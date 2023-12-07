@@ -26,6 +26,7 @@ application-coolsms.properties
 application-ncloud.properties
 application-jwt.properties
 application-map.properties
+application-mail.properties
 .idea
 *.iws
 *.iml
