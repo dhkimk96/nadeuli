@@ -6,9 +6,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-
-import java.util.List;
 
 public interface NadeuliDeliveryRepository extends JpaRepository<NadeuliDelivery, Long> {
 
@@ -21,12 +18,7 @@ public interface NadeuliDeliveryRepository extends JpaRepository<NadeuliDelivery
 
     Page<NadeuliDelivery> findAllByDeliveryPersonTagAndDeliveryState(String deliveryPersonTag, DeliveryState deliveryState, Pageable pageable);
 
-//    @Query("SELECT nd FROM NadeuliDelivery nd WHERE nd.deliveryPerson.tag = :deliveryPersonTag AND nd.deliveryState = :deliveryState")
-//    List<NadeuliDelivery> findByDeliveryPersonTagAndState(@Param("deliveryPersonTag") String deliveryPersonTag, @Param("deliveryState") DeliveryState deliveryState);
-
-
-    NadeuliDelivery findByProductName(String productName);
-
     @Query("SELECT nd FROM NadeuliDelivery nd WHERE nd.buyer.gu = :gu AND nd.deliveryState = 0L")
     Page<NadeuliDelivery> findAllByGuAndDeliveryState(String gu, Pageable pageable);
+
 }

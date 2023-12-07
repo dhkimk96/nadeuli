@@ -26,11 +26,11 @@ public class NadeuliDelivery {
     private Long nadeuliDeliveryId;
 
     // 배달 제목
-    @Column(nullable = false)
+    @Column(name = "title", nullable = false)
     private String title;
 
     // 배달 내용
-    @Column(nullable = false, length = 5000)
+    @Column(name = "content", nullable = false, length = 5000)
     private String content;
 
     // 상품 이름
@@ -86,10 +86,6 @@ public class NadeuliDelivery {
     @Column(name = "delivery_state", nullable = false)
     private DeliveryState deliveryState;
 
-    // 사진 이름
-    @Column(name = "image_name", nullable = false)
-    private String imageName;
-
     // 배송자 닉네임
     @Column(name = "delivery_person_nickname")
     private String deliveryPersonNickName;
@@ -118,7 +114,7 @@ public class NadeuliDelivery {
     private List<DeliveryNotification> deliveryNotifications;
 
     // 상품 사진
-    @OneToMany(mappedBy = "nadeuliDelivery", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "nadeuliDelivery", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Image> images;
 
     // 신고

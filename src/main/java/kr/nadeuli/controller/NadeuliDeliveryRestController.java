@@ -1,9 +1,9 @@
 package kr.nadeuli.controller;
 
 import kr.nadeuli.dto.*;
+import kr.nadeuli.service.image.ImageService;
 import kr.nadeuli.service.member.MemberService;
 import kr.nadeuli.service.nadeulidelivery.NadeuliDeliveryService;
-import kr.nadeuli.service.product.ProductService;
 import kr.nadeuli.service.trade.TradeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -25,13 +25,12 @@ public class NadeuliDeliveryRestController {
 
     private final MemberService memberService;
     private final TradeService tradeService;
-    private final ProductService productService;
     private final NadeuliDeliveryService nadeuliDeliveryService;
+    private final ImageService imageService;
 
-    // 미해결
     @Transactional
-    @GetMapping("/getAddOrUpdateUsedDeliveryOrder")
-    public List<TradeScheduleDTO> getAddOrUpdateUsedDeliveryOrder(@ModelAttribute String tag, @ModelAttribute SearchDTO searchDTO) throws Exception {
+    @PostMapping("/getAddOrUpdateUsedDeliveryOrder/{tag}")
+    public List<TradeScheduleDTO> getAddOrUpdateUsedDeliveryOrder(@PathVariable String tag, @RequestBody SearchDTO searchDTO) throws Exception {
         // 중고상품 선택 시, 등록 된 거래 일정 리스트를 호출한다.
         log.info("/nadeulidelivery/getAddUpdateUsedDeliveryOrder : GET");
         log.info(tag);
@@ -41,50 +40,77 @@ public class NadeuliDeliveryRestController {
 
         List<TradeScheduleDTO> tradeScheduleDTOList = tradeService.getTradeScheduleList(tag, searchDTO);
 
-        // Base class 가 public 이 아닌 문제로 regDate 를 불러올 수 없다고 하는데,
-        // ProductMapper 내의 regDate ignore = true 로 되어있어서 인 것 같다.
-
-        for (TradeScheduleDTO tradeScheduleDTO : tradeScheduleDTOList) {
-            if (tradeScheduleDTO.getProduct().getProductId() != null) {
-                ProductDTO productDTO = productService.getProduct(tradeScheduleDTO.getProduct().getProductId());
-                tradeScheduleDTO.setProduct(productDTO);
-            }
-        }
-
         log.info(tradeScheduleDTOList);
 
         return tradeScheduleDTOList;
     }
 
     @Transactional
-    @PostMapping("/addOrUpdateDeliveryOrder")
-    public ResponseEntity<?> addOrUpdateDeliveryOrder(@RequestBody NadeuliDeliveryDTO nadeuliDeliveryDTO) throws Exception{
-        // 중고상품 배달 주문을 등록한다.
-        log.info("/nadeulidelivery/addOrUpdateDeliveryOrder : POST");
-        log.info(nadeuliDeliveryDTO);
-        Long beforeDeposit;
+    @PostMapping("/addDeliveryOrder")
+    public ResponseEntity<?> addDeliveryOrder(@RequestBody NadeuliDeliveryDTO nadeuliDeliveryDTO) throws Exception{
+        // 배달 주문을 등록한다.
+        log.info("/nadeulidelivery/addDeliveryOrder : POST");
 
-        // nadeuliDeliveryId 값이 있다면, 해당 deposit 을 balance 에 더하고 새로 받은 deposit 값 만큼 뺀다.
-        if (nadeuliDeliveryDTO.getNadeuliDeliveryId() != null) {
-            beforeDeposit = nadeuliDeliveryService.getDeliveryOrder(nadeuliDeliveryDTO.getNadeuliDeliveryId()).getDeposit();
+        // 나드리페이 잔액을 상품 금액 만큼 뺀다.
+        memberService.handleNadeuliPayBalance(
+                nadeuliDeliveryDTO.getBuyer().getTag(),
+                null ,
+                nadeuliDeliveryDTO, null
+        );
 
-            memberService.handleNadeuliPayBalance(
-                    nadeuliDeliveryDTO.getBuyer().getTag(),
-                    null ,
-                    nadeuliDeliveryDTO, beforeDeposit
-            );
-        } else {
-            // nadeuliDeliveryId 값이 null 이면, MemberService 로 나드리페이 잔액을 상품 금액 만큼 먼저 뺀다.
-            memberService.handleNadeuliPayBalance(
-                    nadeuliDeliveryDTO.getBuyer().getTag(),
-                    null ,
-                    nadeuliDeliveryDTO, null
-            );
+        // 먼저 주문 등록
+        NadeuliDeliveryDTO returnedNadeuliDeliveryDTO = nadeuliDeliveryService.addOrUpdateDeliveryOrder(nadeuliDeliveryDTO);
+
+        // image table 에 image 저장
+        List<String> images = nadeuliDeliveryDTO.getImages();
+        for (String image : images) {
+            ImageDTO newImage = ImageDTO.builder()
+                    .imageName(image)
+                    .nadeuliDelivery(returnedNadeuliDeliveryDTO)
+                    .build();
+            log.info(newImage);
+            imageService.addImage(newImage);
         }
 
-        nadeuliDeliveryService.addOrUpdateDeliveryOrder(nadeuliDeliveryDTO);
-        return ResponseEntity.ok("Delivery Order 등록/수정 완료");
+        return ResponseEntity.ok("Delivery Order 등록 완료");
     }
+
+    @Transactional
+    @PostMapping("/updateDeliveryOrder")
+    public ResponseEntity<?> updateDeliveryOrder(@RequestBody NadeuliDeliveryDTO nadeuliDeliveryDTO) throws Exception{
+        // 배달 주문을 수정한다.
+        log.info("/nadeulidelivery/updateDeliveryOrder : POST");
+        Long nadeuliDeliveryId = nadeuliDeliveryDTO.getNadeuliDeliveryId();
+
+        // beforeDeposit 을 balance 에 더하고 새로 받은 deposit 값 만큼 뺀다.
+        Long beforeDeposit = nadeuliDeliveryService.getDeliveryOrder(nadeuliDeliveryDTO.getNadeuliDeliveryId()).getDeposit();
+        memberService.handleNadeuliPayBalance(
+                nadeuliDeliveryDTO.getBuyer().getTag(),
+                null ,
+                nadeuliDeliveryDTO, beforeDeposit
+        );
+
+        // 기존 Images 삭제
+        imageService.deleteNadeuliDeliveryImage(nadeuliDeliveryId);
+
+        // 먼저 주문 등록
+        nadeuliDeliveryService.addOrUpdateDeliveryOrder(nadeuliDeliveryDTO);
+
+        // 새 이미지를 image table 에 저장한다.
+        List<String> images = nadeuliDeliveryDTO.getImages();
+        for (String image : images) {
+            ImageDTO newImage = ImageDTO.builder()
+                    .imageName(image)
+                    .nadeuliDelivery(nadeuliDeliveryDTO)
+                    .build();
+            log.info(newImage);
+            imageService.addImage(newImage);
+        }
+
+        return ResponseEntity.ok("Delivery Order 수정 완료");
+    }
+
+
 
     @GetMapping("/getDeliveryOrder/{nadeuliDeliveryId}")
     public NadeuliDeliveryDTO getDeliveryOrder(@PathVariable long nadeuliDeliveryId) throws Exception {
@@ -125,16 +151,6 @@ public class NadeuliDeliveryRestController {
         return nadeuliDeliveryService.getMyOrderHistoryList(nadeuliDeliveryDTO, searchDTO);
     }
 
-//    @GetMapping("/getMyOrderHistory/{nadeuliDeliveryId}")
-//    public NadeuliDeliveryDTO getMyOrderHistory
-//            (@PathVariable long nadeuliDeliveryId) throws Exception {
-//        // 나의 주문 내역을 상세 조회한다.
-//        log.info("/nadeulidelivery/getMyOrderHistory : GET");
-//        log.info(nadeuliDeliveryId);
-//
-//        return nadeuliDeliveryService.getMyOrderHistory(nadeuliDeliveryId);
-//    }
-
     @Transactional
     @PostMapping("/getMyDeliveryHistoryList")
     public List<NadeuliDeliveryDTO> getMyDeliveryHistoryList
@@ -149,16 +165,6 @@ public class NadeuliDeliveryRestController {
         return nadeuliDeliveryService.getMyDeliveryHistoryList(nadeuliDeliveryDTO, searchDTO);
     }
 
-//    @GetMapping("/getMyDeliveryHistory/{nadeuliDeliveryId}")
-//    public NadeuliDeliveryDTO getMyDeliveryHistory
-//            (@RequestBody long nadeuliDeliveryId) throws Exception {
-//        // 나의 배달 내역을 상세 조회한다.
-//        log.info("/nadeulidelivery/getMyDeliveryHistory : GET");
-//        log.info(nadeuliDeliveryId);
-//
-//        return nadeuliDeliveryService.getMyDeliveryHistory(nadeuliDeliveryId);
-//    }
-
     @PostMapping("/getMyAcceptedDeliveryHistoryList")
     public List<NadeuliDeliveryDTO> getMyAcceptedDeliveryHistoryList
             (@RequestBody NadeuliDeliveryDTO nadeuliDeliveryDTO, SearchDTO searchDTO) throws Exception {
@@ -171,16 +177,6 @@ public class NadeuliDeliveryRestController {
 
         return nadeuliDeliveryService.getMyAcceptedDeliveryHistoryList(nadeuliDeliveryDTO, searchDTO);
     }
-
-//    @PostMapping("/getAcceptedDeliveryLocationList")
-//    public List<NadeuliDeliveryDTO> getAcceptedDeliveryLocationList
-//            (@RequestBody NadeuliDeliveryDTO nadeuliDeliveryDTO) throws Exception {
-//        // 최단 경로 계산 시 필요한 정보 전달
-//        log.info("/nadeulidelivery/getAcceptedDeliveryLocationList : POST");
-//        log.info(nadeuliDeliveryDTO);
-//
-//        return nadeuliDeliveryService.getAcceptedDeliveryLocationList(nadeuliDeliveryDTO);
-//    }
 
     @Transactional
     @GetMapping("/cancelDeliveryOrder/{nadeuliDeliveryId}")
