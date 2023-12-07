@@ -26,6 +26,7 @@ import java.util.List;
 @Transactional
 @Service("orikkiriServiceImpl")
 public class OrikkiriServiceImpl implements OrikkiriService {
+    
 
 
     private final OriScheMenChatFavRepository oriScheMenChatFavRepository;

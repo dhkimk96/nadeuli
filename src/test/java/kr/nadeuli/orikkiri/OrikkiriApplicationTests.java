@@ -41,10 +41,10 @@ public class OrikkiriApplicationTests {
     }
 
 
-    //@Test
+    @Test
     @Transactional
     public void testGetOrikkiriSignUpList() throws Exception {
-        long ansQuestionId = 3L;
+        long ansQuestionId = 6L;
         SearchDTO searchDTO = new SearchDTO();
         searchDTO.setCurrentPage(0);
         searchDTO.setPageSize(pageSize);
