@@ -7,7 +7,6 @@ import kr.nadeuli.dto.MemberDTO;
 import kr.nadeuli.dto.NadeuliDeliveryDTO;
 import kr.nadeuli.dto.SearchDTO;
 import kr.nadeuli.entity.DeliveryNotification;
-import kr.nadeuli.entity.Image;
 import kr.nadeuli.entity.Member;
 import kr.nadeuli.entity.NadeuliDelivery;
 import kr.nadeuli.mapper.DeliveryNotificationMapper;
@@ -40,19 +39,19 @@ public class NadeuliDeliveryServiceImpl implements NadeuliDeliveryService {
     private final NadeuliDeliveryMapper nadeuliDeliveryMapper;
     private final DeliveryNotificationMapper deliveryNotificationMapper;
 
+    @Transactional
     @Override
-    public void addOrUpdateDeliveryOrder(NadeuliDeliveryDTO nadeuliDeliveryDTO) throws Exception {
+    public NadeuliDeliveryDTO addOrUpdateDeliveryOrder(NadeuliDeliveryDTO nadeuliDeliveryDTO) throws Exception {
         // 나드리부름 게시물을 등록/수정한다.
 
         NadeuliDelivery nadeuliDelivery = nadeuliDeliveryMapper.nadeuliDeliveryDTOToNadeuliDelivery(nadeuliDeliveryDTO);
 
-        // images 에 각 nadeuliDeliveryId 추가
-        List<Image> images = nadeuliDelivery.getImages();
-        images.forEach(image -> image.setNadeuliDelivery(nadeuliDelivery));
-
         // NadeuliDelivery 엔티티 저장
-        nadeuliDeliveryRepository.save(nadeuliDelivery);
-        log.info(nadeuliDelivery);
+        NadeuliDeliveryDTO returnedNadeuliDeliveryDTO = nadeuliDeliveryMapper
+                .nadeuliDeliveryToNadeuliDeliveryDTO(nadeuliDeliveryRepository.save(nadeuliDelivery));
+        log.info(returnedNadeuliDeliveryDTO);
+
+        return returnedNadeuliDeliveryDTO;
     }
 
     @Override
@@ -274,7 +273,7 @@ public class NadeuliDeliveryServiceImpl implements NadeuliDeliveryService {
 
     // 알림 삭제 추가 필요
 
-//    @Override
+    //    @Override
 //    public List<NadeuliDeliveryDTO> getAcceptedDeliveryLocationList(NadeuliDeliveryDTO nadeuliDeliveryDTO) throws Exception {
 //
 //        List<NadeuliDeliveryDTO> nadeuliDeliveryLocationList = nadeuliDeliveryRepository.findByDeliveryPersonTagAndState(nadeuliDeliveryDTO.getDeliveryPerson().getTag(), ACCEPT_ORDER)

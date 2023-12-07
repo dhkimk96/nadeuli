@@ -8,10 +8,12 @@ import kr.nadeuli.entity.Image;
 import kr.nadeuli.entity.Member;
 import kr.nadeuli.entity.NadeuliDelivery;
 import kr.nadeuli.entity.Product;
-import org.mapstruct.*;
+import org.mapstruct.Builder;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,8 +26,7 @@ public interface NadeuliDeliveryMapper {
     @Mapping(source = "deliveryPerson", target = "deliveryPerson", qualifiedByName = "deliveryPersonDTOToDeliveryPerson")
     @Mapping(source = "buyer", target = "buyerNickName", qualifiedByName = "buyerDTOToBuyerNickName")
     @Mapping(source = "deliveryPerson", target = "deliveryPersonNickName", qualifiedByName = "deliveryPersonDTOToDeliveryPersonNickName")
-    @Mapping(source = "images", target = "images", qualifiedByName = "stringToImage")
-    @Mapping(source = "images", target = "imageName", qualifiedByName = "stringImageListToImageName")
+    @Mapping(target = "images", ignore = true)
     @Mapping(target = "regDate", qualifiedByName = "createRegDate")
     NadeuliDelivery nadeuliDeliveryDTOToNadeuliDelivery(NadeuliDeliveryDTO nadeuliDeliveryDTO);
 
@@ -36,37 +37,17 @@ public interface NadeuliDeliveryMapper {
     @Mapping(source = "product", target = "product", qualifiedByName = "ProductToProductDTO")
     @Mapping(source = "buyer", target = "buyer", qualifiedByName = "buyerToBuyerDTO")
     @Mapping(source = "deliveryPerson", target = "deliveryPerson", qualifiedByName = "deliveryPersonToDeliveryPersonDTO")
-    @Mapping(source = "imageName", target = "images", qualifiedByName = "imageNameToStringImageList")
+    @Mapping(source = "images", target = "images", qualifiedByName = "imageToString")
     @Mapping(source = "regDate", target = "timeAgo", qualifiedByName = "regDateToTimeAgo")
     NadeuliDeliveryDTO nadeuliDeliveryToNadeuliDeliveryDTO(NadeuliDelivery nadeuliDelivery);
 
 
-    @Named("stringToImage")
-    default List<Image> stringToImage(List<String> images){
+    @Named("imageToString")
+    default List<String> imageToString(List<Image> images){
         if (images == null) {
             return null;
         }
-        return images.stream().map(imageName -> Image.builder()
-                .imageName(imageName)
-                .build())
-                .collect(Collectors.toList());
-    }
-
-    @Named("stringImageListToImageName")
-    default String stringImageListToImageName(List<String> images) {
-        if (images == null || images.isEmpty()) {
-            return null;
-        }
-        return String.join(", ", images);
-    }
-
-
-    @Named("imageNameToStringImageList")
-    default List<String> imagesToStringImageList(String imageName) {
-        if (imageName == null || imageName.isEmpty()) {
-            throw new NullPointerException("등록된 imageName 이 없습니다.");
-        }
-        return Arrays.asList(imageName.split(",\\s"));
+        return images.stream().map(Image::getImageName).collect(Collectors.toList());
     }
 
     @Named("regDateToTimeAgo")

@@ -4,14 +4,13 @@ import kr.nadeuli.dto.DeliveryNotificationDTO;
 import kr.nadeuli.dto.MemberDTO;
 import kr.nadeuli.dto.NadeuliDeliveryDTO;
 import kr.nadeuli.dto.SearchDTO;
-import kr.nadeuli.entity.Member;
 
 import java.util.List;
 
 public interface NadeuliDeliveryService {
 
     // 구매자의 주문 등록/수정
-    void addOrUpdateDeliveryOrder(NadeuliDeliveryDTO nadeuliDeliveryDTO) throws Exception;
+    NadeuliDeliveryDTO addOrUpdateDeliveryOrder(NadeuliDeliveryDTO nadeuliDeliveryDTO) throws Exception;
 
     // 배달 주문 조회
     NadeuliDeliveryDTO getDeliveryOrder(long nadeuliDeliveryId) throws Exception;

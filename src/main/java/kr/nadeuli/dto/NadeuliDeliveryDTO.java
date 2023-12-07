@@ -35,7 +35,6 @@ public class NadeuliDeliveryDTO {
     private LocalDateTime deliveryCancelDate;
     private LocalDateTime deliveryCompleteDate;
     private DeliveryState deliveryState;
-    private String imageName;
     private MemberDTO deliveryPerson;
     private MemberDTO buyer;
     private ProductDTO product;
