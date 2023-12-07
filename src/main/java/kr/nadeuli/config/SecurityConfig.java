@@ -206,7 +206,7 @@ public class SecurityConfig {
         //8. HTTP 요청에 대한 접근 권한을 설정
         .authorizeHttpRequests((request) -> request
             //8-1. .permitAll()에 해당하는 URI는 인증되지않은 회원도 접근 가능
-            .requestMatchers("/api/v1/auth/**","/resources/**","/nadeulidelivery/**","/product/**","/nadeuliPay/**","/trade/**","/orikkiri/**","/orikkiriManage/**","/dongNe/**","/nadeuli/**","/sms/**").permitAll()
+            .requestMatchers("/api/v1/auth/**","/resources/**","/nadeulidelivery/**","/product/**","/nadeuliPay/**","/trade/**","/orikkiri/**","/orikkiriManage/**","/dongNe/**","/nadeuli/**","/sms/**","/login").permitAll()
             //8-2. ADMIN만 접근가능
             .requestMatchers("/api/v1/admin/**").hasAnyAuthority(Role.ADMIN.name())
             //8-3. USER만 접근가능
