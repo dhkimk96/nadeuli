@@ -59,7 +59,7 @@ public class CommentApplicationTests {
         searchDTO.setPageSize(pageSize);
         searchDTO.setSearchKeyword("목");
         long postId= 9L;
-        List<CommentDTO> commentList = commentService.getCommentList(postId, searchDTO);
+        List<CommentDTO> commentList = commentService.getCommentList(postId);
         System.out.println(commentList);
     }
 

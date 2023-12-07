@@ -1,5 +1,6 @@
 package kr.nadeuli.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
@@ -42,14 +43,18 @@ public class Orikkiri {
     private String masterTag;
 
     @OneToMany(mappedBy = "orikkiri", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<AnsQuestion> ansQuestions;
 
     @OneToMany(mappedBy = "orikkiri", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Post> posts;
 
     @OneToMany(mappedBy = "orikkiri", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<OrikkiriSchedule> orikkiriSchedules;
 
     @OneToMany(mappedBy = "orikkiri", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<OriScheMemChatFav> oriScheMemChatFavs;
 }

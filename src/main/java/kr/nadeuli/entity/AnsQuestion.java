@@ -1,5 +1,7 @@
 package kr.nadeuli.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -20,7 +22,7 @@ import org.hibernate.annotations.DynamicUpdate;
 @AllArgsConstructor
 @Builder
 @DynamicUpdate
-@ToString(exclude = {"orikkiri", "oriScheMemChatFav"}) // exclude 설정: 연관 관계 필드
+@ToString(exclude = {"orikkiri", "oriScheMemChatFav"})
 @Table(name = "ans_question")
 public class AnsQuestion {
 
@@ -34,9 +36,11 @@ public class AnsQuestion {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "orikkiri_id")
+    @JsonBackReference
     private Orikkiri orikkiri;
 
     @ManyToOne(fetch = FetchType.LAZY )
     @JoinColumn(name = "ori_sche_mem_chat_fav_id")
+    @JsonBackReference
     private OriScheMemChatFav oriScheMemChatFav;
 }

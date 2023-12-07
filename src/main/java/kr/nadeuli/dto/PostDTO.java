@@ -30,4 +30,5 @@ public class PostDTO {
     private OrikkiriDTO orikkiri;
     private List<String> images;
 
+
 }

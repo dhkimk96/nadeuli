@@ -64,8 +64,10 @@ public class OrikkiriManageRestController {
         return orikkiriManageService.getAnsQuestion(ansQuestionId);
     }
 
-    @GetMapping("/getAnsQuestionList")
-    public List<AnsQuestionDTO> getAnsQuestionList(long orikkiriId, SearchDTO searchDTO) throws Exception {
+    @GetMapping("/getAnsQuestionList/{orikkiriId}/{currentPage}")
+    public List<AnsQuestionDTO> getAnsQuestionList(@PathVariable long orikkiriId, @PathVariable int currentPage) throws Exception {
+        SearchDTO searchDTO = new SearchDTO();
+        searchDTO.setCurrentPage(currentPage);
         searchDTO.setPageSize(pageSize);
         return orikkiriManageService.getAnsQuestionList(orikkiriId, searchDTO);
     }

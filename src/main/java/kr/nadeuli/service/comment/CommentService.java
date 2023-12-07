@@ -13,7 +13,7 @@ public interface CommentService {
 
     CommentDTO getComment(long commentId) throws Exception;
 
-    List<CommentDTO> getCommentList(long postId, SearchDTO searchDTO) throws Exception;
+    List<CommentDTO> getCommentList(long postId) throws Exception;
 
     void updateComment(CommentDTO commentDTO) throws Exception;
 

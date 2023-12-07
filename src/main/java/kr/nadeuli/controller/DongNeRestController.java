@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/dongNe")
@@ -44,30 +45,38 @@ public class DongNeRestController {
 
     @GetMapping("/getPost/{postId}")
     public PostDTO getPost(@PathVariable long postId) throws Exception {
-        return postService.getPost(postId);
+        List<ImageDTO> imageDTOList =imageService.getImageList(postId, SearchDTO.builder()
+                .isPost(true)
+                .build());
+        PostDTO postDTO = postService.getPost(postId);
+        List<String> imageNames = imageDTOList.stream()
+                .map(ImageDTO::getImageName)
+                .collect(Collectors.toList());
+        postDTO.setImages(imageNames);
+        return postDTO;
     }
 
-    @GetMapping("/getPostList")
-    public List<PostDTO> getPostList(@RequestParam String gu, SearchDTO searchDTO) throws Exception {
-        searchDTO.setPageSize(pageSize);
-        System.out.println(gu);
-        System.out.println(searchDTO);
+    @GetMapping("/dongNeHome/{currentPage}/{gu}")
+    public List<PostDTO> getPostList(@PathVariable int currentPage, @PathVariable String gu, @RequestParam(required = false) String searchKeyword) throws Exception {
+        SearchDTO searchDTO = SearchDTO.builder()
+                .currentPage(currentPage)
+                .pageSize(pageSize)
+                .searchKeyword(searchKeyword)
+                .build();
+
         return postService.getPostList(gu, searchDTO);
     }
 
     @PostMapping("/updatePost")
     public ResponseEntity<String> updatePost(@RequestBody PostDTO postDTO) throws Exception {
         Long postId = postService.updatePost(postDTO);
-
         imageService.deletePostImage(postId);
 
         for(String image : postDTO.getImages()){
             imageService.addImage(ImageDTO.builder()
-                    .imageName(image)
-                    .post(PostDTO.builder()
-                            .postId(postDTO.getPostId())
-                            .build())
-                    .build());
+                            .imageName(image)
+                            .post(PostDTO.builder().postId(postDTO.getPostId()).build())
+                            .build());
         }
         return ResponseEntity.status(HttpStatus.OK).body("{\"success\": true}");
     }
@@ -90,10 +99,9 @@ public class DongNeRestController {
         return commentService.getComment(commentId);
     }
 
-    @GetMapping("/getCommentList")
-    public List<CommentDTO> getCommentList(long postId, SearchDTO searchDTO) throws Exception {
-        searchDTO.setPageSize(pageSize);
-        return commentService.getCommentList(postId, searchDTO);
+    @GetMapping("/getCommentList/{postId}")
+    public List<CommentDTO> getCommentList(@PathVariable  long postId) throws Exception {
+        return commentService.getCommentList(postId);
     }
 
     @PostMapping("/updateComment")

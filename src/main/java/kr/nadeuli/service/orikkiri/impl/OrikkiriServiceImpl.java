@@ -11,6 +11,8 @@ import kr.nadeuli.service.orikkiri.OrikkiriScheduleRepository;
 import kr.nadeuli.service.orikkiri.OrikkiriService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -24,12 +26,15 @@ import java.util.List;
 @Transactional
 @Service("orikkiriServiceImpl")
 public class OrikkiriServiceImpl implements OrikkiriService {
+    
+
 
     private final OriScheMenChatFavRepository oriScheMenChatFavRepository;
     private final OriScheMemChatFavMapper oriScheMemChatFavMapper;
 
     private final OrikkiriScheduleRepository orikkiriScheduleRepository;
     private final OrikkiriScheduleMapper orikkiriScheduleMapper;
+
 
     @Override
     public void addOrikkrirSignUp(OriScheMemChatFavDTO oriScheMemChatFavDTO) throws Exception {
@@ -39,10 +44,10 @@ public class OrikkiriServiceImpl implements OrikkiriService {
     }
 
     @Override
-    public List<OriScheMemChatFavDTO> getOrikkiriSignUpList(long ansQuestionId, SearchDTO searchDTO) throws Exception {
+    public List<OriScheMemChatFavDTO> getOrikkiriSignUpList(long orikkiriId, SearchDTO searchDTO) throws Exception {
         Pageable pageable = PageRequest.of(searchDTO.getCurrentPage(), searchDTO.getPageSize());
         Page<OriScheMemChatFav> oriScheMemChatFavPage;
-        oriScheMemChatFavPage = oriScheMenChatFavRepository.findByAnsQuestions(AnsQuestion.builder().ansQuestionId(ansQuestionId).build(), pageable);
+        oriScheMemChatFavPage = oriScheMenChatFavRepository.findByOrikkiriAndAnsQuestionsNotNull(Orikkiri.builder().orikkiriId(orikkiriId).build(), pageable);
         log.info(oriScheMemChatFavPage);
         return oriScheMemChatFavPage.map(oriScheMemChatFavMapper::oriScheMemChatFavToOriScheMemChatFavDTO).toList();
     }
@@ -52,7 +57,7 @@ public class OrikkiriServiceImpl implements OrikkiriService {
         Pageable pageable = PageRequest.of(searchDTO.getCurrentPage(), searchDTO.getPageSize());
         Page<OriScheMemChatFav> oriScheMemChatFavPage;
         oriScheMemChatFavPage = oriScheMenChatFavRepository
-                .findByMemberAndOrikkiriNotNull(Member.builder().tag(tag).build(), pageable);
+                .findByMemberAndOrikkiriNotNullAndAnsQuestionsNull(Member.builder().tag(tag).build(), pageable);
         log.info(oriScheMemChatFavPage);
         return oriScheMemChatFavPage.map(oriScheMemChatFavMapper::oriScheMemChatFavToOriScheMemChatFavDTO).toList();
 
@@ -73,7 +78,7 @@ public class OrikkiriServiceImpl implements OrikkiriService {
     public List<OriScheMemChatFavDTO> getOrikkiriMemberList(long orikkiriId, SearchDTO searchDTO) throws Exception {
         Pageable pageable = PageRequest.of(searchDTO.getCurrentPage(), searchDTO.getPageSize());
         Page<OriScheMemChatFav> oriScheMemChatFavPage;
-        oriScheMemChatFavPage = oriScheMenChatFavRepository.findByOrikkiri(Orikkiri.builder().orikkiriId(orikkiriId).build(), pageable);
+        oriScheMemChatFavPage = oriScheMenChatFavRepository.findByOrikkiriAndAnsQuestionsNull(Orikkiri.builder().orikkiriId(orikkiriId).build(), pageable);
         log.info(oriScheMemChatFavPage);
         return oriScheMemChatFavPage.map(oriScheMemChatFavMapper::oriScheMemChatFavToOriScheMemChatFavDTO).toList();
     }
