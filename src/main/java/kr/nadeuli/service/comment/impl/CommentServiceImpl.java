@@ -13,6 +13,7 @@ import kr.nadeuli.service.comment.CommentService;
 import kr.nadeuli.service.post.PostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -33,6 +34,9 @@ public class CommentServiceImpl implements CommentService {
     private final CommentMapper commentMapper;
 
 
+    @Value("${commentNum}")
+    int commentNum;
+
     @Override
     public void addComment(CommentDTO commentDTO) throws Exception {
         Comment comment = commentMapper.commentDTOToComment(commentDTO);
@@ -46,9 +50,9 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public List<CommentDTO> getCommentList(long postId, SearchDTO searchDTO) throws Exception {
+    public List<CommentDTO> getCommentList(long postId) throws Exception {
         Sort sort = Sort.by(Sort.Direction.DESC, "regDate");
-        Pageable pageable = PageRequest.of(searchDTO.getCurrentPage(), searchDTO.getPageSize(), sort);
+        Pageable pageable = PageRequest.of(0, commentNum, sort);
         Page<Comment> commentPage;
         commentPage = commentRepository.findByPost(Post.builder().postId(postId).build(), pageable);
         log.info(commentPage);
