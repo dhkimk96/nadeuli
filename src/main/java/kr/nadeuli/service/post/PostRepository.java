@@ -10,8 +10,9 @@ import org.springframework.data.repository.query.Param;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
 
-    @Query("SELECT p FROM Post p WHERE p.gu = :gu AND (p.title LIKE %:keyword% OR p.content LIKE %:keyword%)")
-    Page<Post> findByGuAndTitleOrContentContaining(@Param("gu") String gu, @Param("keyword") String keyword, Pageable pageable);
+    @Query("SELECT p FROM Post p WHERE p.title LIKE %:title% OR p.content LIKE %:content% AND p.gu = :gu")
+    Page<Post> findPostListByKeyword(@Param("title") String title, @Param("content") String content, @Param("gu") String gu, Pageable pageable);
 
-
+    @Query("SELECT p FROM Post p WHERE p.gu = :gu")
+    Page<Post> findPostList(@Param("gu") String gu, Pageable pageable);
 }

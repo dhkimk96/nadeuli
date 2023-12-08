@@ -47,7 +47,11 @@ public class PostServiceImpl implements PostService {
         Sort sort = Sort.by(Sort.Direction.DESC, "regDate");
         Pageable pageable = PageRequest.of(searchDTO.getCurrentPage(), searchDTO.getPageSize(), sort);
         Page<Post> postPage;
-        postPage = postRepository.findByGuAndTitleOrContentContaining(gu, searchDTO.getSearchKeyword(), pageable);
+        if(searchDTO.getSearchKeyword() == null || searchDTO.getSearchKeyword().isEmpty()){
+            postPage = postRepository.findPostList(gu, pageable);
+        }else {
+            postPage = postRepository.findPostListByKeyword(searchDTO.getSearchKeyword(), searchDTO.getSearchKeyword(), gu, pageable);
+        }
         log.info(postPage);
         System.out.println(postPage);
         return postPage.map(postMapper::postToPostDTO).toList();
