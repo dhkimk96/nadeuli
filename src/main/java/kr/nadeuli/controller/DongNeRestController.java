@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/dongNe")
@@ -30,16 +31,15 @@ public class DongNeRestController {
     int pageSize;
 
     @PostMapping("/addPost")
-    public ResponseEntity<String> addPost(@RequestBody PostDTO postDTO) throws Exception {
+    public ResponseEntity<String> addPost(@RequestBody PostDTO postDTO,@RequestParam("images") List<MultipartFile> images) throws Exception {
         Long postId = postService.addPost(postDTO);
-        for(String image : postDTO.getImages()){
-            imageService.addImage(ImageDTO.builder()
-                    .imageName(image)
-                    .post(PostDTO.builder()
-                            .postId(postId)
-                            .build())
-                    .build());
-        }
+        // 이미지 업로드 및 저장을 위한 ImageDTO 생성
+        ImageDTO imageDTO = ImageDTO.builder()
+            .post(PostDTO.builder().postId(postId).build())
+            .build();
+
+        // 이미지 업로드 및 저장
+        imageService.addImage(images, imageDTO);
       return ResponseEntity.status(HttpStatus.OK).body("{\"success\": true}");
     }
 
@@ -68,16 +68,17 @@ public class DongNeRestController {
     }
 
     @PostMapping("/updatePost")
-    public ResponseEntity<String> updatePost(@RequestBody PostDTO postDTO) throws Exception {
+    public ResponseEntity<String> updatePost(@RequestBody PostDTO postDTO,@RequestParam("images") List<MultipartFile> images) throws Exception {
         Long postId = postService.updatePost(postDTO);
         imageService.deletePostImage(postId);
 
-        for(String image : postDTO.getImages()){
-            imageService.addImage(ImageDTO.builder()
-                            .imageName(image)
-                            .post(PostDTO.builder().postId(postDTO.getPostId()).build())
-                            .build());
-        }
+        // 이미지 업로드 및 저장을 위한 ImageDTO 생성
+        ImageDTO imageDTO = ImageDTO.builder()
+            .post(PostDTO.builder().postId(postId).build())
+            .build();
+
+        // 이미지 업로드 및 저장
+        imageService.addImage(images, imageDTO);
         return ResponseEntity.status(HttpStatus.OK).body("{\"success\": true}");
     }
 

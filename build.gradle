@@ -69,6 +69,16 @@ dependencies {
 
     //이메일 전송을위한 Gmail SMTP Dependency추가
     implementation 'org.springframework.boot:spring-boot-starter-mail'
+
+    //파일업로드 의존성 추가
+    implementation group: 'commons-fileupload', name: 'commons-fileupload', version: '1.5'
+    implementation group: 'commons-io', name: 'commons-io', version: '2.11.0'
+
+    //Amazon S3 cloud 의존성 추가
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
+
+
 }
 
 tasks.named('bootBuildImage') {
