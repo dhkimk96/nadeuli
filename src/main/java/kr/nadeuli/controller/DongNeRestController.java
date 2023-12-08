@@ -56,8 +56,8 @@ public class DongNeRestController {
         return postDTO;
     }
 
-    @GetMapping("/dongNeHome/{currentPage}/{gu}")
-    public List<PostDTO> getPostList(@PathVariable int currentPage, @PathVariable String gu, @RequestParam(required = false) String searchKeyword) throws Exception {
+    @GetMapping("/dongNeHome/{currentPage}")
+    public List<PostDTO> getPostList(@PathVariable int currentPage, @RequestParam String gu, @RequestParam(required = false) String searchKeyword) throws Exception {
         SearchDTO searchDTO = SearchDTO.builder()
                 .currentPage(currentPage)
                 .pageSize(pageSize)
