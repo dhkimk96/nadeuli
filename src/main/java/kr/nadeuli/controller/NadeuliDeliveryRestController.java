@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import org.springframework.web.multipart.MultipartFile;
 
 @Log4j2
 @RestController
@@ -47,7 +48,7 @@ public class NadeuliDeliveryRestController {
 
     @Transactional
     @PostMapping("/addDeliveryOrder")
-    public ResponseEntity<?> addDeliveryOrder(@RequestBody NadeuliDeliveryDTO nadeuliDeliveryDTO) throws Exception{
+    public ResponseEntity<?> addDeliveryOrder(@RequestBody NadeuliDeliveryDTO nadeuliDeliveryDTO,@RequestParam("images") List<MultipartFile> images) throws Exception{
         // 배달 주문을 등록한다.
         log.info("/nadeulidelivery/addDeliveryOrder : POST");
 
@@ -61,23 +62,20 @@ public class NadeuliDeliveryRestController {
         // 먼저 주문 등록
         NadeuliDeliveryDTO returnedNadeuliDeliveryDTO = nadeuliDeliveryService.addOrUpdateDeliveryOrder(nadeuliDeliveryDTO);
 
-        // image table 에 image 저장
-        List<String> images = nadeuliDeliveryDTO.getImages();
-        for (String image : images) {
-            ImageDTO newImage = ImageDTO.builder()
-                    .imageName(image)
+        ImageDTO imageDTO = ImageDTO.builder()
                     .nadeuliDelivery(returnedNadeuliDeliveryDTO)
                     .build();
-            log.info(newImage);
-            imageService.addImage(newImage);
-        }
+
+        // 이미지 업로드 및 저장
+        imageService.addImage(images, imageDTO);
+
 
         return ResponseEntity.ok("Delivery Order 등록 완료");
     }
 
     @Transactional
     @PostMapping("/updateDeliveryOrder")
-    public ResponseEntity<?> updateDeliveryOrder(@RequestBody NadeuliDeliveryDTO nadeuliDeliveryDTO) throws Exception{
+    public ResponseEntity<?> updateDeliveryOrder(@RequestBody NadeuliDeliveryDTO nadeuliDeliveryDTO,@RequestParam("images") List<MultipartFile> images) throws Exception{
         // 배달 주문을 수정한다.
         log.info("/nadeulidelivery/updateDeliveryOrder : POST");
         Long nadeuliDeliveryId = nadeuliDeliveryDTO.getNadeuliDeliveryId();
@@ -96,16 +94,12 @@ public class NadeuliDeliveryRestController {
         // 먼저 주문 등록
         nadeuliDeliveryService.addOrUpdateDeliveryOrder(nadeuliDeliveryDTO);
 
-        // 새 이미지를 image table 에 저장한다.
-        List<String> images = nadeuliDeliveryDTO.getImages();
-        for (String image : images) {
-            ImageDTO newImage = ImageDTO.builder()
-                    .imageName(image)
-                    .nadeuliDelivery(nadeuliDeliveryDTO)
-                    .build();
-            log.info(newImage);
-            imageService.addImage(newImage);
-        }
+        ImageDTO imageDTO = ImageDTO.builder()
+            .nadeuliDelivery(nadeuliDeliveryDTO)
+            .build();
+
+        // 이미지 업로드 및 저장
+        imageService.addImage(images, imageDTO);
 
         return ResponseEntity.ok("Delivery Order 수정 완료");
     }

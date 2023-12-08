@@ -33,7 +33,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @RequiredArgsConstructor
-@EnableWebSecurity
+@EnableWebSecurity(debug = true)
 public class SecurityConfig {
   /** 번호를 잘 따라갈것. 용어설명부터 시작하여 흐름을 제공하겠다.
   *  1. 인증및 권한을 부여, 보호하는 기능을 제공
@@ -206,7 +206,7 @@ public class SecurityConfig {
         //8. HTTP 요청에 대한 접근 권한을 설정
         .authorizeHttpRequests((request) -> request
             //8-1. .permitAll()에 해당하는 URI는 인증되지않은 회원도 접근 가능
-            .requestMatchers("/api/v1/auth/**","/resources/**","/nadeulidelivery/**","/product/**","/nadeuliPay/**","/trade/**","/orikkiri/**","/orikkiriManage/**","/dongNe/**","/nadeuli/**","/sms/**","/login").permitAll()
+            .requestMatchers("/api/v1/auth/**","/resources/**","/nadeulidelivery/**","/product/**","/nadeuliPay/**","/trade/**","/orikkiri/**","/orikkiriManage/**","/dongNe/**","/nadeuli/**","/sms/**","/login","/error").permitAll()
             //8-2. ADMIN만 접근가능
             .requestMatchers("/api/v1/admin/**").hasAnyAuthority(Role.ADMIN.name())
             //8-3. USER만 접근가능

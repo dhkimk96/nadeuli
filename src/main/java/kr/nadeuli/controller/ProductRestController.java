@@ -2,6 +2,7 @@ package kr.nadeuli.controller;
 
 import kr.nadeuli.dto.ImageDTO;
 import kr.nadeuli.dto.NadeuliPayHistoryDTO;
+import kr.nadeuli.dto.PostDTO;
 import kr.nadeuli.dto.ProductDTO;
 import kr.nadeuli.dto.SearchDTO;
 import kr.nadeuli.service.image.ImageService;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/product")
@@ -59,7 +61,7 @@ public class ProductRestController {
     }
 
     @PostMapping("/updateProduct")
-    public ResponseEntity<String> updateProduct(@RequestBody ProductDTO productDTO) throws Exception {
+    public ResponseEntity<String> updateProduct(@RequestBody ProductDTO productDTO,@RequestParam("images") List<MultipartFile> images) throws Exception {
         log.info(productDTO);
         ProductDTO beforeProductDTO = productService.getProduct(productDTO.getProductId());
         if(productDTO.isPremium() &&(productDTO.getPremiumTime() > beforeProductDTO.getPremiumTime())){
@@ -71,19 +73,22 @@ public class ProductRestController {
         }
         productService.updateProduct(productDTO);
         imageService.deleteProductImage(productDTO.getProductId());
-        for(String image : productDTO.getImages()){
-            imageService.addImage(ImageDTO.builder()
-                                          .imageName(image)
-                                          .product(ProductDTO.builder()
-                                                             .productId(productDTO.getProductId())
-                                                             .build())
-                                          .build());
-        }
+
+        // 이미지 업로드 및 저장을 위한 ImageDTO 생성
+        ImageDTO imageDTO = ImageDTO.builder()
+            .product(ProductDTO.builder()
+                         .productId(productDTO.getProductId())
+                         .build())
+            .build();
+
+        // 이미지 업로드 및 저장
+        imageService.addImage(images, imageDTO);
+
         return ResponseEntity.status(HttpStatus.OK).body("{\"success\": true}");
     }
 
     @PostMapping("/addProduct")
-    public ResponseEntity<String> addProduct(@RequestBody ProductDTO productDTO) throws Exception {
+    public ResponseEntity<String> addProduct(@RequestBody ProductDTO productDTO,@RequestParam("images") List<MultipartFile> images) throws Exception {
         if(productDTO.isPremium()){
             nadeuliPayService.nadeuliPayPay(productDTO.getSeller().getTag(), NadeuliPayHistoryDTO.builder()
                                      .productTitle(productDTO.getTitle())
@@ -92,14 +97,15 @@ public class ProductRestController {
                                                                                                  .build());
         }
         Long productId = productService.addProduct(productDTO);
-        for(String image : productDTO.getImages()){
-            imageService.addImage(ImageDTO.builder()
-                                .imageName(image)
-                                .product(ProductDTO.builder()
-                                        .productId(productId)
-                                                   .build())
-                                          .build());
-        }
+        // 이미지 업로드 및 저장을 위한 ImageDTO 생성
+        ImageDTO imageDTO = ImageDTO.builder()
+            .product(ProductDTO.builder()
+                         .productId(productId)
+                         .build())
+            .build();
+
+        // 이미지 업로드 및 저장
+        imageService.addImage(images, imageDTO);
 
         return ResponseEntity.status(HttpStatus.OK).body("{\"success\": true}");
     }

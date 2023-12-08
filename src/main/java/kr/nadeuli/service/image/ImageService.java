@@ -6,10 +6,11 @@ import kr.nadeuli.dto.SearchDTO;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface ImageService {
 
-    void addImage(ImageDTO imageDTO) throws Exception;
+    void addImage(List<MultipartFile> multipartFiles,ImageDTO imageDTO) throws Exception;
 
     ImageDTO getImage(long imageId) throws Exception;
 

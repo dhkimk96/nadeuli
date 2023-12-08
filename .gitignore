@@ -27,6 +27,7 @@ application-ncloud.properties
 application-jwt.properties
 application-map.properties
 application-mail.properties
+application-cloud.properties
 .idea
 *.iws
 *.iml
