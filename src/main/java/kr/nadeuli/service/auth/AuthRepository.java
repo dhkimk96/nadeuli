@@ -1,13 +1,14 @@
-package kr.nadeuli.service.sms;
+package kr.nadeuli.service.auth;
 
 import java.time.Duration;
+import kr.nadeuli.dto.AuthDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 
 @RequiredArgsConstructor
 @Repository
-public class SmsRepository {
+public class AuthRepository {
 
   /* 인증번호와 관련된 정보들을 저장, 삭제, 조회하기 위해 Repository 생성
    * Redis에 저장하는 부분에서 .set을 쓰는데 중복 방지가 자동으로 된다.
@@ -22,25 +23,25 @@ public class SmsRepository {
   private final StringRedisTemplate stringRedisTemplate;
 
   // Redis에 저장
-  public void addAuthNum(String cellphone, String authNum) {
-    System.out.println(authNum);
-    System.out.println(cellphone);
+  public void addAuthNum(AuthDTO authDTO) {
+    System.out.println(authDTO.getAuthNumber());
+    System.out.println(authDTO.getTo());
     stringRedisTemplate.opsForValue()
-        .set(PREFIX + cellphone, authNum, Duration.ofSeconds(LIMIT_TIME));
+        .set(PREFIX + authDTO.getTo(), authDTO.getAuthNumber(), Duration.ofSeconds(LIMIT_TIME));
   }
 
   // 휴대전화 번호에 해당하는 인증번호 불러오기
-  public String getAuthNum(String cellphone) {
-    return stringRedisTemplate.opsForValue().get(PREFIX + cellphone);
+  public String getAuthNum(String to) {
+    return stringRedisTemplate.opsForValue().get(PREFIX + to);
   }
 
   // 인증 완료 시, 인증번호 Redis에서 삭제
-  public void deleteAuthNum(String cellphone) {
-    stringRedisTemplate.delete(PREFIX + cellphone);
+  public void deleteAuthNum(String to) {
+    stringRedisTemplate.delete(PREFIX + to);
   }
 
   // Redis에 해당 휴대번호로 저장된 인증번호가 존재하는지 확인
-  public boolean isAuthNum(String cellphone) {
-    return Boolean.TRUE.equals(stringRedisTemplate.hasKey(PREFIX + cellphone));
+  public boolean isAuthNum(String to) {
+    return Boolean.TRUE.equals(stringRedisTemplate.hasKey(PREFIX + to));
   }
 }

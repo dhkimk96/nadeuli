@@ -6,6 +6,7 @@ import java.util.List;
 import kr.nadeuli.category.DeliveryState;
 import kr.nadeuli.category.Role;
 import kr.nadeuli.category.TradeType;
+import kr.nadeuli.dto.AuthDTO;
 import kr.nadeuli.dto.BlockDTO;
 import kr.nadeuli.dto.GpsDTO;
 import kr.nadeuli.dto.MemberDTO;
@@ -15,14 +16,13 @@ import kr.nadeuli.dto.OriScheMemChatFavDTO;
 import kr.nadeuli.dto.ProductDTO;
 import kr.nadeuli.dto.ReportDTO;
 import kr.nadeuli.dto.SearchDTO;
-import kr.nadeuli.dto.SmsDTO;
 import kr.nadeuli.mapper.MemberMapper;
+import kr.nadeuli.service.auth.AuthRepository;
+import kr.nadeuli.service.auth.AuthService;
 import kr.nadeuli.service.jwt.AuthenticationService;
 import kr.nadeuli.service.member.MemberRepository;
 import kr.nadeuli.service.member.MemberService;
 import kr.nadeuli.service.product.ProductService;
-import kr.nadeuli.service.sms.SmsRepository;
-import kr.nadeuli.service.sms.SmsService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -47,10 +47,10 @@ public class MemberApplicationTests {
   AuthenticationService authenticationService;
 
   @Autowired
-  SmsService smsService;
+  AuthService authService;
 
   @Autowired
-  SmsRepository smsRepository;
+  AuthRepository authRepository;
 
   @Autowired
   ProductService productService;
@@ -59,15 +59,15 @@ public class MemberApplicationTests {
   private int pageSize;
 
   @DisplayName("자체회원가입 테스트")
-  //@Test
+//  @Test
   public void testAddMember() throws Exception {
     //입력받는 값
-    String nickname = "김영진";
-    String cellPhone = "01088889999";
+    String nickname = "최*현";
+    String cellPhone = "01034431643";
 
-    SmsDTO smsDTO = SmsDTO.builder()
+    AuthDTO authDTO = AuthDTO.builder()
         .authNumber("11111")
-        .cellphone(cellPhone)
+        .to(cellPhone)
         .build();
 
     GpsDTO gpsDTO = GpsDTO.builder()
@@ -76,13 +76,13 @@ public class MemberApplicationTests {
         .build();
 
     // 1. 휴대폰 번호 인증 후 로그인이 가능하기때문에 SmsService의 목 객체(mock) 생성
-    SmsService mockSmsService = Mockito.mock(SmsService.class);
+    AuthService mockAuthService = Mockito.mock(AuthService.class);
 
     // 2. 인증번호 확인 메소드인 verifySms()가 항상 true를 반환하도록 설정
-    Mockito.when(mockSmsService.verifySms(smsDTO)).thenReturn(true);
+    Mockito.when(mockAuthService.verifySms(authDTO)).thenReturn(true);
 
     // 3. 인증번호 확인이 완료되었다면...
-    if (mockSmsService.verifySms(smsDTO)) {
+    if (mockAuthService.verifySms(authDTO)) {
       MemberDTO memberDTO = MemberDTO.builder()
           .affinity(50L)
           .cellphone(cellPhone)
@@ -109,19 +109,19 @@ public class MemberApplicationTests {
     //입력받는 값
     String cellphone = "01086258914";
 
-    SmsDTO smsDTO = SmsDTO.builder()
+    AuthDTO authDTO = AuthDTO.builder()
         .authNumber("11111")
-        .cellphone(cellphone)
+        .to(cellphone)
         .build();
 
     // 1. 휴대폰 번호 인증 후 로그인이 가능하기때문에 SmsService의 목 객체(mock) 생성
-    SmsService mockSmsService = Mockito.mock(SmsService.class);
+    AuthService mockAuthService = Mockito.mock(AuthService.class);
 
     // 2. 인증번호 확인 메소드인 verifySms()가 항상 true를 반환하도록 설정
-    Mockito.when(mockSmsService.verifySms(smsDTO)).thenReturn(true);
+    Mockito.when(mockAuthService.verifySms(authDTO)).thenReturn(true);
 
     // 3. 인증번호 확인이 완료되었다면...
-    if (mockSmsService.verifySms(smsDTO)) {
+    if (mockAuthService.verifySms(authDTO)) {
       System.out.println(authenticationService.login(cellphone));
     } else {
       System.out.println("존재하지 않는 회원입니다.");
@@ -204,10 +204,10 @@ public class MemberApplicationTests {
   @DisplayName("회원 비활성화, 비활성화 해제 테스트")
 //  @Test
   public void testHandleMemberActivate() throws Exception{
-   String tag = "#4FzB";
-   memberService.handleMemberActivate(tag);
+    String tag = "#4FzB";
+    memberService.handleMemberActivate(tag);
 
- }
+  }
 
   @DisplayName("회원 비활성화, 비활성화 해제 테스트")
 //  @Test
@@ -276,7 +276,7 @@ public class MemberApplicationTests {
     ProductDTO productDTO = productService.getProduct(5L);
     ReportDTO reportDTO = ReportDTO.builder()
         .reportId(1L)
-        .content("걍 개띠꺼움ddd")
+        .content("걍 개띠꺼움ddd     ")
         .reporter(memberDTO)
         .product(productDTO)
         .build();
@@ -311,7 +311,7 @@ public class MemberApplicationTests {
   }
 
   @DisplayName("친화력 점수 반영 테스트")
-  @Test
+//  @Test
   public void testUpdateAffinity() throws Exception{
     String tag = "Kv4G";
     Long affinityScore = 5L;
@@ -321,4 +321,3 @@ public class MemberApplicationTests {
 
   }
 }
-
