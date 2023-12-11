@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import kr.nadeuli.category.DeliveryState;
 import kr.nadeuli.category.TradeType;
 import kr.nadeuli.dto.AddressDTO;
@@ -19,7 +18,6 @@ import kr.nadeuli.dto.MemberDTO;
 import kr.nadeuli.dto.NadeuliDeliveryDTO;
 import kr.nadeuli.dto.NadeuliPayHistoryDTO;
 import kr.nadeuli.dto.OriScheMemChatFavDTO;
-import kr.nadeuli.dto.ProductDTO;
 import kr.nadeuli.dto.ReportDTO;
 import kr.nadeuli.dto.SearchDTO;
 import kr.nadeuli.dto.TradeReviewDTO;
@@ -38,20 +36,16 @@ import kr.nadeuli.service.member.MemberService;
 import kr.nadeuli.service.member.ReportRepository;
 import kr.nadeuli.service.orikkiri.OriScheMenChatFavRepository;
 import kr.nadeuli.service.product.ProductService;
-import kr.nadeuli.service.sms.SmsService;
+import kr.nadeuli.service.auth.AuthService;
 import kr.nadeuli.service.trade.TradeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -74,7 +68,7 @@ public class MemberServiceImpl implements MemberService{
 
   private final BlockScheduler blockDayScheduler;
 
-  private final SmsService smsService;
+  private final AuthService authService;
 
   private final OriScheMenChatFavRepository oriScheMenChatFavRepository;
 

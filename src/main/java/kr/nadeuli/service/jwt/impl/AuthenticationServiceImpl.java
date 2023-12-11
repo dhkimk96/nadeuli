@@ -15,7 +15,7 @@ import kr.nadeuli.service.jwt.AuthenticationService;
 import kr.nadeuli.service.jwt.JWTService;
 import kr.nadeuli.service.member.MemberService;
 import kr.nadeuli.service.member.MemberRepository;
-import kr.nadeuli.service.sms.SmsService;
+import kr.nadeuli.service.auth.AuthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,7 +39,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
   private final MemberService memberService;
 
-  private final SmsService smsService;
+  private final AuthService authService;
 
   public TokenDTO addMember(MemberDTO memberDTO, GpsDTO gpsDTO) throws Exception {
     // findByCellphone로 회원을 찾음
