@@ -8,6 +8,7 @@ import kr.nadeuli.dto.MemberDTO;
 import kr.nadeuli.dto.RefreshTokenDTO;
 import kr.nadeuli.dto.TokenDTO;
 import kr.nadeuli.service.jwt.AuthenticationService;
+import kr.nadeuli.service.jwt.JWTService;
 import kr.nadeuli.service.member.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -31,11 +32,13 @@ public class AuthenticationRestController {
 
   private final MemberService memberService;
 
+  private final JWTService jwtService;
+
   @Autowired
   private ObjectMapper objectMapper;
 
   @PostMapping("/addMember")
-  public ResponseEntity<TokenDTO> addMember(@RequestBody Map<String, Object> requestData) throws Exception {
+  public ResponseEntity<MemberDTO> addMember(@RequestBody Map<String, Object> requestData) throws Exception {
     log.info("/member/login : POST");
 
     MemberDTO memberDTO = objectMapper.convertValue(requestData.get("memberDTO"), MemberDTO.class);
@@ -46,23 +49,41 @@ public class AuthenticationRestController {
 
     TokenDTO tokenDTO = authenticationService.addMember(memberDTO, gpsDTO);
 
+    MemberDTO existMember = null;
+
+    if (tokenDTO.getAccessToken() != null) {
+      String memberTag = jwtService.extractUserName(tokenDTO.getAccessToken());
+      log.info("멤버태그는: {}", memberTag);
+      existMember = memberService.getMember(memberTag);
+    }
+
     HttpHeaders headers = new HttpHeaders();
     headers.add("Authorization", "Bearer " + tokenDTO.getAccessToken());
 
-    return new ResponseEntity<>(tokenDTO, headers, HttpStatus.OK);
+    return new ResponseEntity<>(existMember, headers, HttpStatus.OK);
   }
 
   @PostMapping("/login")
-  public ResponseEntity<TokenDTO> login(@RequestBody Map<String, String> requestBody) throws Exception {
+  public ResponseEntity<MemberDTO> login(@RequestBody Map<String, Object> requestData) throws Exception {
     log.info("/member/login : POST");
-    log.info("login에서 받은 cellphone은 {}", requestBody.get("cellphone"));
+    MemberDTO memberDTO = objectMapper.convertValue(requestData.get("memberDTO"), MemberDTO.class);
 
-    TokenDTO tokenDTO = authenticationService.login(requestBody.get("cellphone"));
+    log.info("addMember에서 받은 memberDTO는 {}", memberDTO);
+
+    TokenDTO tokenDTO = authenticationService.login(memberDTO.getCellphone());
+
+    MemberDTO existMember = null;
+
+    if (tokenDTO.getAccessToken() != null) {
+      String memberTag = jwtService.extractUserName(tokenDTO.getAccessToken());
+      log.info("멤버태그는: {}", memberTag);
+      existMember = memberService.getMember(memberTag);
+    }
 
     HttpHeaders headers = new HttpHeaders();
     headers.add("Authorization", "Bearer " + tokenDTO.getAccessToken());
 
-    return new ResponseEntity<>(tokenDTO, headers, HttpStatus.OK);
+    return new ResponseEntity<>(existMember, headers, HttpStatus.OK);
   }
 
 
@@ -74,5 +95,27 @@ public class AuthenticationRestController {
 
     return authenticationService.refreshToken(refreshTokenDTO);
   }
+  @PostMapping("/findAccount")
+  public boolean findAccount(@RequestBody Map<String, Object> requestData) throws Exception {
+    log.info("/nadeuli/findAccount : POST : {}", requestData);
+
+    MemberDTO memberDTO = objectMapper.convertValue(requestData.get("memberDTO"), MemberDTO.class);
+
+    // memberDTO가 null이거나, findAccount가 false인 경우에 false를 반환.
+    return memberDTO != null && memberService.findAccount(memberDTO.getEmail());
+  }
+
+  @PostMapping("/updateCellphone")
+  public String updateCellphone(@RequestBody MemberDTO memberDTO) throws Exception {
+    log.info("/nadeuli/findAccount : POST : {}", memberDTO);
+
+//    MemberDTO memberDTO = objectMapper.convertValue(requestData.get("memberDTO"), MemberDTO.class);
+
+    memberService.updateCellphone(memberDTO);
+
+    // memberDTO가 null이거나, findAccount가 false인 경우에 false를 반환.
+    return "{\"success\": true}";
+  }
+
 
 }
