@@ -14,7 +14,7 @@ import java.util.Date;
 @MappedSuperclass
 @EntityListeners(value = {AuditingEntityListener.class})
 @Getter
-abstract class Base {
+public abstract class Base {
     @LastModifiedDate
     @Column(updatable = true)
     private LocalDateTime regDate;
