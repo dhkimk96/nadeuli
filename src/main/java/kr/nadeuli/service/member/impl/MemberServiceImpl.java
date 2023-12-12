@@ -502,6 +502,31 @@ public class MemberServiceImpl implements MemberService{
     memberRepository.save(memberMapper.memberDTOToMember(memberDTO));
   }
 
+  //계정 찾기
+  @Override
+  public boolean findAccount(String email) throws Exception {
+    log.info("email는 {}", email);
+
+    // 이메일로 회원을 찾습니다.
+    MemberDTO memberDTO = memberMapper.memberToMemberDTO(memberRepository.findByEmail(email).orElse(null));
+
+    // 찾은 회원이 존재하면 true, 없으면 false를 반환합니다.
+    return memberDTO != null;
+  }
+
+  @Override
+  public void updateCellphone(MemberDTO memberDTO) throws Exception{
+    log.info("memberDTO는 {}", memberDTO);
+
+    // 이메일로 회원을 찾습니다.
+    MemberDTO existMemberDTO = memberMapper.memberToMemberDTO(memberRepository.findByEmail(memberDTO.getEmail()).orElse(null));
+
+    existMemberDTO.setCellphone(memberDTO.getCellphone());
+
+    updateMember(existMemberDTO);
+
+  }
+
 
 }
 

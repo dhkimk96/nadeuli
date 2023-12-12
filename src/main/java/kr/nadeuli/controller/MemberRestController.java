@@ -13,6 +13,7 @@ import kr.nadeuli.dto.OriScheMemChatFavDTO;
 import kr.nadeuli.dto.ProductDTO;
 import kr.nadeuli.dto.ReportDTO;
 import kr.nadeuli.dto.SearchDTO;
+import kr.nadeuli.entity.Member;
 import kr.nadeuli.service.member.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -177,6 +178,8 @@ public class MemberRestController {
     memberService.handleNadeuliDelivery(tag);
     return "{\"success\": true}";
   }
+
+
 
 
 }
