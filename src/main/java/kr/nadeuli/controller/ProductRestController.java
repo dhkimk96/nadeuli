@@ -88,7 +88,7 @@ public class ProductRestController {
     }
 
     @PostMapping("/addProduct")
-    public ResponseEntity<String> addProduct(@RequestBody ProductDTO productDTO,@RequestParam("images") List<MultipartFile> images) throws Exception {
+    public ResponseEntity<String> addProduct(@ModelAttribute ProductDTO productDTO,@RequestParam("image") List<MultipartFile> images) throws Exception {
         if(productDTO.isPremium()){
             nadeuliPayService.nadeuliPayPay(productDTO.getSeller().getTag(), NadeuliPayHistoryDTO.builder()
                                      .productTitle(productDTO.getTitle())
