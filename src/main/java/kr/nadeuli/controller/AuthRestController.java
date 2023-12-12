@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/sms")
+@RequestMapping("/auth")
 @RequiredArgsConstructor
 @Log4j2
 public class AuthRestController {
@@ -28,15 +28,16 @@ public class AuthRestController {
 
   @PostMapping("/sendMail")
   public String sendMail(@RequestBody AuthDTO authDTO) throws Exception{
-    log.info("/member/sendOne : POST : {}", authDTO);
+    log.info("/member/sendOne : POST : {}", authDTO.toString());
     authService.sendMail(authDTO);
 
     return "{\"success\": true}";
   }
 
-  @PostMapping("/verifySms")
+  @PostMapping("/verifyNum")
   public String verifySms(@RequestBody AuthDTO authDTO) throws Exception{
-    log.info("/member/verifySms : POST : {}", authDTO);
+    log.info("/member/verifySms : POST : {}", authDTO.getAuthNumber());
+    log.info("/member/verifySms : POST : {}", authDTO.getTo());
     authService.verifySms(authDTO);
 
     return "{\"success\": true}";

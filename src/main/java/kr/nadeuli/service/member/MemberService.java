@@ -48,4 +48,8 @@ public interface MemberService {
 
   public void  updateAffinity(String tag) throws Exception;
 
+  public boolean findAccount(String email) throws Exception;
+
+  public void updateCellphone(MemberDTO memberDTO) throws Exception;
+
 }
