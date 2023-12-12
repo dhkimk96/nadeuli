@@ -7,6 +7,7 @@ import kr.nadeuli.entity.NadeuliDelivery;
 import kr.nadeuli.service.nadeulidelivery.NadeuliDeliveryService;
 import kr.nadeuli.service.nadeulidelivery.DeliveryNotificationRepository;
 import kr.nadeuli.service.nadeulidelivery.NadeuliDeliveryRepository;
+import kr.nadeuli.service.trade.TradeService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,9 +31,24 @@ public class NadeuliDeliveryApplicationTests {
     NadeuliDeliveryRepository nadeuliDeliveryRepository;
     @Autowired
     DeliveryNotificationRepository deliveryNotificationRepository;
+    @Autowired
+    TradeService tradeService;
 
     @Value("${pageSize}")
     private int pageSize;
+
+    @Test
+    public void getAddOrUpdateUsedDeliveryOrder() throws Exception {
+        String tag = "WVU3";
+        SearchDTO searchDTO = SearchDTO.builder()
+                .currentPage(0)
+                .pageSize(pageSize)
+                .build();
+        List<TradeScheduleDTO> tradeScheduleDTOList = tradeService.getTradeScheduleList(tag, searchDTO);
+        System.out.println(tradeScheduleDTOList);
+
+        assertNotNull(tradeScheduleDTOList);
+    }
 
     @Test
     public void testAddOrUpdateDeliveryOrder() throws Exception {

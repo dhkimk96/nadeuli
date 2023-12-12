@@ -33,7 +33,7 @@ public class NadeuliDeliveryRestController {
     @PostMapping("/getAddOrUpdateUsedDeliveryOrder/{tag}")
     public List<TradeScheduleDTO> getAddOrUpdateUsedDeliveryOrder(@PathVariable String tag, @RequestBody SearchDTO searchDTO) throws Exception {
         // 중고상품 선택 시, 등록 된 거래 일정 리스트를 호출한다.
-        log.info("/nadeulidelivery/getAddUpdateUsedDeliveryOrder : GET");
+        log.info("/nadeulidelivery/getAddUpdateUsedDeliveryOrder : POST");
         log.info(tag);
 
         searchDTO.setPageSize(pageSize);
@@ -48,7 +48,8 @@ public class NadeuliDeliveryRestController {
 
     @Transactional
     @PostMapping("/addDeliveryOrder")
-    public ResponseEntity<?> addDeliveryOrder(@RequestBody NadeuliDeliveryDTO nadeuliDeliveryDTO,@RequestParam("images") List<MultipartFile> images) throws Exception{
+    public ResponseEntity<?> addDeliveryOrder(@RequestPart NadeuliDeliveryDTO nadeuliDeliveryDTO,
+                                              @RequestPart("images") List<MultipartFile> images) throws Exception{
         // 배달 주문을 등록한다.
         log.info("/nadeulidelivery/addDeliveryOrder : POST");
 
