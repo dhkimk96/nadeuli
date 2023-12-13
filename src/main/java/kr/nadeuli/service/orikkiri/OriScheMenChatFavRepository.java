@@ -25,4 +25,6 @@ public interface OriScheMenChatFavRepository extends JpaRepository<OriScheMemCha
 
     boolean existsByMemberAndProduct(Member member, Product product);
 
+    long countByProduct(Product product);
+
 }

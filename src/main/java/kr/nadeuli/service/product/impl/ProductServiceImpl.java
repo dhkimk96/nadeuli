@@ -6,6 +6,7 @@ import kr.nadeuli.entity.Member;
 import kr.nadeuli.entity.Product;
 import kr.nadeuli.mapper.ProductMapper;
 import kr.nadeuli.scheduler.PremiumTimeScheduler;
+import kr.nadeuli.service.orikkiri.OriScheMenChatFavRepository;
 import kr.nadeuli.service.product.ProductRepository;
 import kr.nadeuli.service.product.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -27,6 +29,7 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
     private final PremiumTimeScheduler premiumTimeScheduler;
+    private final OriScheMenChatFavRepository oriScheMenChatFavRepository;
 
     @Override
     public Long addProduct(ProductDTO productDTO) throws Exception {
@@ -50,7 +53,7 @@ public class ProductServiceImpl implements ProductService {
         Product product = productMapper.productDTOToProduct(productDTO);
         log.info(product);
         product.setViewNum(beforeProduct.getViewNum());
-
+        product.setLastWriteTime(LocalDateTime.now());
         Product savedProduct = productRepository.save(product);
         if(productDTO.isPremium()){
             premiumTimeScheduler.startPremiumTimeScheduler(savedProduct.getProductId());
@@ -67,12 +70,14 @@ public class ProductServiceImpl implements ProductService {
         }
         product.setViewNum(product.getViewNum()+1);
         productRepository.save(product);
-        return productMapper.productToProductDTO(product);
+        ProductDTO productDTO = productMapper.productToProductDTO(product);
+        productDTO.setLikeNum(oriScheMenChatFavRepository.countByProduct(product));
+        return productDTO;
     }
 
     @Override
     public List<ProductDTO> getProductList(String gu, SearchDTO searchDTO) throws Exception {
-        Sort sort = Sort.by(Sort.Direction.DESC, "regDate");
+        Sort sort = Sort.by(Sort.Direction.DESC, "lastWriteTime");
         Pageable pageable = PageRequest.of(searchDTO.getCurrentPage(), searchDTO.getPageSize(), sort);
         Page<Product> productPage;
         if(searchDTO.getSearchKeyword() == null || searchDTO.getSearchKeyword().isEmpty()){

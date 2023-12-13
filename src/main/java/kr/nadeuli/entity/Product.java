@@ -3,6 +3,8 @@ package kr.nadeuli.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -55,6 +57,10 @@ public class Product extends Base{
 
     @Column(name = "gu", nullable = false)
     private String gu;
+
+    @CreatedDate
+    @Column(name = "last_write_time")
+    private LocalDateTime lastWriteTime;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_tag", referencedColumnName = "tag")
