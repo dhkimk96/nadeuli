@@ -28,8 +28,9 @@ public interface ProductMapper {
     @Mapping(source = "buyer", target = "buyer", qualifiedByName = "memberDTOToMember")
     Product productDTOToProduct(ProductDTO productDTO);
 
+    @Mapping(target = "likeNum", ignore = true)
     @Mapping(source = "images", target = "images", qualifiedByName = "imageToString")
-    @Mapping(source = "regDate", target = "timeAgo", qualifiedByName = "regDateToTimeAgo")
+    @Mapping(source = "lastWriteTime", target = "timeAgo", qualifiedByName = "regDateToTimeAgo")
     @Mapping(source = "seller", target = "seller", qualifiedByName = "memberToMemberDTO")
     @Mapping(source = "buyer", target = "buyer", qualifiedByName = "memberToMemberDTO")
     ProductDTO productToProductDTO(Product product);

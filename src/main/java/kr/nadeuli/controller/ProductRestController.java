@@ -61,7 +61,7 @@ public class ProductRestController {
     }
 
     @PostMapping("/updateProduct")
-    public ResponseEntity<String> updateProduct(@RequestBody ProductDTO productDTO,@RequestParam("images") List<MultipartFile> images) throws Exception {
+    public ResponseEntity<String> updateProduct(@ModelAttribute ProductDTO productDTO,@RequestParam("image") List<MultipartFile> images) throws Exception {
         log.info(productDTO);
         ProductDTO beforeProductDTO = productService.getProduct(productDTO.getProductId());
         if(productDTO.isPremium() &&(productDTO.getPremiumTime() > beforeProductDTO.getPremiumTime())){

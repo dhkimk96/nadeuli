@@ -27,6 +27,7 @@ public class ProductDTO {
     private String gu;
     private List<String> images;
     private String timeAgo;
+    private Long likeNum;
     private MemberDTO seller;
     private MemberDTO buyer;
 }
