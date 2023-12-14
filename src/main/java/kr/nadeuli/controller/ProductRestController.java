@@ -6,6 +6,7 @@ import kr.nadeuli.dto.PostDTO;
 import kr.nadeuli.dto.ProductDTO;
 import kr.nadeuli.dto.SearchDTO;
 import kr.nadeuli.service.image.ImageService;
+import kr.nadeuli.service.member.MemberService;
 import kr.nadeuli.service.nadeuli_pay.NadeuliPayService;
 import kr.nadeuli.service.product.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 @Log4j2
 public class ProductRestController {
+    private final MemberService memberService;
     private final ProductService productService;
     private final NadeuliPayService nadeuliPayService;
     private final ImageService imageService;
@@ -57,6 +59,7 @@ public class ProductRestController {
                                               .map(ImageDTO::getImageName)
                                               .collect(Collectors.toList());
         productDTO.setImages(imageNames);
+        productDTO.setSeller(memberService.getOtherMember(productDTO.getSeller().getTag()));
         return productDTO;
     }
 
