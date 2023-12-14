@@ -117,20 +117,6 @@ public class NadeuliDeliveryServiceImpl implements NadeuliDeliveryService {
         return returnPage;
     }
 
-//    @Override
-//    public NadeuliDeliveryDTO getMyDeliveryHistory(long nadeuliDeliveryId) throws Exception {
-//
-//        // 요청 DTO
-//        log.info(nadeuliDeliveryId);
-//        NadeuliDeliveryDTO responseDTO = nadeuliDeliveryRepository.findById(nadeuliDeliveryId)
-//                .map(nadeuliDeliveryMapper::nadeuliDeliveryToNadeuliDeliveryDTO)
-//                .orElse(null);
-//        // 반환 DTO
-//        log.info(responseDTO);
-//        return responseDTO;
-//
-//    }
-
     @Override
     public List<NadeuliDeliveryDTO> getMyDeliveryHistoryList(NadeuliDeliveryDTO nadeuliDeliveryDTO, SearchDTO searchDTO) throws Exception {
         String deliveryPersonTag = nadeuliDeliveryDTO.getDeliveryPerson().getTag();
