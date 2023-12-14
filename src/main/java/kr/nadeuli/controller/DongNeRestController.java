@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Key;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,7 +32,7 @@ public class DongNeRestController {
     int pageSize;
 
     @PostMapping("/addPost")
-    public ResponseEntity<String> addPost(@RequestBody PostDTO postDTO,@RequestParam("images") List<MultipartFile> images) throws Exception {
+    public ResponseEntity<String> addPost(@RequestPart("postDTO") PostDTO postDTO, @RequestPart(value = "images" ,required = false)  List<MultipartFile> images) throws Exception {
         Long postId = postService.addPost(postDTO);
         // 이미지 업로드 및 저장을 위한 ImageDTO 생성
         ImageDTO imageDTO = ImageDTO.builder()
@@ -58,6 +59,8 @@ public class DongNeRestController {
 
     @GetMapping("/dongNeHome/{currentPage}")
     public List<PostDTO> getPostList(@PathVariable int currentPage, @RequestParam String gu, @RequestParam(required = false) String searchKeyword) throws Exception {
+        System.out.println(gu);
+        System.out.println(searchKeyword);
         SearchDTO searchDTO = SearchDTO.builder()
                 .currentPage(currentPage)
                 .pageSize(pageSize)
