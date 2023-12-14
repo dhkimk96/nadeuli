@@ -50,6 +50,7 @@ public interface PostMapper {
         return MemberDTO.builder().tag(member.getTag())
                 .nickname(member.getNickname())
                 .gu(member.getGu())
+                .dongNe(member.getDongNe())
                 .build();
     }
 
