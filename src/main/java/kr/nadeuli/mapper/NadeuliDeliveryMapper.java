@@ -41,7 +41,6 @@ public interface NadeuliDeliveryMapper {
     @Mapping(source = "regDate", target = "timeAgo", qualifiedByName = "regDateToTimeAgo")
     NadeuliDeliveryDTO nadeuliDeliveryToNadeuliDeliveryDTO(NadeuliDelivery nadeuliDelivery);
 
-
     @Named("imageToString")
     default List<String> imageToString(List<Image> images){
         if (images == null) {
