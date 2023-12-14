@@ -62,14 +62,23 @@ public class ProductRestController {
 
     @PostMapping("/updateProduct")
     public ResponseEntity<String> updateProduct(@ModelAttribute ProductDTO productDTO,@RequestParam("image") List<MultipartFile> images) throws Exception {
+        System.out.println("업데이트프로덕트");
         log.info(productDTO);
         ProductDTO beforeProductDTO = productService.getProduct(productDTO.getProductId());
-        if(productDTO.isPremium() &&(productDTO.getPremiumTime() > beforeProductDTO.getPremiumTime())){
-            nadeuliPayService.nadeuliPayPay(productDTO.getSeller().getTag(), NadeuliPayHistoryDTO.builder()
-                                                                                                 .productTitle(productDTO.getTitle())
-                                                                                                 .product(productDTO)
-                                                                                                 .tradingMoney((beforeProductDTO.getPremiumTime()- productDTO.getPremiumTime()) * premiumPricePerHour)
-                                                                                                 .build());
+        log.info(beforeProductDTO);
+        if(productDTO.getIsPremium()){
+            Long premiumTime = 0L;
+            if(beforeProductDTO.getIsPremium() == null || !beforeProductDTO.getIsPremium()) {
+                premiumTime = productDTO.getPremiumTime();
+            } else{
+                premiumTime = productDTO.getPremiumTime() - beforeProductDTO.getPremiumTime();
+            }
+            nadeuliPayService.nadeuliPayPay(beforeProductDTO.getSeller()
+                                                      .getTag(), NadeuliPayHistoryDTO.builder()
+                                                                                     .productTitle(productDTO.getTitle())
+                                                                                     .product(productDTO)
+                                                                                     .tradingMoney(premiumTime * premiumPricePerHour)
+                                                                                     .build());
         }
         productService.updateProduct(productDTO);
         imageService.deleteProductImage(productDTO.getProductId());
@@ -88,15 +97,17 @@ public class ProductRestController {
     }
 
     @PostMapping("/addProduct")
-    public ResponseEntity<String> addProduct(@ModelAttribute ProductDTO productDTO,@RequestParam("image") List<MultipartFile> images) throws Exception {
-        if(productDTO.isPremium()){
+    public ResponseEntity<String> addProduct(@ModelAttribute ProductDTO productDTO, @RequestParam("image") List<MultipartFile> images) throws Exception {
+        Long productId = productService.addProduct(productDTO);
+        productDTO.setProductId(productId);
+        if(productDTO.getIsPremium()){
             nadeuliPayService.nadeuliPayPay(productDTO.getSeller().getTag(), NadeuliPayHistoryDTO.builder()
                                      .productTitle(productDTO.getTitle())
                                      .product(productDTO)
                                      .tradingMoney(productDTO.getPremiumTime() * premiumPricePerHour)
                                                                                                  .build());
         }
-        Long productId = productService.addProduct(productDTO);
+
         // 이미지 업로드 및 저장을 위한 ImageDTO 생성
         ImageDTO imageDTO = ImageDTO.builder()
             .product(ProductDTO.builder()

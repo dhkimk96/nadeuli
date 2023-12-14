@@ -31,7 +31,7 @@ public class PremiumTimeScheduler {
 
     public void startPremiumTimeScheduler(Long productId) {
         // 초기 스케줄링 로직
-        scheduledFuture = scheduler.schedule(() -> updatePremiumTime(productId), new CronTrigger("* * * * * *"));
+        scheduledFuture = scheduler.schedule(() -> updatePremiumTime(productId), new CronTrigger("0 0 * * * *"));
         log.info("스케줄링 시작");
     }
 
@@ -39,6 +39,7 @@ public class PremiumTimeScheduler {
         try {
             if (!productService.updatePremiumTime(productId)) {
                 stopPremiumTimeScheduler();
+                log.info("스케일러 돌아가는중~");
             }
         } catch (Exception e){
             e.printStackTrace();
