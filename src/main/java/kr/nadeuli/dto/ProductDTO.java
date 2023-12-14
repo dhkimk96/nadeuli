@@ -18,10 +18,10 @@ public class ProductDTO {
     private String content;
     private String video;
     private Long viewNum;
-    private boolean isBargain;
+    private Boolean isBargain;
     private Long price;
-    private boolean isSold;
-    private boolean isPremium;
+    private Boolean isSold;
+    private Boolean isPremium;
     private Long premiumTime;
     private String tradingLocation;
     private String gu;

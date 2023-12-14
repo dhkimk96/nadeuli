@@ -23,12 +23,18 @@ public interface ProductMapper {
     @Mapping(target = "reports", ignore = true)
     @Mapping(target = "oriScheMemChatFavs", ignore = true)
     @Mapping(target = "regDate", ignore = true)
+    @Mapping(source = "isBargain", target = "bargain")
+    @Mapping(source = "isSold", target = "sold")
+    @Mapping(source = "isPremium", target = "premium")
     @Mapping(source = "images", target = "images", qualifiedByName = "stringToImage")
     @Mapping(source = "seller", target = "seller", qualifiedByName = "memberDTOToMember")
     @Mapping(source = "buyer", target = "buyer", qualifiedByName = "memberDTOToMember")
     Product productDTOToProduct(ProductDTO productDTO);
 
     @Mapping(target = "likeNum", ignore = true)
+    @Mapping(source = "bargain", target = "isBargain")
+    @Mapping(source = "sold", target = "isSold")
+    @Mapping(source = "premium", target = "isPremium")
     @Mapping(source = "images", target = "images", qualifiedByName = "imageToString")
     @Mapping(source = "lastWriteTime", target = "timeAgo", qualifiedByName = "regDateToTimeAgo")
     @Mapping(source = "seller", target = "seller", qualifiedByName = "memberToMemberDTO")

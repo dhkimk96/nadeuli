@@ -37,7 +37,7 @@ public class ProductServiceImpl implements ProductService {
         Product product = productMapper.productDTOToProduct(productDTO);
         log.info(product);
         Product savedProduct = productRepository.save(product);
-        if(productDTO.isPremium()){
+        if(productDTO.getIsPremium()){
             premiumTimeScheduler.startPremiumTimeScheduler(savedProduct.getProductId());
         }
         log.info(savedProduct);
@@ -54,8 +54,11 @@ public class ProductServiceImpl implements ProductService {
         log.info(product);
         product.setViewNum(beforeProduct.getViewNum());
         product.setLastWriteTime(LocalDateTime.now());
+        product.setSeller(beforeProduct.getSeller());
+        product.setSold(beforeProduct.isSold());
+
         Product savedProduct = productRepository.save(product);
-        if(productDTO.isPremium()){
+        if(productDTO.getIsPremium()){
             premiumTimeScheduler.startPremiumTimeScheduler(savedProduct.getProductId());
         }
         log.info(savedProduct);
@@ -77,7 +80,10 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<ProductDTO> getProductList(String gu, SearchDTO searchDTO) throws Exception {
-        Sort sort = Sort.by(Sort.Direction.DESC, "lastWriteTime");
+        Sort sort = Sort.by(
+                Sort.Order.desc("isPremium"),
+                Sort.Order.desc("lastWriteTime")
+        );
         Pageable pageable = PageRequest.of(searchDTO.getCurrentPage(), searchDTO.getPageSize(), sort);
         Page<Product> productPage;
         if(searchDTO.getSearchKeyword() == null || searchDTO.getSearchKeyword().isEmpty()){
@@ -132,16 +138,12 @@ public class ProductServiceImpl implements ProductService {
         }
         long premiumTime = product.getPremiumTime();
         if(product.getPremiumTime() == 0){
-            productRepository.save(Product.builder()
-                                     .productId(productId)
-                                     .isPremium(false)
-                                          .build());
+            product.setPremium(false);
+            productRepository.save(product);
             return false;
         }else{
-            productRepository.save(Product.builder()
-                                          .productId(productId)
-                                          .premiumTime(premiumTime-1)
-                                          .build());
+            product.setPremiumTime(premiumTime-1);
+            productRepository.save(product);
             return true;
         }
     }

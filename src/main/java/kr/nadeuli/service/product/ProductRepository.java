@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
-    @Query("SELECT p FROM Product p WHERE p.title LIKE %:title% OR p.content LIKE %:content% AND p.gu = :gu")
+    @Query("SELECT p FROM Product p WHERE p.title LIKE %:title% OR p.content LIKE %:content% AND p.gu = :gu AND p.isSold = false")
     Page<Product> findProductListByKeyword(@Param("title") String title, @Param("content") String content, @Param("gu") String gu, Pageable pageable);
 
     @Query("SELECT p FROM Product p WHERE p.gu = :gu")
