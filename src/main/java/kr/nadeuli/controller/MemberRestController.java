@@ -86,7 +86,7 @@ public class MemberRestController {
   }
 
   @PostMapping("/updateDongNe")
-  public String updateDongNe(@RequestBody Map<String, Object> requestData) throws Exception{
+  public MemberDTO updateDongNe(@RequestBody Map<String, Object> requestData) throws Exception{
     log.info("/member/updateDongNe : POST : {}", requestData);
 
     MemberDTO memberDTO = objectMapper.convertValue(requestData.get("memberDTO"), MemberDTO.class);
@@ -94,7 +94,7 @@ public class MemberRestController {
 
     memberService.addDongNe(memberDTO.getTag(), gpsDTO);
 
-    return "{\"success\": true}";
+    return getMember(memberDTO.getTag());
   }
 
   @PostMapping("/addBlockMember")
@@ -128,11 +128,11 @@ public class MemberRestController {
   }
 
   @PostMapping("/updateMember")
-  public String updateMember(@RequestBody MemberDTO memberDTO) throws Exception{
+  public MemberDTO updateMember(@RequestBody MemberDTO memberDTO) throws Exception{
     log.info("/member/updateMember : POST : {}", memberDTO);
     memberService.updateMember(memberDTO);
 
-    return "{\"success\": true}";
+    return getMember(memberDTO.getTag());
   }
 
   @GetMapping("/addFavorite/{tag}/{productId}")

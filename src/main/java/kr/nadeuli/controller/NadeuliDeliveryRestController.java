@@ -4,6 +4,7 @@ import kr.nadeuli.dto.*;
 import kr.nadeuli.service.image.ImageService;
 import kr.nadeuli.service.member.MemberService;
 import kr.nadeuli.service.nadeulidelivery.NadeuliDeliveryService;
+import kr.nadeuli.service.product.ProductService;
 import kr.nadeuli.service.trade.TradeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -11,9 +12,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import org.springframework.web.multipart.MultipartFile;
 
 @Log4j2
 @RestController
@@ -26,13 +27,14 @@ public class NadeuliDeliveryRestController {
 
     private final MemberService memberService;
     private final TradeService tradeService;
+    private final ProductService productService;
     private final NadeuliDeliveryService nadeuliDeliveryService;
     private final ImageService imageService;
 
     @Transactional
     @PostMapping("/getAddOrUpdateUsedDeliveryOrder/{tag}")
     public List<TradeScheduleDTO> getAddOrUpdateUsedDeliveryOrder(@PathVariable String tag, @RequestBody SearchDTO searchDTO) throws Exception {
-        // 중고상품 선택 시, 등록 된 거래 일정 리스트를 호출한다.
+        // 중고상품 선택 시, 등록된 거래 일정 리스트를 호출한다.
         log.info("/nadeulidelivery/getAddUpdateUsedDeliveryOrder : POST");
         log.info(tag);
 
@@ -40,15 +42,21 @@ public class NadeuliDeliveryRestController {
         log.info(searchDTO);
 
         List<TradeScheduleDTO> tradeScheduleDTOList = tradeService.getTradeScheduleList(tag, searchDTO);
+        for (TradeScheduleDTO tradeScheduleDTO : tradeScheduleDTOList) {
+            Long productId = tradeScheduleDTO.getProduct().getProductId();
+            ProductDTO productDTO = productService.getProduct(productId);
+            tradeScheduleDTO.setProduct(productDTO);
+        }
 
         log.info(tradeScheduleDTOList);
 
         return tradeScheduleDTOList;
     }
 
+
     @Transactional
     @PostMapping("/addDeliveryOrder")
-    public ResponseEntity<?> addDeliveryOrder(@RequestPart NadeuliDeliveryDTO nadeuliDeliveryDTO,
+    public ResponseEntity<?> addDeliveryOrder(@RequestPart("nadeuliDeliveryDTO") NadeuliDeliveryDTO nadeuliDeliveryDTO,
                                               @RequestPart("images") List<MultipartFile> images) throws Exception{
         // 배달 주문을 등록한다.
         log.info("/nadeulidelivery/addDeliveryOrder : POST");
@@ -56,18 +64,17 @@ public class NadeuliDeliveryRestController {
         // 나드리페이 잔액을 상품 금액 만큼 뺀다.
         memberService.handleNadeuliPayBalance(
                 nadeuliDeliveryDTO.getBuyer().getTag(),
-                null ,
+                null,
                 nadeuliDeliveryDTO, null
         );
 
         // 먼저 주문 등록
         NadeuliDeliveryDTO returnedNadeuliDeliveryDTO = nadeuliDeliveryService.addOrUpdateDeliveryOrder(nadeuliDeliveryDTO);
-
+        System.out.println(returnedNadeuliDeliveryDTO);
         ImageDTO imageDTO = ImageDTO.builder()
                     .nadeuliDelivery(returnedNadeuliDeliveryDTO)
                     .build();
 
-        // 이미지 업로드 및 저장
         imageService.addImage(images, imageDTO);
 
 
@@ -85,7 +92,7 @@ public class NadeuliDeliveryRestController {
         Long beforeDeposit = nadeuliDeliveryService.getDeliveryOrder(nadeuliDeliveryDTO.getNadeuliDeliveryId()).getDeposit();
         memberService.handleNadeuliPayBalance(
                 nadeuliDeliveryDTO.getBuyer().getTag(),
-                null ,
+                null,
                 nadeuliDeliveryDTO, beforeDeposit
         );
 
@@ -129,7 +136,17 @@ public class NadeuliDeliveryRestController {
         searchDTO.setPageSize(pageSize);
         log.info(searchDTO);
 
-        return nadeuliDeliveryService.getDeliveryOrderList(memberDTO, searchDTO);
+        List<NadeuliDeliveryDTO> nadeuliDeliveryDTOList = nadeuliDeliveryService.getDeliveryOrderList(memberDTO, searchDTO);
+
+        // 각 nadeuliDeliveryDTOList 에 담겨있는 nadeuliDeliveryId 로 이미지 리스트를 담는다.
+        for (NadeuliDeliveryDTO newDTO : nadeuliDeliveryDTOList) {
+            Long nadeuliDeliveryId = newDTO.getNadeuliDeliveryId();
+            List<ImageDTO> imageDTOList = imageService.getImageList(nadeuliDeliveryId, searchDTO);
+            List<String> images = imageDTOList.stream().map(ImageDTO::getImageName).toList();
+            newDTO.setImages(images);
+        }
+
+        return nadeuliDeliveryDTOList;
     }
 
     @Transactional
@@ -143,7 +160,17 @@ public class NadeuliDeliveryRestController {
         searchDTO.setPageSize(pageSize);
         log.info(searchDTO);
 
-        return nadeuliDeliveryService.getMyOrderHistoryList(nadeuliDeliveryDTO, searchDTO);
+        List<NadeuliDeliveryDTO> nadeuliDeliveryDTOList = nadeuliDeliveryService.getMyOrderHistoryList(nadeuliDeliveryDTO, searchDTO);
+
+        // 각 nadeuliDeliveryDTOList 에 담겨있는 nadeuliDeliveryId 로 이미지 리스트를 담는다.
+        for (NadeuliDeliveryDTO newDTO : nadeuliDeliveryDTOList) {
+            Long nadeuliDeliveryId = newDTO.getNadeuliDeliveryId();
+            List<ImageDTO> imageDTOList = imageService.getImageList(nadeuliDeliveryId, searchDTO);
+            List<String> images = imageDTOList.stream().map(ImageDTO::getImageName).toList();
+            newDTO.setImages(images);
+        }
+
+        return nadeuliDeliveryDTOList;
     }
 
     @Transactional
@@ -157,7 +184,17 @@ public class NadeuliDeliveryRestController {
         searchDTO.setPageSize(pageSize);
         log.info(searchDTO);
 
-        return nadeuliDeliveryService.getMyDeliveryHistoryList(nadeuliDeliveryDTO, searchDTO);
+        List<NadeuliDeliveryDTO> nadeuliDeliveryDTOList = nadeuliDeliveryService.getMyDeliveryHistoryList(nadeuliDeliveryDTO, searchDTO);
+
+        // 각 nadeuliDeliveryDTOList 에 담겨있는 nadeuliDeliveryId 로 이미지 리스트를 담는다.
+        for (NadeuliDeliveryDTO newDTO : nadeuliDeliveryDTOList) {
+            Long nadeuliDeliveryId = newDTO.getNadeuliDeliveryId();
+            List<ImageDTO> imageDTOList = imageService.getImageList(nadeuliDeliveryId, searchDTO);
+            List<String> images = imageDTOList.stream().map(ImageDTO::getImageName).toList();
+            newDTO.setImages(images);
+        }
+
+        return nadeuliDeliveryDTOList;
     }
 
     @PostMapping("/getMyAcceptedDeliveryHistoryList")

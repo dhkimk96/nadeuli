@@ -1,10 +1,13 @@
 package kr.nadeuli.service.jwt.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.HashMap;
 import java.util.Optional;
 import kr.nadeuli.category.Role;
 import kr.nadeuli.dto.GpsDTO;
 import kr.nadeuli.dto.MemberDTO;
+import kr.nadeuli.dto.OauthTokenDTO;
 import kr.nadeuli.dto.RefreshTokenDTO;
 import kr.nadeuli.dto.TokenDTO;
 import kr.nadeuli.entity.Member;
@@ -19,7 +22,17 @@ import kr.nadeuli.service.auth.AuthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.reactive.function.client.WebClient;
 
 @Service
 @RequiredArgsConstructor
@@ -40,6 +53,19 @@ public class AuthenticationServiceImpl implements AuthenticationService {
   private final MemberService memberService;
 
   private final AuthService authService;
+
+
+  @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
+  private String kakaoClientId;
+
+  @Value("${spring.security.oauth2.client.registration.kakao.client-secret}")
+  private String kakaoClientSecret;
+
+  @Value("${spring.security.oauth2.client.registration.kakao.redirect-uri}")
+  private String kakaoRedirectUri;
+
+  @Value("${spring.security.oauth2.client.provider.kakao.token-uri}")
+  private String kakaoTokenUri;
 
   public TokenDTO addMember(MemberDTO memberDTO, GpsDTO gpsDTO) throws Exception {
     // findByCellphone로 회원을 찾음
@@ -111,5 +137,72 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     return null;
   }
 
+  public OauthTokenDTO getOauthToken(String code) {
+
+    //(2)
+    RestTemplate rt = new RestTemplate();
+
+    //(3)
+    HttpHeaders headers = new HttpHeaders();
+    headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+
+    //(4)
+    MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+    params.add("grant_type", "authorization_code");
+    params.add("client_id", kakaoClientId);
+    params.add("redirect_uri", kakaoRedirectUri);
+    params.add("code", code);
+    params.add("client_secret", kakaoClientSecret); // 생략 가능!
+
+    //(5)
+    HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest =
+        new HttpEntity<>(params, headers);
+
+    //(6)
+    ResponseEntity<String> accessTokenResponse = rt.exchange(
+        "https://kauth.kakao.com/oauth/token",
+        HttpMethod.POST,
+        kakaoTokenRequest,
+        String.class
+    );
+
+    //(7)
+    ObjectMapper objectMapper = new ObjectMapper();
+    OauthTokenDTO oauthToken = null;
+    try {
+      oauthToken = objectMapper.readValue(accessTokenResponse.getBody(), OauthTokenDTO.class);
+      log.info(oauthToken);
+      getOauthUserInfo(oauthToken);
+    }catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+
+    return oauthToken; //(8)
+  }
+
+  public void getOauthUserInfo(OauthTokenDTO oauthTokenDTO) throws Exception{
+
+    //(2)
+    RestTemplate rt = new RestTemplate();
+
+    //(3)
+    HttpHeaders headers = new HttpHeaders();
+
+    // 2. 토큰으로 카카오 API 호출
+    // HTTP Header 생성
+    headers.add("Authorization", "Bearer " + oauthTokenDTO.getAccessToken());
+    headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+
+    // HTTP 요청 보내기
+    HttpEntity<MultiValueMap<String, String>> kakaoUserInfoRequest = new HttpEntity<>(headers);
+    ResponseEntity<String> response = rt.exchange(
+        "https://kapi.kakao.com/v2/user/me",
+        HttpMethod.POST,
+        kakaoUserInfoRequest,
+        String.class
+    );
+
+    log.info(response);
+  };
 
 }

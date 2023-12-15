@@ -139,6 +139,7 @@ public class NadeuliDeliveryApplicationTests {
     @Test
     public void testGetDeliveryOrderList() throws Exception {
         // 요청 값 설정
+        System.out.println();
         MemberDTO memberDTO = MemberDTO.builder()
                 .gu("강남구")
                 .build();
@@ -148,6 +149,8 @@ public class NadeuliDeliveryApplicationTests {
 //                .searchKeyword("치")
                 .pageSize(pageSize)
                 .build();
+
+
 
 
         // method 실행
