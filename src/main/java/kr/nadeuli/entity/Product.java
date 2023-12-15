@@ -31,9 +31,6 @@ public class Product extends Base{
     @Column(name = "content", nullable = false, length = 5000)
     private String content;
 
-    @Column(name = "video")
-    private String video;
-
     @Column(name = "view_num", nullable = false)
     private Long viewNum;
 
