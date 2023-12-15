@@ -5,17 +5,20 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Map;
 import kr.nadeuli.dto.GpsDTO;
 import kr.nadeuli.dto.MemberDTO;
+import kr.nadeuli.dto.OauthTokenDTO;
 import kr.nadeuli.dto.RefreshTokenDTO;
 import kr.nadeuli.dto.TokenDTO;
 import kr.nadeuli.service.jwt.AuthenticationService;
 import kr.nadeuli.service.jwt.JWTService;
 import kr.nadeuli.service.member.MemberService;
+import kr.nadeuli.service.oauth.impl.CustomOauth2MemberServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,6 +36,8 @@ public class AuthenticationRestController {
   private final MemberService memberService;
 
   private final JWTService jwtService;
+
+  private final CustomOauth2MemberServiceImpl customOauth2MemberService;
 
   @Autowired
   private ObjectMapper objectMapper;
@@ -117,5 +122,12 @@ public class AuthenticationRestController {
     return "{\"success\": true}";
   }
 
+  //소셜로그인
+  @GetMapping("/kakao")
+  public void kakaoCallback(@RequestParam String code) throws Exception{
+    System.out.println(code);
+//    OauthTokenDTO oauthTokenDTO = authenticationService.getOauthToken(code);
+//    customOauth2MemberService.loadUser(oauthTokenDTO);
+  }
 
 }

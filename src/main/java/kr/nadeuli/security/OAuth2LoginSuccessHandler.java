@@ -60,7 +60,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
 
     // 리다이렉션 수행
-//    response.sendRedirect("/api/v1/user");
+    response.sendRedirect("http://localhost:3000/main");
   }
 
 
