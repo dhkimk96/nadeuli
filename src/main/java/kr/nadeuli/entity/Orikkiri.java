@@ -30,10 +30,10 @@ public class Orikkiri {
     @Column(name = "orikkiri_name", nullable = false, length = 255)
     private String orikkiriName;
 
-    @Column(name = "orikkiri_picture", nullable = false, length = 255)
+    @Column(name = "orikkiri_picture", nullable = false, length = 50000)
     private String orikkiriPicture;
 
-    @Column(name = "orikkiri_introduction", nullable = false, length = 255)
+    @Column(name = "orikkiri_introduction", nullable = false, length = 5000)
     private String orikkiriIntroduction;
 
     @Column(name = "orikkiri_regist_time", nullable = false)
