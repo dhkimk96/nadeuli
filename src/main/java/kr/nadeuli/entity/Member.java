@@ -46,7 +46,7 @@ public class Member implements UserDetails {
   @Column(name = "nickname", length = 40, nullable = false)
   private String nickname;
 
-  @Column(name = "affinity", nullable = false, columnDefinition = "BIGINT DEFAULT 50")
+  @Column(name = "affinity", nullable = false, columnDefinition = "BIGINT DEFAULT 0")
   private Long affinity;
 
   @Column(name = "email")
@@ -55,7 +55,7 @@ public class Member implements UserDetails {
   @Column(name = "dong_ne", nullable = false)
   private String dongNe;
 
-  @Column(name = "picture", nullable = false, columnDefinition = "VARCHAR(255) DEFAULT 'empty.jpg'")
+  @Column(name = "picture", nullable = false, columnDefinition = "VARCHAR(50000) DEFAULT 'https://kr.object.ncloudstorage.com/nadeuli/image/empty.jpg'")
   private String picture;
 
   @Column(name = "nadeuli_pay_balance", nullable = false, columnDefinition = "BIGINT DEFAULT 0")
