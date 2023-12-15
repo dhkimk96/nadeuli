@@ -31,16 +31,16 @@ public class Post extends Base{
     @Column(name = "content", length = 5000)
     private String content;
 
-    @Column(name = "video", length = 255)
+    @Column(name = "video", length = 50000)
     private String video;
 
-    @Column(name = "streaming", length = 255)
+    @Column(name = "streaming", length = 50000)
     private String streaming;
 
     @Column(name = "orikkiri_name", length = 255)
     private String orikkiriName;
 
-    @Column(name = "orikkiri_picture", length = 255)
+    @Column(name = "orikkiri_picture", length = 50000)
     private String orikkiriPicture;
 
     @Column(name = "post_category", nullable = false)
