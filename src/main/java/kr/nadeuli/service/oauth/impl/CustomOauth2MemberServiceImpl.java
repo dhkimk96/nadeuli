@@ -26,7 +26,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class CustomOauth2MemberServiceImpl implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
+public class CustomOauth2MemberServiceImpl extends DefaultOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
   private final MemberRepository memberRepository;
 

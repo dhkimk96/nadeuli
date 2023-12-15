@@ -1,21 +1,36 @@
 package kr.nadeuli.security;
 
+import java.util.Collections;
+import java.util.Map;
+import kr.nadeuli.dto.MemberDTO;
+import kr.nadeuli.entity.Member;
+import kr.nadeuli.mapper.MemberMapper;
+import kr.nadeuli.oauthinfo.OAuth2CustomUser;
+import kr.nadeuli.oauthinfo.OAuthAttributes;
 import kr.nadeuli.service.member.MemberRepository;
+import kr.nadeuli.service.member.MemberService;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
+import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service
-public class CustomUserDetailsService implements UserDetailsService {
+@Log4j2
+public class CustomUserDetailsService extends DefaultOAuth2UserService implements UserDetailsService {
 
   private final MemberRepository memberRepository;
-
 
   //1. JwtAuthenticationFilter에서 사용할 메소드 생성
   // - UserDetailsService는 Spring Security에서 사용자의 인증 정보를 검색하는 데 사용되는 인터페이스
@@ -31,8 +46,10 @@ public class CustomUserDetailsService implements UserDetailsService {
    * 내부에 메서드를 생성하는 이러한 방식은 코드를 모듈화하고 관리하기 쉽게 만들며,
    * UserDetailsService의 구현을 하나의 메서드 내에서 정의할 수 있어 효율적이다.
    * */
+
   @Override
   public UserDetails loadUserByUsername(String identifier) throws UsernameNotFoundException {
+    log.info("identifier:{}",identifier);
     if (isOAuth2Login()) {
       // OAuth2 로그인일 경우
       return loadUserBySocialId(identifier);
@@ -61,7 +78,9 @@ public class CustomUserDetailsService implements UserDetailsService {
   }
 
   private boolean isOAuth2Login() {
+    log.info("isOAuth2Login");
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    log.info("authentication:{}",authentication);
     if (authentication != null && authentication.getPrincipal() instanceof OAuth2User) {
       // OAuth2 로그인일 경우
       return true;
@@ -70,4 +89,5 @@ public class CustomUserDetailsService implements UserDetailsService {
       return false;
     }
   }
+
 }

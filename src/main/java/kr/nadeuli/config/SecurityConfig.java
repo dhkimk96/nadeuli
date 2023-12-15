@@ -163,6 +163,8 @@ public class SecurityConfig {
   // AuthenticationManager를 커스텀
   private final CustomAuthenticationManager customAuthenticationManager;
 
+  public static final String DEFAULT_FILTER_PROCESSES_URI = "/login/oauth2/code/*"; // 기본 값
+
   ///Method
   /**
    * 이 메서드는 정적 자원에 대해 보안을 적용하지 않도록 설정한다.
@@ -179,7 +181,7 @@ public class SecurityConfig {
   public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration = new CorsConfiguration();
     configuration.setAllowedOrigins(Arrays.asList("*"));
-    configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
+    configuration.setAllowedMethods(Arrays.asList("*"));
     configuration.setAllowedHeaders(Arrays.asList("X-Requested-With", "Content-Type", "Authorization", "X-XSRF-token"));
     configuration.setAllowCredentials(false);
     configuration.setMaxAge(3600L);
@@ -206,7 +208,7 @@ public class SecurityConfig {
         //8. HTTP 요청에 대한 접근 권한을 설정
         .authorizeHttpRequests((request) -> request
             //8-1. .permitAll()에 해당하는 URI는 인증되지않은 회원도 접근 가능
-            .requestMatchers("/api/v1/auth/**","/resources/**","/nadeulidelivery/**","/product/**","/nadeuliPay/**","/trade/**","/orikkiri/**","/orikkiriManage/**","/dongNe/**","/nadeuli/**","/auth/**","/login","/error").permitAll()
+            .requestMatchers("/api/v1/auth/**","/resources/**","/nadeulidelivery/**","/product/**","/nadeuliPay/**","/trade/**","/orikkiri/**","/orikkiriManage/**","/dongNe/**","/nadeuli/**","/auth/**","/login","/error","index.html","/oauth2/**").permitAll()
             //8-2. ADMIN만 접근가능
             .requestMatchers("/api/v1/admin/**").hasAnyAuthority(Role.ADMIN.name())
             //8-3. USER만 접근가능
@@ -217,25 +219,23 @@ public class SecurityConfig {
         //모든 요청은 세션에 의존하지 않는다. 이는 주로 토큰 기반의 인증을 사용할 때 사용
         .sessionManagement(
             manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        .formLogin(login -> login
-            .loginPage("/login")
-            .successHandler(new SimpleUrlAuthenticationSuccessHandler("/index.html"))
-            .permitAll()
-        )
+//        .formLogin(login -> login
+//            .loginPage("/login")
+//            .successHandler(new SimpleUrlAuthenticationSuccessHandler("/index.html"))
+//            .permitAll()
+//        )
         .httpBasic(Customizer.withDefaults()) // httpBasic 사용 X
         .oauth2Login(oauth2Configurer -> oauth2Configurer
-                         .loginPage("/index.html")  // OAuth2 로그인 페이지 설정
                          .userInfoEndpoint(userInfo -> userInfo
                              .userService(customOauth2MemberService))
-                         .successHandler(oAuth2LoginSuccessHandler) // 동의하고 계속하기를 눌렀을 때 Handler 설정
-                         .failureHandler(oAuth2LoginFailureHandler) // 소셜 로그인 실패 시 핸들러 설정
-                         .defaultSuccessUrl("/index.html", true)  // OAuth2 로그인 성공 시 기본 이동 경로
+                         .successHandler(oAuth2LoginSuccessHandler)
+                         .failureHandler(oAuth2LoginFailureHandler)
         )
 
         //사용자 인증을 처리
         //사용자의 인증을 검증하고 사용자 정보를 가져오는 역할
         //사용자의 JWT 토큰을 검증하고, 사용자를 인증
-        .authenticationManager(customAuthenticationManager)
+//        .authenticationManager(customAuthenticationManager)
         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
         .logout(logout -> logout
             .logoutUrl("/api/v1/member/logout")  // 로그아웃 URL 지정
@@ -267,13 +267,25 @@ public class SecurityConfig {
 
   //사용자의 인증을 처리하는 역할
   @Bean
-  public AuthenticationProvider authenticationProvider() {
+  public AuthenticationProvider authenticationProvider() throws Exception{
     System.out.println("프로바이더");
     DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
     //사용자 정보를 가져오는 데 사용될 UserDetailsService를 설정
     authenticationProvider.setUserDetailsService(customUserDetailsService);
-    //비밀번호 암호화를 처리하는 데 사용될 PasswordEncoder를 설정
-//    authenticationProvider.setPasswordEncoder(passwordEncoder());
+    // 비밀번호 암호화를 처리하는 데 사용될 PasswordEncoder를 설정
+    // authenticationProvider.setPasswordEncoder(passwordEncoder());
+
+    // 사용자 정보를 로드하기 전에 실행되는 동작
+    authenticationProvider.setPreAuthenticationChecks(userDetails -> {
+      // 여기에 로그 출력 또는 확인하고자 하는 동작 추가
+      System.out.println("사용자 정보 로드 전 동작");
+    });
+
+    // 사용자 정보를 로드한 후에 실행되는 동작
+    authenticationProvider.setPostAuthenticationChecks(userDetails -> {
+      // 여기에 로그 출력 또는 확인하고자 하는 동작 추가
+      System.out.println("사용자 정보 로드 후 동작");
+    });
     return authenticationProvider;
   }
 
