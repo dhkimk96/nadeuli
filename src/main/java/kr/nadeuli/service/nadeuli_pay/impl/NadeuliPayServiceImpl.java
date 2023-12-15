@@ -46,21 +46,18 @@ public class NadeuliPayServiceImpl implements NadeuliPayService {
     @Override
     public void nadeuliPayCharge(String tag, NadeuliPayHistoryDTO nadeuliPayHistoryDTO) {
         log.info(nadeuliPayHistoryDTO);
-        nadeuliPayHistoryDTO.setTradeType(TradeType.CHARGE);
         nadeuliPayHistoryRepository.save(nadeuliPayHistoryMapper.nadeuliPayHistoryDTOToNadeuliPayHistory(nadeuliPayHistoryDTO));
     }
 
     @Override
     public void nadeuliPayPay(String tag, NadeuliPayHistoryDTO nadeuliPayHistoryDTO) {
         log.info(nadeuliPayHistoryDTO);
-        nadeuliPayHistoryDTO.setTradeType(TradeType.PAYMENT);
         nadeuliPayHistoryRepository.save(nadeuliPayHistoryMapper.nadeuliPayHistoryDTOToNadeuliPayHistory(nadeuliPayHistoryDTO));
     }
 
     @Override
     public void nadeuliPayWithdraw(String tag, NadeuliPayHistoryDTO nadeuliPayHistoryDTO) {
         log.info(nadeuliPayHistoryDTO);
-        nadeuliPayHistoryDTO.setTradeType(TradeType.WITHDRAW);
         nadeuliPayHistoryRepository.save(nadeuliPayHistoryMapper.nadeuliPayHistoryDTOToNadeuliPayHistory(nadeuliPayHistoryDTO));
     }
 }

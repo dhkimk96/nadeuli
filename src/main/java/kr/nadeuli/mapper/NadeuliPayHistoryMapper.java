@@ -13,6 +13,7 @@ import org.mapstruct.Named;
 
 @Mapper(builder = @Builder(disableBuilder = true), componentModel = "spring")
 public interface NadeuliPayHistoryMapper {
+    @Mapping(target = "imp_uid", ignore = true)
     @Mapping(source = "member", target = "member", qualifiedByName = "memberToMemberDTO")
     @Mapping(source = "product", target = "product", qualifiedByName = "productToProductDTO")
     NadeuliPayHistoryDTO nadeuliPayHistoryToNadeuliPayHistoryDTO(NadeuliPayHistory nadeuliPayHistory);

@@ -21,6 +21,7 @@ configurations {
 
 repositories {
     mavenCentral()
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
@@ -82,7 +83,7 @@ dependencies {
     implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
 
     //아임포트
-//    implementation 'com.github.iamport:iamport-rest-client-java:0.2.21'
+    implementation 'com.github.iamport:iamport-rest-client-java:0.2.23'
 
 
 

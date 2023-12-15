@@ -26,6 +26,7 @@ public class NadeuliPayHistoryDTO {
     private TradeType tradeType;
     private String productTitle;
     private LocalDateTime regDate;
+    private String imp_uid;
     private MemberDTO member;
     private ProductDTO product;
 
