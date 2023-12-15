@@ -28,6 +28,7 @@ application-jwt.properties
 application-map.properties
 application-mail.properties
 application-cloud.properties
+application-iamport.properties
 .idea
 *.iws
 *.iml

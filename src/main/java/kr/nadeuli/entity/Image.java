@@ -29,7 +29,7 @@ public class Image {
     @Column(name = "image_id")
     private Long imageId;
 
-    @Column(name = "image_name", nullable = false)
+    @Column(name = "image_name", length = 50000, nullable = false)
     private String imageName;
 
     @ManyToOne(fetch = FetchType.LAZY)
