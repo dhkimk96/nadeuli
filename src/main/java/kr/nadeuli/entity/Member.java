@@ -46,7 +46,7 @@ public class Member implements UserDetails {
   @Column(name = "nickname", length = 40, nullable = false)
   private String nickname;
 
-  @Column(name = "affinity", nullable = false, columnDefinition = "BIGINT DEFAULT 0")
+  @Column(name = "affinity", columnDefinition = "BIGINT DEFAULT 0")
   private Long affinity;
 
   @Column(name = "email")
@@ -64,10 +64,10 @@ public class Member implements UserDetails {
   @Column(name = "is_activate", nullable = false, columnDefinition = "BIT DEFAULT 0")
   private boolean isActivate;
 
-  @Column(name = "is_nadeuli_delivery", nullable = false, columnDefinition = "BIT DEFAULT 0")
+  @Column(name = "is_nadeuli_delivery", columnDefinition = "BIT DEFAULT 0")
   private boolean isNadeuliDelivery;
 
-  @Column(name = "role", nullable = false, columnDefinition = "BIGINT DEFAULT 0 CHECK (role BETWEEN 0 AND 1)")
+  @Column(name = "role",columnDefinition = "BIGINT DEFAULT 0 CHECK (role BETWEEN 0 AND 1)")
   private Role role;
 
   @Column(name = "gu", nullable = false)
