@@ -19,11 +19,10 @@ pipeline {
             steps {
                 script {
                     // Gradle 빌드
-                    dir('/var/lib/jenkins/workspace/nadeuliWaspp/') {
+
                                     // gradlew에 실행 권한을 부여
                                     sh 'chmod +x gradlew'
                         sh './gradlew clean bootJar'
-                    }
                 }
             }
         }
@@ -35,9 +34,7 @@ pipeline {
             steps {
                 script {
                     // Docker 이미지 빌드
-                    dir('/var/lib/jenkins/workspace/nadeuliWas/') {
                         sh 'sudo docker build -t lsm00/nadeuliwas:latest .'
-                    }
                     // 이전에 실행 중이던 도커 컨테이너 중지 및 삭제
                     def existingContainerId = sh(script: 'docker ps -aq --filter name=nadeuliwas', returnStdout: true).trim()
                     if (existingContainerId) {
