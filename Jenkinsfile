@@ -9,7 +9,7 @@ pipeline {
                     def credentialId = 'application'
                     // Jenkins Credential에서 파일을 가져와서 프로젝트 디렉토리로 복사
                     withCredentials([file(credentialsId: credentialId, variable: 'CREDENTIAL_FILE')]) {
-                        sh "cp $CREDENTIAL_FILE /var/lib/jenkins/workspace/nadeuliWas/src/main/resources/application.properties"
+                        sh "cp $CREDENTIAL_FILE /var/lib/jenkins/workspace/nadeuliWaspp/src/main/resources/application.properties"
                     }
                 }
             }
