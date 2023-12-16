@@ -60,7 +60,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
 
     // 리다이렉션 수행
-    response.sendRedirect("http://localhost:3000/main");
+    response.sendRedirect("https://www.nadeuli.kr/main");
   }
 
 

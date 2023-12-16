@@ -78,13 +78,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }else{
       // 회원이 존재하지 않는 경우
       memberDTO.setTag(memberService.addTag());
-      memberDTO.setAffinity(affinity);
-      //기본값이 유저이기떄문에 필요없음
-      memberDTO.setRole(Role.USER);
       memberDTO.setDongNe(memberService.addDongNe(memberDTO.getTag(),gpsDTO).getDocuments().get(1).getAddressName());
       memberDTO.setGu(memberService.addDongNe(memberDTO.getTag(),gpsDTO).getDocuments().get(1).getRegion2depthName());
-      memberDTO.setNadeuliPayBalance(0L);
-      memberDTO.setPicture("empty.jpg");
       Member member = memberMapper.memberDTOToMember(memberDTO);
       memberRepository.save(member);
       MemberDTO existMember = memberRepository.findByTag(memberDTO.getTag()).map(memberMapper::memberToMemberDTO).orElseThrow(()-> new IllegalArgumentException("없는 태그입니다."));
