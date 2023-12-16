@@ -219,11 +219,9 @@ public class SecurityConfig {
         //모든 요청은 세션에 의존하지 않는다. 이는 주로 토큰 기반의 인증을 사용할 때 사용
         .sessionManagement(
             manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-//        .formLogin(login -> login
-//            .loginPage("/login")
-//            .successHandler(new SimpleUrlAuthenticationSuccessHandler("/index.html"))
-//            .permitAll()
-//        )
+        .formLogin(login -> login
+            .disable() // 기본 로그인 페이지 생성 필터를 비활성화
+        )
         .httpBasic(Customizer.withDefaults()) // httpBasic 사용 X
         .oauth2Login(oauth2Configurer -> oauth2Configurer
                          .userInfoEndpoint(userInfo -> userInfo
