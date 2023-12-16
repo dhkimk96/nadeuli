@@ -50,7 +50,7 @@ public class AuthenticationRestController {
     GpsDTO gpsDTO = objectMapper.convertValue(requestData.get("gpsDTO"), GpsDTO.class);
 
     log.info("addMember에서 받은 memberDTO는 {}", memberDTO);
-    log.info("addMember에서 받은 gpsDTO는 {}", gpsDTO);
+    log.info("addMember에서 받은 gpsDTO는  {}", gpsDTO);
 
     TokenDTO tokenDTO = authenticationService.addMember(memberDTO, gpsDTO);
 
