@@ -35,7 +35,7 @@ pipeline {
             steps {
                 script {
                     // Docker 이미지 빌드
-                    dir('/var/lib/jenkins/workspace/nadeuliWas/') {
+                    dir('/var/lib/jenkins/workspace/nadeuliWaspp/') {
                         sh 'sudo docker build -t lsm00/nadeuliwas:latest .'
                     }
                     // 이전에 실행 중이던 도커 컨테이너 중지 및 삭제
