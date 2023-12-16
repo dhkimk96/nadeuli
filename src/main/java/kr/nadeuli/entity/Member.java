@@ -88,7 +88,7 @@ public class Member implements UserDetails {
   @Column(name = "block_day")
   private Long blockDay;
 
-  // 소셜로그인 식별자 값 (자체 로그인인 경우 null  )
+  // 소셜로그인 식별자 값 (자체 로그인인 경우 null   )
   @Column(name = "social_id")
   private String socialId;
 
