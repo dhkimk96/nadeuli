@@ -6,7 +6,7 @@ RUN pwd
 # jar 파일을 복사하여 도커 Tomcat 웹 애플리케이션 폴더로 이동
 
 COPY build/libs/ROOT.jar /usr/local/tomcat/
-EXPOSE 80
+EXPOSE 82
 
 #CMD ["java", "-jar", "ROOT.jar"]
-ENTRYPOINT ["java","-jar","/ROOT.jar"]
+ENTRYPOINT ["java","-jar","ROOT.jar"]
