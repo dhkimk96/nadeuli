@@ -19,7 +19,7 @@ pipeline {
             steps {
                 script {
                     // Gradle 빌드
-                    dir('/var/lib/jenkins/workspace/nadeuliWas/') {
+                    dir('/var/lib/jenkins/workspace/nadeuliWaspp/') {
                                     // gradlew에 실행 권한을 부여
                                     sh 'chmod +x gradlew'
                         sh './gradlew clean bootJar'
