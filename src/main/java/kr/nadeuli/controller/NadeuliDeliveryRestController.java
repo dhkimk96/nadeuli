@@ -83,7 +83,8 @@ public class NadeuliDeliveryRestController {
 
     @Transactional
     @PostMapping("/updateDeliveryOrder")
-    public ResponseEntity<?> updateDeliveryOrder(@RequestBody NadeuliDeliveryDTO nadeuliDeliveryDTO,@RequestParam("images") List<MultipartFile> images) throws Exception{
+    public ResponseEntity<?> updateDeliveryOrder(@RequestPart("nadeuliDeliveryDTO") NadeuliDeliveryDTO nadeuliDeliveryDTO,
+                                                 @RequestPart("images") List<MultipartFile> images) throws Exception{
         // 배달 주문을 수정한다.
         log.info("/nadeulidelivery/updateDeliveryOrder : POST");
         Long nadeuliDeliveryId = nadeuliDeliveryDTO.getNadeuliDeliveryId();
