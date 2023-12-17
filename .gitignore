@@ -29,6 +29,7 @@ application-map.properties
 application-mail.properties
 application-cloud.properties
 application-iamport.properties
+application-jenkins.properties
 .idea
 *.iws
 *.iml
@@ -46,3 +47,4 @@ out/
 
 ### VS Code ###
 .vscode/
+/src/main/resources/application-jenkins.properties

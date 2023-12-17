@@ -98,6 +98,7 @@ public class CustomOauth2MemberServiceImpl extends DefaultOAuth2UserService impl
   private void saveUser(OAuthAttributes attributes) throws Exception {
     MemberDTO memberDTO = attributes.toEntity(attributes.getOauth2UserInfo());
     memberDTO.setTag(memberService.addTag()); // 변경
+    memberDTO.setAffinity(0L);
     memberRepository.save(memberMapper.memberDTOToMember(memberDTO));
   }
 }

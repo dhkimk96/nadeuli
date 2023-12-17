@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/nadeuli/auth")
 @RequiredArgsConstructor
 @Log4j2
 public class AuthRestController {
