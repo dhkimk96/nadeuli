@@ -28,7 +28,7 @@ public class TradeReview extends Base{
     @Column(name = "affinity_score", nullable = false)
     private Long affinityScore;
 
-    @Column(name = "member_picture", nullable = false, length = 50000)
+    @Column(name = "member_picture", nullable = true, length = 50000)
     private String memberPicture;
 
     @ManyToOne
