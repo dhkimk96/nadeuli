@@ -122,12 +122,5 @@ public class AuthenticationRestController {
     return "{\"success\": true}";
   }
 
-  //소셜로그인
-  @GetMapping("/kakao")
-  public void kakaoCallback(@RequestParam String code) throws Exception{
-    System.out.println(code);
-//    OauthTokenDTO oauthTokenDTO = authenticationService.getOauthToken(code);
-//    customOauth2MemberService.loadUser(oauthTokenDTO);
-  }
 
 }

@@ -126,7 +126,7 @@ public class MemberServiceImpl implements MemberService{
   //회원 프로필 수정
   //todo 리팩토링 예정 -> record사용하여 코드중복제거
   @Override
-  public void updateMember(MemberDTO memberDTO) throws Exception {
+  public MemberDTO updateMember(MemberDTO memberDTO) throws Exception {
    log.info("받은 member는{}",memberDTO);
 
    MemberDTO existMember = getMember(memberDTO.getTag());
@@ -161,6 +161,8 @@ public class MemberServiceImpl implements MemberService{
       existMember.setNadeuliPayBalance(memberDTO.getNadeuliPayBalance());
     }
    memberRepository.save(memberMapper.memberDTOToMember(existMember));
+
+    return existMember;
   }
 
 

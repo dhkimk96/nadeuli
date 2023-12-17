@@ -8,27 +8,35 @@ import java.util.List;
 import java.util.Map;
 import kr.nadeuli.dto.BlockDTO;
 import kr.nadeuli.dto.GpsDTO;
+import kr.nadeuli.dto.ImageDTO;
 import kr.nadeuli.dto.MemberDTO;
 import kr.nadeuli.dto.OriScheMemChatFavDTO;
+import kr.nadeuli.dto.PostDTO;
 import kr.nadeuli.dto.ProductDTO;
 import kr.nadeuli.dto.ReportDTO;
 import kr.nadeuli.dto.SearchDTO;
+import kr.nadeuli.dto.TokenDTO;
 import kr.nadeuli.entity.Member;
+import kr.nadeuli.service.image.ImageService;
+import kr.nadeuli.service.jwt.JWTService;
 import kr.nadeuli.service.member.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/nadeuli/member")
@@ -37,6 +45,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class MemberRestController {
 
   private final MemberService memberService;
+
+  private final JWTService jwtService;
+
+  private final ImageService imageService;
 
   @Value("${pageSize}")
   private int pageSize;
@@ -78,10 +90,12 @@ public class MemberRestController {
 
   }
 
-  @GetMapping("/getMemberList")
-  public List<MemberDTO> getMemberList(@RequestBody SearchDTO searchDTO) throws Exception {
-    log.info("/member/getMemberList : GET : {}",searchDTO);
+  @PostMapping("/getMemberList")
+  public List<MemberDTO> getMemberList(@RequestBody Map<String, Object> requestData) throws Exception {
+    log.info("/member/getMemberList : POST : {}",requestData);
+    SearchDTO searchDTO = objectMapper.convertValue(requestData.get("searchDTO"), SearchDTO.class);
     searchDTO.setPageSize(pageSize);
+    log.info("멤버리스트는{}",memberService.getMemberList(searchDTO));
     return memberService.getMemberList(searchDTO);
   }
 
@@ -180,6 +194,42 @@ public class MemberRestController {
   }
 
 
+  @PostMapping("/addNickname")
+  public MemberDTO addNickname(@RequestBody Map<String, Object> requestData) throws Exception{
+    log.info("/member/addNickname : POST : {}", requestData);
 
+    TokenDTO tokenDTO = objectMapper.convertValue(requestData.get("tokenDTO"), TokenDTO.class);
+    GpsDTO gpsDTO = objectMapper.convertValue(requestData.get("gpsDTO"), GpsDTO.class);
+    MemberDTO memberDTO = objectMapper.convertValue(requestData.get("memberDTO"), MemberDTO.class);
+
+    String tag = jwtService.extractUserName(tokenDTO.getAccessToken());
+    MemberDTO existMemberDTO = memberService.getMember(tag);
+    memberService.addDongNe(existMemberDTO.getTag(), gpsDTO);
+    existMemberDTO.setNickname(memberDTO.getNickname());
+
+    return memberService.updateMember(existMemberDTO);
+  }
+
+  @PostMapping("/getSocialMember")
+  public MemberDTO getSocialMember(@RequestBody Map<String, Object> requestData) throws Exception{
+    log.info("/member/getSocialMember : POST : {}", requestData);
+
+    TokenDTO tokenDTO = objectMapper.convertValue(requestData.get("tokenDTO"), TokenDTO.class);
+
+    String tag = jwtService.extractUserName(tokenDTO.getAccessToken());
+
+    return memberService.getMember(tag);
+  }
+
+  @PostMapping("/updateProfile")
+  public MemberDTO updateProfile(@ModelAttribute MemberDTO memberDTO,@RequestParam("image") MultipartFile image) throws Exception {
+    log.info("/member/updateProfile : POST : {}", memberDTO);
+    String fileName = memberDTO.getPicture();
+    imageService.deleteProfile(fileName);
+
+    // 이미지 업로드 및 저장
+    imageService.addProfile(image, memberDTO);
+    return getMember(memberDTO.getTag());
+  }
 
 }

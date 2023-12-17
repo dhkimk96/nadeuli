@@ -2,6 +2,7 @@ package kr.nadeuli.service.image;
 
 
 import kr.nadeuli.dto.ImageDTO;
+import kr.nadeuli.dto.MemberDTO;
 import kr.nadeuli.dto.SearchDTO;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +21,11 @@ public interface ImageService {
     void deleteProductImage(long productId) throws Exception;
     void deleteNadeuliDeliveryImage(long nadeuliDeliveryId) throws Exception;
 
+    void  deleteImageByFileName(String fileName) throws Exception;
+
+    void deleteProfile(String fileName) throws Exception;
+
     void deleteImage(long imageId) throws Exception;
 
+    void addProfile(MultipartFile profileImage, MemberDTO memberDTO) throws Exception;
 }
