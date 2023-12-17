@@ -16,7 +16,7 @@ public interface MemberService {
 
   public String addTag() throws Exception;
 
-  public void updateMember(MemberDTO memberDTO) throws Exception;
+  public MemberDTO updateMember(MemberDTO memberDTO) throws Exception;
 
   public MemberDTO getMember(String tag) throws Exception;
 

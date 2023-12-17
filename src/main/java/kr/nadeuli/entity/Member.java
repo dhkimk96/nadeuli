@@ -55,13 +55,13 @@ public class Member implements UserDetails {
   @Column(name = "dong_ne", nullable = false)
   private String dongNe;
 
-  @Column(name = "picture", nullable = false, columnDefinition = "VARCHAR(50000) DEFAULT 'https://kr.object.ncloudstorage.com/nadeuli/image/empty.jpg'")
+  @Column(name = "picture", columnDefinition = "VARCHAR(10000) DEFAULT 'https://kr.object.ncloudstorage.com/nadeuli/image/empty.jpg'")
   private String picture;
 
-  @Column(name = "nadeuli_pay_balance", nullable = false, columnDefinition = "BIGINT DEFAULT 0")
+  @Column(name = "nadeuli_pay_balance", columnDefinition = "BIGINT DEFAULT 0")
   private Long nadeuliPayBalance;
 
-  @Column(name = "is_activate", nullable = false, columnDefinition = "BIT DEFAULT 0")
+  @Column(name = "is_activate", columnDefinition = "BIT DEFAULT 0")
   private boolean isActivate;
 
   @Column(name = "is_nadeuli_delivery", columnDefinition = "BIT DEFAULT 0")

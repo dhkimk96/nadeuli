@@ -99,6 +99,7 @@ public class CustomOauth2MemberServiceImpl extends DefaultOAuth2UserService impl
     MemberDTO memberDTO = attributes.toEntity(attributes.getOauth2UserInfo());
     memberDTO.setTag(memberService.addTag()); // 변경
     memberDTO.setAffinity(0L);
+    memberDTO.setPicture("https://kr.object.ncloudstorage.com/nadeuli/image/empty.jpg");
     memberRepository.save(memberMapper.memberDTOToMember(memberDTO));
   }
 }
