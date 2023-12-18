@@ -33,7 +33,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @RequiredArgsConstructor
-@EnableWebSecurity
+@EnableWebSecurity(debug = true)
 public class SecurityConfig {
   /** 번호를 잘 따라갈것. 용어설명부터 시작하여 흐름을 제공하겠다.
   *  1. 인증및 권한을 부여, 보호하는 기능을 제공

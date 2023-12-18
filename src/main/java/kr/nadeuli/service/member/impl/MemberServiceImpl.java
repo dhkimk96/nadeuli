@@ -176,17 +176,23 @@ public class MemberServiceImpl implements MemberService{
   //상대 프로필 조회
   @Override
   public MemberDTO getOtherMember(String tag) throws Exception {
+    log.info("받은태그는{}",tag);
     //상대프로필은 프로필사진, 닉네임, 태그, 동네, 친화력이있어야한다.
     Member member = memberRepository.findByTag(tag).orElse(null);
 
     if(member != null){
-      return MemberDTO.builder()
+
+      MemberDTO memberDTO = MemberDTO.builder()
           .picture(member.getPicture())
           .nickname(member.getNickname())
           .tag(member.getTag())
           .dongNe(member.getDongNe())
           .affinity(member.getAffinity())
           .build();
+
+      log.info("반환하는 셀러는{}",memberDTO);
+
+      return memberDTO;
     }
     return null;
   }
@@ -354,7 +360,7 @@ public class MemberServiceImpl implements MemberService{
   @Override
   public List<OriScheMemChatFavDTO> getFavoriteList(String tag, SearchDTO searchDTO) throws Exception {
     Pageable pageable = PageRequest.of(searchDTO.getCurrentPage(), searchDTO.getPageSize());
-    return oriScheMenChatFavRepository.findProductsByMemberTag(tag, pageable)
+    return oriScheMenChatFavRepository.findByMemberTagAndOrikkiriScheduleIsNullAndOrikkiriIsNullAndAnsQuestionsIsNull(tag, pageable)
         .map(oriScheMemChatFavMapper::oriScheMemChatFavToOriScheMemChatFavDTO)
         .toList();
   }

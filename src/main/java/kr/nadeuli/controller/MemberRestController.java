@@ -20,6 +20,7 @@ import kr.nadeuli.entity.Member;
 import kr.nadeuli.service.image.ImageService;
 import kr.nadeuli.service.jwt.JWTService;
 import kr.nadeuli.service.member.MemberService;
+import kr.nadeuli.service.product.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +50,8 @@ public class MemberRestController {
   private final JWTService jwtService;
 
   private final ImageService imageService;
+
+  private final ProductService productService;
 
   @Value("${pageSize}")
   private int pageSize;
@@ -94,7 +97,7 @@ public class MemberRestController {
   public List<MemberDTO> getMemberList(@RequestBody Map<String, Object> requestData) throws Exception {
     log.info("/member/getMemberList : POST : {}",requestData);
     SearchDTO searchDTO = objectMapper.convertValue(requestData.get("searchDTO"), SearchDTO.class);
-    searchDTO.setPageSize(pageSize);
+    searchDTO.setPageSize(1000);
     log.info("멤버리스트는{}",memberService.getMemberList(searchDTO));
     return memberService.getMemberList(searchDTO);
   }
@@ -167,11 +170,32 @@ public class MemberRestController {
     return "{\"success\": true}";
   }
 
-  @PostMapping ("/getFavoriteList")
-  public List<OriScheMemChatFavDTO> getFavoriteList(@RequestParam String tag, @RequestBody SearchDTO searchDTO) throws Exception{
-    log.info("/member/deleteFavorite : GET : {},{}", tag,searchDTO);
+  @PostMapping("/getFavoriteList")
+  public List<OriScheMemChatFavDTO> getFavoriteList(@RequestBody Map<String, Object> requestData) throws Exception {
+    MemberDTO memberDTO = objectMapper.convertValue(requestData.get("memberDTO"), MemberDTO.class);
+    SearchDTO searchDTO = objectMapper.convertValue(requestData.get("searchDTO"), SearchDTO.class);
+
+    log.info(memberDTO);
+    log.info(searchDTO);
+
     searchDTO.setPageSize(pageSize);
-    return memberService.getFavoriteList(tag,searchDTO);
+    List<OriScheMemChatFavDTO> list = memberService.getFavoriteList(memberDTO.getTag(), searchDTO);
+
+    // ProductDTO 객체의 productId를 사용하여 객체를 가져와서 각각의 OriScheMemChatFavDTO에 설정
+    for (OriScheMemChatFavDTO favDTO : list) {
+      long productId = favDTO.getProduct().getProductId();
+      ProductDTO productDTO = productService.getProduct(productId);
+
+      // ProductDTO의 seller를 설정
+      MemberDTO sellerDTO = memberService.getMember(productDTO.getSeller().getTag());
+      productDTO.setSeller(sellerDTO);
+
+      favDTO.setProduct(productDTO);
+    }
+
+    log.info(list.stream().toList());
+
+    return list;
   }
 
   @PostMapping("/addReport")
