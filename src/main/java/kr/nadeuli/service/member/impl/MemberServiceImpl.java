@@ -140,12 +140,20 @@ public class MemberServiceImpl implements MemberService{
       log.info("받은 Nickname는{}",memberDTO.getNickname());
       existMember.setNickname(memberDTO.getNickname());
     }
+    if (memberDTO.getCellphone() != null && memberDTO.getCellphone().equals(existMember.getCellphone())) {
+      log.error("Cellphone이 기존 값과 동일합니다. 수정할 필요가 없습니다.");
+      throw new IllegalArgumentException("Cellphone이 기존 값과 동일합니다.");
+    }
+    if (memberDTO.getEmail() != null && memberDTO.getEmail().equals(existMember.getEmail())) {
+      log.error("Email이 기존 값과 동일합니다. 수정할 필요가 없습니다.");
+      throw new IllegalArgumentException("Email이 기존 값과 동일합니다.");
+    }
     if (memberDTO.getCellphone() != null) {
-      log.info("받은 Cellphone는{}",memberDTO.getCellphone());
+      log.info("받은 Cellphone는{}", memberDTO.getCellphone());
       existMember.setCellphone(memberDTO.getCellphone());
     }
     if (memberDTO.getEmail() != null) {
-      log.info("받은 Email는{}",memberDTO.getEmail());
+      log.info("받은 Email는{}", memberDTO.getEmail());
       existMember.setEmail(memberDTO.getEmail());
     }
     if (memberDTO.getDongNe() != null) {
