@@ -51,7 +51,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public List<CommentDTO> getCommentList(long postId) throws Exception {
-        Sort sort = Sort.by(Sort.Direction.DESC, "regDate");
+        Sort sort = Sort.by(Sort.Direction.ASC, "regDate");
         Pageable pageable = PageRequest.of(0, commentNum, sort);
         Page<Comment> commentPage;
         commentPage = commentRepository.findByPost(Post.builder().postId(postId).build(), pageable);

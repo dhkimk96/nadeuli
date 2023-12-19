@@ -55,7 +55,10 @@ public interface OriScheMemChatFavMapper {
         if(orikkiri == null){
             return null;
         }
-        return OrikkiriDTO.builder().orikkiriId(orikkiri.getOrikkiriId()).build();
+        return OrikkiriDTO.builder().orikkiriId(orikkiri.getOrikkiriId())
+                .orikkiriName(orikkiri.getOrikkiriName())
+                .orikkiriPicture(orikkiri.getOrikkiriPicture())
+                .build();
     }
 
     @Named("orikkiriScheduleDTOToOrikkiriSchedule")
