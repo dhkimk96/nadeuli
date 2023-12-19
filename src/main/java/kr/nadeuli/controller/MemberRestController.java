@@ -147,10 +147,15 @@ public class MemberRestController {
   @PostMapping("/updateMember")
   public MemberDTO updateMember(@RequestBody MemberDTO memberDTO) throws Exception{
     log.info("/member/updateMember : POST : {}", memberDTO);
-    memberService.updateMember(memberDTO);
-
-    return getMember(memberDTO.getTag());
+    return memberService.updateMember(memberDTO);
   }
+
+  @PostMapping("/updateTo")
+  public MemberDTO updateTo(@RequestBody MemberDTO memberDTO) throws Exception{
+    log.info("/member/updateTo : POST : {}", memberDTO);
+    return memberService.updateTo(memberDTO);
+  }
+
 
   @GetMapping("/addFavorite/{tag}/{productId}")
   public String addFavorite(@PathVariable String tag, @PathVariable Long productId) throws Exception{
