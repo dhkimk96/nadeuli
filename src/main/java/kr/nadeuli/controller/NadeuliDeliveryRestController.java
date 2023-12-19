@@ -19,7 +19,7 @@ import java.util.List;
 @Log4j2
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/nadeulidelivery")
+@RequestMapping("/nadeuli/nadeulidelivery")
 public class NadeuliDeliveryRestController {
 
     @Value("${pageSize}")
