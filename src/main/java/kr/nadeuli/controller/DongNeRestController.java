@@ -31,8 +31,21 @@ public class DongNeRestController {
     @Value("${pageSize}")
     int pageSize;
 
+    //    @PostMapping("/addPost")
+//    public ResponseEntity<String> addPost(@RequestPart("postDTO") PostDTO postDTO, @RequestPart(value = "images" ,required = false)  List<MultipartFile> images) throws Exception {
+//        Long postId = postService.addPost(postDTO);
+//        // 이미지 업로드 및 저장을 위한 ImageDTO 생성
+//        ImageDTO imageDTO = ImageDTO.builder()
+//            .post(PostDTO.builder().postId(postId).build())
+//            .build();
+//
+//        // 이미지 업로드 및 저장
+//        imageService.addImage(images, imageDTO);
+//      return ResponseEntity.status(HttpStatus.OK).body("{\"success\": true}");
+//    }
+
     @PostMapping("/addPost")
-    public ResponseEntity<String> addPost(@RequestPart("postDTO") PostDTO postDTO, @RequestPart(value = "images" ,required = false)  List<MultipartFile> images) throws Exception {
+    public ResponseEntity<String> addPost(@ModelAttribute PostDTO postDTO, @RequestParam("images") List<MultipartFile> images) throws Exception {
         Long postId = postService.addPost(postDTO);
         // 이미지 업로드 및 저장을 위한 ImageDTO 생성
         ImageDTO imageDTO = ImageDTO.builder()
@@ -56,6 +69,7 @@ public class DongNeRestController {
         postDTO.setImages(imageNames);
         return postDTO;
     }
+
 
     @GetMapping("/dongNeHome/{currentPage}")
     public List<PostDTO> getPostList(@PathVariable int currentPage, @RequestParam String gu, @RequestParam(required = false) String searchKeyword) throws Exception {
@@ -120,4 +134,19 @@ public class DongNeRestController {
         return ResponseEntity.status(HttpStatus.OK).body("{\"success\": true}");
     }
 
+    @PostMapping("/addStreaming")
+    public StreamingDTO addStreaming(@ModelAttribute StreamingDTO streamingDTO) throws Exception {
+        return postService.addStreamingChannel(streamingDTO);
+    }
+
+    @GetMapping("/getStreaming/{channelId}")
+    public StreamingDTO getStreaming(@PathVariable String channelId) throws Exception {
+        return postService.getStreamingUrl(channelId);
+    }
+
+    @GetMapping("/deleteStreaming/{channelId}")
+    public ResponseEntity<String> deleteComment(@PathVariable String channelId) throws Exception {
+        postService.deleteStreamingChannel(channelId);
+        return ResponseEntity.status(HttpStatus.OK).body("{\"success\": true}");
+    }
 }

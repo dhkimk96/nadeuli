@@ -58,6 +58,8 @@ public interface CommentMapper {
             return null;
         }
         return MemberDTO.builder().tag(member.getTag())
+                .nickname(member.getNickname())
+                .picture(member.getPicture())
                 .build();
     }
 
