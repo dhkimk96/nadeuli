@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/nadeuliPay")
+@RequestMapping("/nadeuli/nadeuliPay")
 @Log4j2
 public class NadeuliPayRestController {
     private final NadeuliPayService nadeuliPayService;

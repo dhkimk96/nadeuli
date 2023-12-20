@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("/product")
+@RequestMapping("/nadeuli/product")
 @RequiredArgsConstructor
 @Log4j2
 public class ProductRestController {
