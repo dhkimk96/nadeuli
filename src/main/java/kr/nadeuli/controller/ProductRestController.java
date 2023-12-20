@@ -1,6 +1,7 @@
 package kr.nadeuli.controller;
 
 import kr.nadeuli.dto.ImageDTO;
+import kr.nadeuli.dto.MemberDTO;
 import kr.nadeuli.dto.NadeuliPayHistoryDTO;
 import kr.nadeuli.dto.PostDTO;
 import kr.nadeuli.dto.ProductDTO;
@@ -136,7 +137,14 @@ public class ProductRestController {
         if(type == 2){
             searchDTO.setBuyer(true);
         }
-        return productService.getMyProductList(tag, searchDTO);
+
+        List<ProductDTO> list = productService.getMyProductList(tag, searchDTO);
+        for(ProductDTO productDTO : list){
+            // ProductDTO의 seller를 설정
+            MemberDTO sellerDTO = memberService.getMember(productDTO.getSeller().getTag());
+            productDTO.setSeller(sellerDTO);
+        }
+        return list;
     }
 
     @GetMapping("/deleteProduct/{productId}")

@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/nadeuli/nadeuli")
+@RequestMapping("/nadeuli")
 @RequiredArgsConstructor
 @Log4j2
 public class AuthenticationRestController {
@@ -111,23 +111,11 @@ public class AuthenticationRestController {
   }
 
   @PostMapping("/updateCellphone")
-  public String updateCellphone(@RequestBody MemberDTO memberDTO) throws Exception {
-    log.info("/nadeuli/findAccount : POST : {}", memberDTO);
-
-//    MemberDTO memberDTO = objectMapper.convertValue(requestData.get("memberDTO"), MemberDTO.class);
-
-    memberService.updateCellphone(memberDTO);
-
-    // memberDTO가 null이거나, findAccount가 false인 경우에 false를 반환.
-    return "{\"success\": true}";
+  public boolean updateCellphone(@RequestBody MemberDTO memberDTO) throws Exception {
+    log.info("/nadeuli/updateCellphone : POST : {}", memberDTO);
+    log.info(memberService.updateCellphone(memberDTO));
+    return memberService.updateCellphone(memberDTO);
   }
 
-  //소셜로그인
-  @GetMapping("/kakao")
-  public void kakaoCallback(@RequestParam String code) throws Exception{
-    System.out.println(code);
-//    OauthTokenDTO oauthTokenDTO = authenticationService.getOauthToken(code);
-//    customOauth2MemberService.loadUser(oauthTokenDTO);
-  }
 
 }

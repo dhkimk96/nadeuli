@@ -18,8 +18,8 @@ public class PostDTO {
     private Long postId;
     private String title;
     private String content;
-    private String video;
     private String streaming;
+    private String video;
     private String orikkiriName;
     private String orikkiriPicture;
     private Long postCategory;
@@ -29,6 +29,7 @@ public class PostDTO {
     private MemberDTO writer;
     private OrikkiriDTO orikkiri;
     private List<String> images;
+
 
 
 }

@@ -126,7 +126,7 @@ public class MemberServiceImpl implements MemberService{
   //회원 프로필 수정
   //todo 리팩토링 예정 -> record사용하여 코드중복제거
   @Override
-  public void updateMember(MemberDTO memberDTO) throws Exception {
+  public MemberDTO updateMember(MemberDTO memberDTO) throws Exception {
    log.info("받은 member는{}",memberDTO);
 
    MemberDTO existMember = getMember(memberDTO.getTag());
@@ -139,14 +139,6 @@ public class MemberServiceImpl implements MemberService{
     if (memberDTO.getNickname() != null) {
       log.info("받은 Nickname는{}",memberDTO.getNickname());
       existMember.setNickname(memberDTO.getNickname());
-    }
-    if (memberDTO.getCellphone() != null) {
-      log.info("받은 Cellphone는{}",memberDTO.getCellphone());
-      existMember.setCellphone(memberDTO.getCellphone());
-    }
-    if (memberDTO.getEmail() != null) {
-      log.info("받은 Email는{}",memberDTO.getEmail());
-      existMember.setEmail(memberDTO.getEmail());
     }
     if (memberDTO.getDongNe() != null) {
       log.info("받은 DongNe는{}",memberDTO.getDongNe());
@@ -161,8 +153,34 @@ public class MemberServiceImpl implements MemberService{
       existMember.setNadeuliPayBalance(memberDTO.getNadeuliPayBalance());
     }
    memberRepository.save(memberMapper.memberDTOToMember(existMember));
+
+    return existMember;
   }
 
+  @Override
+  public MemberDTO updateTo(MemberDTO memberDTO) throws Exception {
+    log.info("받은 member는 {}", memberDTO);
+
+    MemberDTO existMember = getMember(memberDTO.getTag());
+
+    // Null이 아니고 값이 다를 경우에만 수정
+    if (memberDTO.getCellphone() != null && !memberDTO.getCellphone().equals(existMember.getCellphone())) {
+      log.info("받은 Cellphone는 {}", memberDTO.getCellphone());
+      existMember.setCellphone(memberDTO.getCellphone());
+    }else{
+      return null;
+    }
+    if (memberDTO.getEmail() != null && !memberDTO.getEmail().equals(existMember.getEmail())) {
+      log.info("받은 Email는 {}", memberDTO.getEmail());
+      existMember.setEmail(memberDTO.getEmail());
+    }else{
+      return null;
+    }
+
+    memberRepository.save(memberMapper.memberDTOToMember(existMember));
+
+    return existMember;
+  }
 
   //내 프로필 조회
   @Override
@@ -174,17 +192,23 @@ public class MemberServiceImpl implements MemberService{
   //상대 프로필 조회
   @Override
   public MemberDTO getOtherMember(String tag) throws Exception {
+    log.info("받은태그는{}",tag);
     //상대프로필은 프로필사진, 닉네임, 태그, 동네, 친화력이있어야한다.
     Member member = memberRepository.findByTag(tag).orElse(null);
 
     if(member != null){
-      return MemberDTO.builder()
+
+      MemberDTO memberDTO = MemberDTO.builder()
           .picture(member.getPicture())
           .nickname(member.getNickname())
           .tag(member.getTag())
           .dongNe(member.getDongNe())
           .affinity(member.getAffinity())
           .build();
+
+      log.info("반환하는 셀러는{}",memberDTO);
+
+      return memberDTO;
     }
     return null;
   }
@@ -352,7 +376,7 @@ public class MemberServiceImpl implements MemberService{
   @Override
   public List<OriScheMemChatFavDTO> getFavoriteList(String tag, SearchDTO searchDTO) throws Exception {
     Pageable pageable = PageRequest.of(searchDTO.getCurrentPage(), searchDTO.getPageSize());
-    return oriScheMenChatFavRepository.findProductsByMemberTag(tag, pageable)
+    return oriScheMenChatFavRepository.findByMemberTagAndOrikkiriScheduleIsNullAndOrikkiriIsNullAndAnsQuestionsIsNull(tag, pageable)
         .map(oriScheMemChatFavMapper::oriScheMemChatFavToOriScheMemChatFavDTO)
         .toList();
   }
@@ -515,18 +539,20 @@ public class MemberServiceImpl implements MemberService{
   }
 
   @Override
-  public void updateCellphone(MemberDTO memberDTO) throws Exception{
+  public boolean updateCellphone(MemberDTO memberDTO) throws Exception{
     log.info("memberDTO는 {}", memberDTO);
 
     // 이메일로 회원을 찾습니다.
     MemberDTO existMemberDTO = memberMapper.memberToMemberDTO(memberRepository.findByEmail(memberDTO.getEmail()).orElse(null));
 
-    existMemberDTO.setCellphone(memberDTO.getCellphone());
-
-    updateMember(existMemberDTO);
-
+    // Null이 아니고 값이 다를 경우에만 수정
+    if (memberDTO.getCellphone() != null && !memberDTO.getCellphone().equals(existMemberDTO.getCellphone())) {
+      log.info("받은 Cellphone는 {}", memberDTO.getCellphone());
+      existMemberDTO.setCellphone(memberDTO.getCellphone());
+      memberRepository.save(memberMapper.memberDTOToMember(existMemberDTO));
+      return true;
+    }
+      return false;
   }
-
-
 }
 

@@ -12,7 +12,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import kr.nadeuli.dto.ImageDTO;
+import kr.nadeuli.dto.MemberDTO;
 import kr.nadeuli.dto.NadeuliDeliveryDTO;
+import kr.nadeuli.dto.OrikkiriDTO;
 import kr.nadeuli.dto.SearchDTO;
 import kr.nadeuli.entity.Image;
 import kr.nadeuli.entity.NadeuliDelivery;
@@ -21,6 +23,9 @@ import kr.nadeuli.entity.Product;
 import kr.nadeuli.mapper.ImageMapper;
 import kr.nadeuli.service.image.ImageRepository;
 import kr.nadeuli.service.image.ImageService;
+import kr.nadeuli.service.member.MemberService;
+import kr.nadeuli.service.orikkiri.OrikkiriService;
+import kr.nadeuli.service.orikkirimanage.OrikkiriManageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
@@ -41,6 +46,8 @@ public class ImageServiceImpl implements ImageService {
 
     private final ImageRepository imageRepository;
     private final ImageMapper imageMapper;
+    private final MemberService memberService;
+    private final OrikkiriManageService orikkiriManageService;
 
     @Value("${cloud.aws.s3.endpoint}")
     private String endpoint;
@@ -62,7 +69,7 @@ public class ImageServiceImpl implements ImageService {
     int imageNum;
 
     @Override
-    public void addImage(List<MultipartFile> multipartFiles, ImageDTO imageDTO) {
+    public void addImage(List<MultipartFile> multipartFiles, Object dto) {
         // forEach 구문을 통해 multipartFiles로 넘어온 파일들 하나씩 처리
         multipartFiles.forEach(file -> {
             String fileName = createFileName(file.getOriginalFilename());
@@ -71,19 +78,31 @@ public class ImageServiceImpl implements ImageService {
             objectMetadata.setContentType(file.getContentType());
 
             try (InputStream inputStream = file.getInputStream()) {
-                // S3에 파일 업로드
                 String subDirectory = isImageFile(getFileExtension(fileName)) ? subDirectory1 : isVideoFile(getFileExtension(fileName)) ? subDirectory2 : "";
                 String s3ObjectKey = subDirectory + fileName;
-                log.info("subDirectory:{}",subDirectory);
-                log.info("s3ObjectKey:{}",s3ObjectKey);
+                log.info("subDirectory:{}", subDirectory);
+                log.info("s3ObjectKey:{}", s3ObjectKey);
 
                 amazonS3.putObject(new PutObjectRequest(bucket, s3ObjectKey, inputStream, objectMetadata)
                                        .withCannedAcl(CannedAccessControlList.PublicRead));
 
-                imageDTO.setImageName(generateImageUrl(fileName));
-                imageRepository.save(imageMapper.imageDTOToImage(imageDTO));
+                if (dto instanceof MemberDTO) {
+                    MemberDTO memberDTO = (MemberDTO) dto;
+                    memberDTO.setPicture(endpoint + "/" + bucket + "/" + s3ObjectKey);
+                    memberService.updateMember(memberDTO);
+                } else if (dto instanceof ImageDTO) {
+                    ImageDTO imageDTO = (ImageDTO) dto;
+                    imageDTO.setImageName(generateImageUrl(fileName));
+                    imageRepository.save(imageMapper.imageDTOToImage(imageDTO));
+                } else if (dto instanceof OrikkiriDTO) {
+                    OrikkiriDTO orikkiriDTO = (OrikkiriDTO) dto;
+                    orikkiriDTO.setOrikkiriPicture(endpoint + "/" + bucket + "/" + s3ObjectKey);
+                    orikkiriManageService.updateOrikkiri(orikkiriDTO);
+                }
             } catch (IOException e) {
                 throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "파일 업로드에 실패했습니다.");
+            } catch (Exception e) {
+              throw new RuntimeException(e);
             }
         });
     }
@@ -133,10 +152,19 @@ public class ImageServiceImpl implements ImageService {
         imageRepository.deleteById(imageId);
     }
 
+
     public void deleteImageByFileName(String fileName) {
         // endpoint와 bucket을 파일 경로에서 먼저 삭제
         String cleanedFileName = removeEndpointAndBucket(fileName);
+        log.info("cleanedFileName,{}",cleanedFileName);
+        // S3에서 파일 삭제
+        amazonS3.deleteObject(new DeleteObjectRequest(bucket, cleanedFileName));
+    }
 
+    public void deleteProfile(String fileName){
+        // endpoint와 bucket을 파일 경로에서 먼저 삭제
+        String cleanedFileName = removeEndpointForProfile(fileName);
+        log.info("cleanedFileName,{}",cleanedFileName);
         // S3에서 파일 삭제
         amazonS3.deleteObject(new DeleteObjectRequest(bucket, cleanedFileName));
     }
@@ -209,6 +237,13 @@ public class ImageServiceImpl implements ImageService {
 
         // 파일명에서 '/image' 또는 '/video'를 제거
         cleanedFileName = removeSubDirectory(cleanedFileName);
+
+        return cleanedFileName;
+    }
+
+    private String removeEndpointForProfile(String fileName) {
+        // endpoint와 bucket을 파일 경로에서 삭제
+        String cleanedFileName = fileName.replaceFirst(endpoint + "/" + bucket + "/", "");
 
         return cleanedFileName;
     }

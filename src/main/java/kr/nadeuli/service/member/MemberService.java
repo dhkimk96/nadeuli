@@ -16,7 +16,9 @@ public interface MemberService {
 
   public String addTag() throws Exception;
 
-  public void updateMember(MemberDTO memberDTO) throws Exception;
+  public MemberDTO updateMember(MemberDTO memberDTO) throws Exception;
+
+  public MemberDTO updateTo(MemberDTO memberDTO) throws Exception;
 
   public MemberDTO getMember(String tag) throws Exception;
 
@@ -50,6 +52,6 @@ public interface MemberService {
 
   public boolean findAccount(String email) throws Exception;
 
-  public void updateCellphone(MemberDTO memberDTO) throws Exception;
+  public boolean updateCellphone(MemberDTO memberDTO) throws Exception;
 
 }
