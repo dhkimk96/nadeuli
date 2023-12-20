@@ -30,7 +30,7 @@ public class Orikkiri {
     @Column(name = "orikkiri_name", nullable = false, length = 255)
     private String orikkiriName;
 
-    @Column(name = "orikkiri_picture", nullable = false, length = 50000)
+    @Column(name = "orikkiri_picture", columnDefinition = "VARCHAR(10000) DEFAULT 'https://kr.object.ncloudstorage.com/nadeuli/image/empty.jpg'")
     private String orikkiriPicture;
 
     @Column(name = "orikkiri_introduction", nullable = false, length = 5000)

@@ -251,13 +251,13 @@ public class MemberRestController {
   }
 
   @PostMapping("/updateProfile")
-  public MemberDTO updateProfile(@ModelAttribute MemberDTO memberDTO,@RequestParam("image") List<MultipartFile> image) throws Exception {
+  public MemberDTO updateProfile(@ModelAttribute MemberDTO memberDTO,@RequestParam("image") MultipartFile image) throws Exception {
     log.info("/member/updateProfile : POST : {}", memberDTO);
     String fileName = memberDTO.getPicture();
     imageService.deleteProfile(fileName);
 
     // 이미지 업로드 및 저장
-    imageService.addImage(image, memberDTO);
+    imageService.addProfile(image, memberDTO);
     return getMember(memberDTO.getTag());
   }
 

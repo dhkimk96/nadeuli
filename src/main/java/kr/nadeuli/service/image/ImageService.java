@@ -11,7 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface ImageService {
 
-    void addImage(List<MultipartFile> multipartFiles, Object dto) throws Exception;
+    void addImage(List<MultipartFile> multipartFiles,ImageDTO imageDTO) throws Exception;
 
     ImageDTO getImage(long imageId) throws Exception;
 
@@ -26,4 +26,6 @@ public interface ImageService {
     void deleteProfile(String fileName) throws Exception;
 
     void deleteImage(long imageId) throws Exception;
+
+    void addProfile(MultipartFile profileImage, Object dto) throws Exception;
 }
