@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface OrikkiriManageService {
 
-    void addOrikkiri(OrikkiriDTO orikkiriDTO) throws Exception;
+    OrikkiriDTO addOrikkiri(OrikkiriDTO orikkiriDTO) throws Exception;
 
     void updateOrikkiri(OrikkiriDTO orikkiriDTO) throws Exception;
 
