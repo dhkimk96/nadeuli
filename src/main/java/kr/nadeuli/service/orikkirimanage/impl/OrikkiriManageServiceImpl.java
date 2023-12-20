@@ -34,10 +34,12 @@ public class OrikkiriManageServiceImpl implements OrikkiriManageService {
     private final AnsQuestionMapper ansQuestionMapper ;
 
     @Override
-    public void addOrikkiri(OrikkiriDTO orikkiriDTO) throws Exception {
+    public OrikkiriDTO addOrikkiri(OrikkiriDTO orikkiriDTO) throws Exception {
         Orikkiri orikkiri = orikkiriMapper.orikkiriDTOToOrikkiri(orikkiriDTO);
         log.info(orikkiri);
-        orikkiriManageRepository.save(orikkiri);
+
+
+        return orikkiriMapper.orikkiriToOrikkiriDTO(orikkiriManageRepository.save(orikkiri));
     }
 
     @Override
