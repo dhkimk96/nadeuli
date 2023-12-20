@@ -5,6 +5,7 @@ import java.util.Map;
 import kr.nadeuli.dto.AnsQuestionDTO;
 import kr.nadeuli.dto.OrikkiriDTO;
 import kr.nadeuli.dto.SearchDTO;
+import kr.nadeuli.dto.TokenDTO;
 import kr.nadeuli.service.image.ImageService;
 import kr.nadeuli.service.orikkirimanage.OrikkiriManageService;
 import lombok.RequiredArgsConstructor;
@@ -35,15 +36,20 @@ public class OrikkiriManageRestController {
   private int pageSize;
 
   @PostMapping("/addOrikkiri")
-  public ResponseEntity<String> addOrikkiri(@RequestBody Map<String, Object> requestData,
+  public OrikkiriDTO addOrikkiri(@ModelAttribute OrikkiriDTO orikkiriDTO,
       @RequestParam(value = "image", required = false) MultipartFile image) throws Exception {
 
-    log.info("addOrikkiri에서 받은 OrikkiriDTO : {}",requestData);
-    OrikkiriDTO orikkiriDTO = objectMapper.convertValue(requestData.get("orikkiriDTO"), OrikkiriDTO.class);
-    OrikkiriDTO existOrikkiriDTO = orikkiriManageService.addOrikkiri(orikkiriDTO);
-    imageService.addProfile(image, existOrikkiriDTO);
+    log.info("addOrikkiri에서 받은 OrikkiriDTO : {}", orikkiriDTO);
+    log.info("addOrikkiri에서 받은 image : {}", image);
 
-    return ResponseEntity.status(HttpStatus.OK).body("{\"success\": true}");
+    OrikkiriDTO existOrikkiriDTO = orikkiriManageService.addOrikkiri(orikkiriDTO);
+
+    // image가 null이 아닌 경우에만 실행
+    if (image != null) {
+      imageService.addProfile(image, existOrikkiriDTO);
+    }
+
+    return existOrikkiriDTO;
   }
 
   @PostMapping("/updateOrikkiri")
@@ -73,8 +79,13 @@ public class OrikkiriManageRestController {
   }
 
   @PostMapping("/addAnsQuestion")
-  public ResponseEntity<String> addAnsQuestion(@RequestBody AnsQuestionDTO ansQuestionDTO)
-      throws Exception {
+  public ResponseEntity<String> addAnsQuestion(@RequestParam("orikkiriId") long orikkiriId,
+      @RequestParam("content") String content) throws Exception {
+    log.info("Received orikkiriId: {}, content: {}", orikkiriId, content);
+    AnsQuestionDTO ansQuestionDTO = AnsQuestionDTO.builder()
+        .content(content)
+        .orikkiri(orikkiriManageService.getOrikkiri(orikkiriId))
+        .build();
     orikkiriManageService.addAnsQuestion(ansQuestionDTO);
     return ResponseEntity.status(HttpStatus.OK).body("{\"success\": true}");
   }
