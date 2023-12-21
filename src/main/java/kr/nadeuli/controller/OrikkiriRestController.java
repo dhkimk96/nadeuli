@@ -1,9 +1,14 @@
 package kr.nadeuli.controller;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Map;
 import kr.nadeuli.dto.*;
+import kr.nadeuli.entity.Orikkiri;
 import kr.nadeuli.service.comment.CommentService;
 import kr.nadeuli.service.image.ImageService;
 import kr.nadeuli.service.orikkiri.OrikkiriService;
+import kr.nadeuli.service.orikkirimanage.OrikkiriManageService;
 import kr.nadeuli.service.post.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -17,7 +22,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/orikkiri")
+@RequestMapping("/nadeuli/orikkiri")
 @RequiredArgsConstructor
 @Log4j2
 public class OrikkiriRestController {
@@ -26,23 +31,44 @@ public class OrikkiriRestController {
     private final PostService postService;
     private final CommentService commentService;
     private final ImageService imageService;
+    private final OrikkiriManageService orikkiriManageService;
+    private final ObjectMapper objectMapper;
 
     @Value("${pageSize}")
     private int pageSize;
 
     @PostMapping("/addOrikkrirSignUp")
-    public ResponseEntity<String> addOrikkrirSignUp(OriScheMemChatFavDTO oriScheMemChatFavDTO) throws Exception {
-        orikkiriService.addOrikkrirSignUp(oriScheMemChatFavDTO);
-        return ResponseEntity.status(HttpStatus.OK).body("{\"success\": true}");
+    public OriScheMemChatFavDTO addOrikkrirSignUp(@RequestBody Map<String, Object> requestData) throws Exception {
+        log.info("받은oriScheMemChatFavDTO는 {}",requestData);
+        // MemberDTO 매핑
+        MemberDTO memberDTO = objectMapper.convertValue(requestData.get("member"), MemberDTO.class);
+
+        // OrikkiriDTO 매핑
+        OrikkiriDTO orikkiriDTO = objectMapper.convertValue(requestData.get("orikkiri"), OrikkiriDTO.class);
+        // AnsQuestionDTO 매핑
+        List<AnsQuestionDTO> ansQuestionDTOList = objectMapper.convertValue(requestData.get("ansQuestions"), new TypeReference<List<AnsQuestionDTO>>() {});
+
+        log.info("받은oriScheMemChatFavDTO는 {}",memberDTO);
+        log.info("받은oriScheMemChatFavDTO는 {}",orikkiriDTO);
+        log.info("받은oriScheMemChatFavDTO는 {}",ansQuestionDTOList);
+
+        OriScheMemChatFavDTO oriScheMemChatFavDTO = OriScheMemChatFavDTO.builder()
+            .member(memberDTO)
+            .orikkiri(orikkiriDTO)
+            .ansQuestions(ansQuestionDTOList)
+            .build();
+        return orikkiriService.addOrikkrirSignUp(oriScheMemChatFavDTO);
     }
 
-    @GetMapping("/getOrikkrirSignupList/{orikkiriId}/{currentPage}")
-    public List<OriScheMemChatFavDTO> getOrikkiriSignUpList(@PathVariable long orikkiriId, @PathVariable int currentPage) throws Exception {
+    @GetMapping("/getOrikkrirSignupList/{orikkiriId}")
+    public List<AnsQuestionDTO> getOrikkiriSignUpList(@PathVariable long orikkiriId) throws Exception {
         SearchDTO searchDTO = SearchDTO.builder()
-                .currentPage(currentPage)
+                .currentPage(0)
                 .pageSize(pageSize)
                 .build();
-        return orikkiriService.getOrikkiriSignUpList(orikkiriId, searchDTO);
+
+        List<AnsQuestionDTO> ansQuestionDTO =orikkiriService.getOrikkiriSignUpList(orikkiriId, searchDTO);
+        return ansQuestionDTO;
     }
 
     @GetMapping("/getMyOrikkiriList/{tag}/{currentPage}")

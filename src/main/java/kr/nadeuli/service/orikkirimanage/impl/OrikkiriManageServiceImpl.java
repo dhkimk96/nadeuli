@@ -1,12 +1,17 @@
 package kr.nadeuli.service.orikkirimanage.impl;
 
+import java.util.Optional;
 import kr.nadeuli.dto.AnsQuestionDTO;
+import kr.nadeuli.dto.MemberDTO;
+import kr.nadeuli.dto.OriScheMemChatFavDTO;
 import kr.nadeuli.dto.OrikkiriDTO;
 import kr.nadeuli.dto.SearchDTO;
 import kr.nadeuli.entity.AnsQuestion;
+import kr.nadeuli.entity.OriScheMemChatFav;
 import kr.nadeuli.entity.Orikkiri;
 import kr.nadeuli.mapper.AnsQuestionMapper;
 import kr.nadeuli.mapper.OrikkiriMapper;
+import kr.nadeuli.service.orikkiri.OriScheMenChatFavRepository;
 import kr.nadeuli.service.orikkirimanage.AnsQuestionRepository;
 import kr.nadeuli.service.orikkirimanage.OrikkiriManageRepository;
 import kr.nadeuli.service.orikkirimanage.OrikkiriManageService;
@@ -28,7 +33,7 @@ public class OrikkiriManageServiceImpl implements OrikkiriManageService {
 
     private final OrikkiriManageRepository orikkiriManageRepository;
     private final OrikkiriMapper orikkiriMapper;
-
+    private final OriScheMenChatFavRepository oriScheMenChatFavRepository;
 
     private final AnsQuestionRepository ansQuestionRepository;
     private final AnsQuestionMapper ansQuestionMapper ;
@@ -67,6 +72,16 @@ public class OrikkiriManageServiceImpl implements OrikkiriManageService {
         ansQuestionRepository.save(ansQuestion);
     }
 
+//    @Override
+//    public void addAns(AnsQuestionDTO ansQuestionDTO) throws Exception {
+//        AnsQuestion ansQuestion = ansQuestionMapper.ansQuestionDTOToAnsQuestion(ansQuestionDTO);
+//        log.info(ansQuestion);
+//        AnsQuestionDTO existAnsQuestion = ansQuestionMapper.ansQuestionToAnsQuestionDTO(ansQuestionRepository.save(ansQuestion));
+//        Optional<OriScheMemChatFav> oriScheMemChatFav = oriScheMenChatFavRepository.findById(existAnsQuestion.getOriScheMemChatFav().getOriScheMemChatFavId());
+//        oriScheMemChatFav.get().setAnsQuestions((List<AnsQuestion>) existAnsQuestion);
+//        oriScheMenChatFavRepository.save(oriScheMemChatFav.get().getOriScheMemChatFavId());
+//    }
+
     @Override
     public void updateAnsQuestion(AnsQuestionDTO ansQuestionDTO) throws Exception {
         AnsQuestion ansQuestion = ansQuestionMapper.ansQuestionDTOToAnsQuestion(ansQuestionDTO);
@@ -83,7 +98,7 @@ public class OrikkiriManageServiceImpl implements OrikkiriManageService {
     public List<AnsQuestionDTO> getAnsQuestionList(long orikkiriId, SearchDTO searchDTO) throws Exception {
         Pageable pageable = PageRequest.of(searchDTO.getCurrentPage(), searchDTO.getPageSize());
         Page<AnsQuestion> ansQuestionPage;
-        ansQuestionPage = ansQuestionRepository.findByOrikkiri(Orikkiri.builder().orikkiriId(orikkiriId).build(), pageable);
+        ansQuestionPage = ansQuestionRepository.findByOrikkiriAndOriScheMemChatFavIsNull(Orikkiri.builder().orikkiriId(orikkiriId).build(), pageable);
         log.info(ansQuestionPage);
         return ansQuestionPage.map(ansQuestionMapper::ansQuestionToAnsQuestionDTO).toList();
     }
@@ -93,5 +108,6 @@ public class OrikkiriManageServiceImpl implements OrikkiriManageService {
         log.info(ansQuestionId);
         ansQuestionRepository.deleteById(ansQuestionId);
     }
+
 
 }

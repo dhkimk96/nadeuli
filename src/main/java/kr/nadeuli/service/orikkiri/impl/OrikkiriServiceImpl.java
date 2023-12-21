@@ -1,14 +1,19 @@
 package kr.nadeuli.service.orikkiri.impl;
 
+import kr.nadeuli.dto.AnsQuestionDTO;
+import kr.nadeuli.dto.MemberDTO;
 import kr.nadeuli.dto.OriScheMemChatFavDTO;
 import kr.nadeuli.dto.OrikkiriScheduleDTO;
 import kr.nadeuli.dto.SearchDTO;
 import kr.nadeuli.entity.*;
+import kr.nadeuli.mapper.AnsQuestionMapper;
 import kr.nadeuli.mapper.OriScheMemChatFavMapper;
 import kr.nadeuli.mapper.OrikkiriScheduleMapper;
+import kr.nadeuli.service.member.MemberService;
 import kr.nadeuli.service.orikkiri.OriScheMenChatFavRepository;
 import kr.nadeuli.service.orikkiri.OrikkiriScheduleRepository;
 import kr.nadeuli.service.orikkiri.OrikkiriService;
+import kr.nadeuli.service.orikkirimanage.AnsQuestionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,26 +35,39 @@ public class OrikkiriServiceImpl implements OrikkiriService {
 
 
     private final OriScheMenChatFavRepository oriScheMenChatFavRepository;
+    private final AnsQuestionRepository ansQuestionRepository;
+    private final AnsQuestionMapper ansQuestionMapper;
     private final OriScheMemChatFavMapper oriScheMemChatFavMapper;
+    private final MemberService memberService;
 
     private final OrikkiriScheduleRepository orikkiriScheduleRepository;
     private final OrikkiriScheduleMapper orikkiriScheduleMapper;
 
 
     @Override
-    public void addOrikkrirSignUp(OriScheMemChatFavDTO oriScheMemChatFavDTO) throws Exception {
+    public OriScheMemChatFavDTO addOrikkrirSignUp(OriScheMemChatFavDTO oriScheMemChatFavDTO) throws Exception {
         OriScheMemChatFav oriScheMemChatFav = oriScheMemChatFavMapper.oriScheMemChatFavDTOToOriScheMemChatFav(oriScheMemChatFavDTO);
-        log.info(oriScheMemChatFav);
-        oriScheMenChatFavRepository.save(oriScheMemChatFav);
+        log.info("받은 oriScheMemChatFavDTO는{}",oriScheMemChatFavDTO);
+        log.info("변환한 OriScheMemChatFav는{}",oriScheMemChatFav);
+        OriScheMemChatFavDTO existOriScheMemChatFavDTO = oriScheMemChatFavMapper.oriScheMemChatFavToOriScheMemChatFavDTO(oriScheMenChatFavRepository.save(oriScheMemChatFav));
+        return existOriScheMemChatFavDTO;
     }
 
     @Override
-    public List<OriScheMemChatFavDTO> getOrikkiriSignUpList(long orikkiriId, SearchDTO searchDTO) throws Exception {
+    public List<AnsQuestionDTO> getOrikkiriSignUpList(long orikkiriId, SearchDTO searchDTO) throws Exception {
         Pageable pageable = PageRequest.of(searchDTO.getCurrentPage(), searchDTO.getPageSize());
-        Page<OriScheMemChatFav> oriScheMemChatFavPage;
-        oriScheMemChatFavPage = oriScheMenChatFavRepository.findByOrikkiriAndAnsQuestionsNotNull(Orikkiri.builder().orikkiriId(orikkiriId).build(), pageable);
-        log.info(oriScheMemChatFavPage);
-        return oriScheMemChatFavPage.map(oriScheMemChatFavMapper::oriScheMemChatFavToOriScheMemChatFavDTO).toList();
+        Page<AnsQuestion> ansQuestionPage;
+        ansQuestionPage = ansQuestionRepository.findByOrikkiriAndOriScheMemChatFavNotNull(Orikkiri.builder().orikkiriId(orikkiriId).build(), pageable);
+        log.info(ansQuestionPage);
+        return ansQuestionPage.map(ansQuestionMapper::ansQuestionToAnsQuestionDTO).toList();
+    }
+
+
+    @Override
+    public MemberDTO getAnsMember(OriScheMemChatFavDTO oriScheMemChatFavDTO)throws Exception{
+        log.info("getAnsMember에서 받은 oriScheMemChatFavDTO: {}",oriScheMemChatFavDTO);
+        log.info("getAnsMember에서 받은 memberDTO: {}",memberService.getMember(oriScheMemChatFavDTO.getMember().getTag()));
+        return memberService.getMember(oriScheMemChatFavDTO.getMember().getTag());
     }
 
     @Override

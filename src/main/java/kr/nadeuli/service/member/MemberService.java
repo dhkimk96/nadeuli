@@ -1,5 +1,6 @@
 package kr.nadeuli.service.member;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import java.util.List;
 import kr.nadeuli.dto.AddressDTO;
 import kr.nadeuli.dto.BlockDTO;
@@ -8,6 +9,7 @@ import kr.nadeuli.dto.MemberDTO;
 import kr.nadeuli.dto.NadeuliDeliveryDTO;
 import kr.nadeuli.dto.NadeuliPayHistoryDTO;
 import kr.nadeuli.dto.OriScheMemChatFavDTO;
+import kr.nadeuli.dto.PortOneAccountDTO;
 import kr.nadeuli.dto.ReportDTO;
 import kr.nadeuli.dto.SearchDTO;
 
@@ -40,18 +42,29 @@ public interface MemberService {
 
   public void deleteFavorite(String tag, Long productId) throws Exception;
 
-  public List<OriScheMemChatFavDTO> getFavoriteList(String tag, SearchDTO searchDTO) throws Exception;
+  public List<OriScheMemChatFavDTO> getFavoriteList(String tag, SearchDTO searchDTO)
+      throws Exception;
 
   public void addReport(ReportDTO reportDTO) throws Exception;
 
   public String getAffinityToolTip() throws Exception;
 
-  public boolean handleNadeuliPayBalance(String tag, NadeuliPayHistoryDTO nadeuliPayHistoryDTO, NadeuliDeliveryDTO nadeuliDeliveryDTO, Long beforeDeposit) throws Exception;
+  public boolean handleNadeuliPayBalance(String tag, NadeuliPayHistoryDTO nadeuliPayHistoryDTO,
+      NadeuliDeliveryDTO nadeuliDeliveryDTO, Long beforeDeposit) throws Exception;
 
-  public void  updateAffinity(String tag) throws Exception;
+  public void updateAffinity(String tag) throws Exception;
 
   public boolean findAccount(String email) throws Exception;
 
   public boolean updateCellphone(MemberDTO memberDTO) throws Exception;
 
+  String getPortOneToken() throws JsonProcessingException;
+
+  String getPortOneAccountName(String accessToken, String account, String code)
+      throws JsonProcessingException;
+
+  boolean checkPortOneAccountName(String name, String account, String code)
+      throws JsonProcessingException;
+
+  public void addBankAccount(PortOneAccountDTO portOneAccountDTO) throws Exception;
 }

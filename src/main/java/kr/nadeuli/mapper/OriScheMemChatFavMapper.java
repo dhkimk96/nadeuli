@@ -16,14 +16,14 @@ public interface OriScheMemChatFavMapper {
     @Mapping(source = "orikkiri", target = "orikkiri", qualifiedByName = "orikkiriDTOToOrikkiri")
     @Mapping(source = "orikkiriSchedule", target = "orikkiriSchedule", qualifiedByName = "orikkiriScheduleDTOToOrikkiriSchedule")
     @Mapping(source = "product", target = "product", qualifiedByName = "productDTOToProduct")
-//    @Mapping(source = "ansQuestions", target = "ansQuestions", qualifiedByName = "ansQuestionDTOListToAnsQuestionList")
+    @Mapping(source = "ansQuestions", target = "ansQuestions", qualifiedByName = "ansQuestionsDTOListToAnsQuestionsList")
     OriScheMemChatFav oriScheMemChatFavDTOToOriScheMemChatFav(OriScheMemChatFavDTO oriScheMemChatFavDTO);
 
     @Mapping(source = "member", target = "member", qualifiedByName = "memberToMemberDTO")
     @Mapping(source = "orikkiri", target = "orikkiri", qualifiedByName = "orikkiriToOrikkiriDTO")
     @Mapping(source = "orikkiriSchedule", target = "orikkiriSchedule", qualifiedByName = "orikkiriScheduleToOrikkiriScheduleDTO")
     @Mapping(source = "product", target = "product", qualifiedByName = "productToProductDTO")
-//    @Mapping(source = "ansQuestions", target = "ansQuestions", qualifiedByName = "ansQuestionListToAnsQuestionDTOList")
+    @Mapping(source = "ansQuestions", target = "ansQuestions", qualifiedByName = "ansQuestionListToAnsQuestionDTOList")
     OriScheMemChatFavDTO oriScheMemChatFavToOriScheMemChatFavDTO(OriScheMemChatFav oriScheMemChatFav);
 
     @Named("memberDTOToMember")
@@ -93,26 +93,25 @@ public interface OriScheMemChatFavMapper {
         return ProductDTO.builder().productId(product.getProductId()).build();
     }
 
-//    // 추가된 메서드: DTO에서 Entity로 List<AnsQuestion> 매핑하는 메서드
-//    @Named("ansQuestionsDTOListToAnsQuestionsList") // 이름 수정
-//    default List<AnsQuestion> ansQuestionsDTOListToAnsQuestionsList(List<AnsQuestionDTO> ansQuestionDTO) {
-//        if (ansQuestionDTO == null) {
-//            return null;
-//        }
-//        return ansQuestionDTO.stream()
-//                .map(AnsQuestionDTO -> AnsQuestion.builder().content(ansQuestionDTO.getContent()).build())
-//                .collect(Collectors.toList());
-//    }
-//
-//    // 추가된 메서드: Entity에서 DTO로 List<AnsQuestion> 매핑하는 메서드
-//    @Named("ansQuestionListToAnsQuestionDTOList")
-//    default List<AnsQuestionDTO> ansQuestionListToAnsQuestionDTOList(List<AnsQuestion> ansQuestions) {
-//        if (ansQuestions == null) {
-//            return null;
-//        }
-//        return ansQuestions.stream()
-//                .map(AnsQuestions-> AnsQuestionDTO.builder().content(ansQuestions.getContent()).build())
-//                .collect(Collectors.toList());
-//    }
+    // 추가된 메서드: DTO에서 Entity로 List<AnsQuestion> 매핑하는 메서드
+    @Named("ansQuestionsDTOListToAnsQuestionsList")
+    default List<AnsQuestion> ansQuestionsDTOListToAnsQuestionsList(List<AnsQuestionDTO> ansQuestionDTOList) {
+        if (ansQuestionDTOList == null) {
+            return null;
+        }
+        return ansQuestionDTOList.stream()
+            .map(ansQuestionDTO -> AnsQuestion.builder().content(ansQuestionDTO.getContent()).build())
+            .collect(Collectors.toList());
+    }
+
+    @Named("ansQuestionListToAnsQuestionDTOList")
+    default List<AnsQuestionDTO> ansQuestionListToAnsQuestionDTOList(List<AnsQuestion> ansQuestions) {
+        if (ansQuestions == null) {
+            return null;
+        }
+        return ansQuestions.stream()
+            .map(ansQuestion -> AnsQuestionDTO.builder().content(ansQuestion.getContent()).build())
+            .collect(Collectors.toList());
+    }
 }
 
