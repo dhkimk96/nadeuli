@@ -60,6 +60,8 @@ public interface CommentMapper {
         return MemberDTO.builder().tag(member.getTag())
                 .nickname(member.getNickname())
                 .picture(member.getPicture())
+                .gu(member.getGu())
+                .dongNe(member.getDongNe())
                 .build();
     }
 

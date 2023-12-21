@@ -109,7 +109,7 @@ public class PostServiceImpl implements PostService {
                 "{\"createCdn\": false, " +
                 "\"cdnType\": \"GLOBAL_EDGE\"," +
                 "\"cdnInstanceNo\": 1827}," +
-                "\"qualitySetId\": 5," +
+                "\"qualitySetId\": 3," +
                 "\"useDvr\": true," +
                 "\"immediateOnAir\": true," +
                 "\"timemachineMin\": 360, " +
@@ -135,19 +135,14 @@ public class PostServiceImpl implements PostService {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode rootNode = objectMapper.readTree(responseEntity.getBody());
         JsonNode contentNode = rootNode.path("content");
-
         String channelId = contentNode.path("channelId").asText();
-
         StreamingDTO fetchedStreamingDTO = getStreamingChannel(channelId);
-
-        System.out.println(fetchedStreamingDTO);
-
         return fetchedStreamingDTO;
     }
 
+    @Override
     public StreamingDTO getStreamingChannel(String channelId) throws Exception {
         String time = String.valueOf(System.currentTimeMillis());
-        System.out.println(channelId);
 
         // 헤더 설정
         HttpHeaders headers = new HttpHeaders();
@@ -164,24 +159,25 @@ public class PostServiceImpl implements PostService {
         String url = "https://livestation.apigw.ntruss.com/api/v2/channels/" + channelId;
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
 
-        System.out.println(response.getBody());
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode rootNode = objectMapper.readTree(response.getBody());
         JsonNode contentNode = rootNode.path("content");
 
+        StreamingDTO streamingUrlDTO = getStreamingUrl(channelId);
+
         return StreamingDTO.builder()
                 .channelId(contentNode.path("channelId").asText())
                 .channelName(contentNode.path("channelName").asText())
+                .rtmpUrl(contentNode.path("publishUrl").asText())
+                .globalRtmpUrl(contentNode.path("globalPublishUrl").asText())
                 .channelStatus(contentNode.path("channelStatus").asText())
                 .streamKey(contentNode.path("streamKey").asText())
-                .url(contentNode.path("url").asText())
+                .url(streamingUrlDTO.getUrl())
                 .build();
     }
 
-    @Override
     public StreamingDTO getStreamingUrl(String channelId) throws Exception {
         String time = String.valueOf(System.currentTimeMillis());
-        System.out.println(channelId);
 
         // 헤더 설정
         HttpHeaders headers = new HttpHeaders();
@@ -195,26 +191,34 @@ public class PostServiceImpl implements PostService {
 
         // RestTemplate 객체를 생성하고 GET 요청을 보냄
         RestTemplate restTemplate = new RestTemplate();
-        String url = "https://livestation.apigw.ntruss.com/api/v2/channels/" + channelId;
+        String url = "https://livestation.apigw.ntruss.com/api/v2/channels/"+channelId+"/serviceUrls?serviceUrlType=GENERAL";
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
 
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode rootNode = objectMapper.readTree(response.getBody());
-        JsonNode contentNode = rootNode.path("content");
+        JsonNode contentArray = rootNode.path("content");
+
+        // 'ABR' 이름을 가진 객체 찾기
+        JsonNode abrNode = null;
+        for (JsonNode node : contentArray) {
+            if ("ABR".equals(node.path("name").asText())) {
+                abrNode = node;
+                break;
+            }
+        }
+
+        // 'ABR' 객체에서 URL 추출
+        String abrUrl = abrNode != null ? abrNode.path("url").asText() : null;
 
         return StreamingDTO.builder()
-                .channelId(contentNode.path("channelId").asText())
-                .channelName(contentNode.path("channelName").asText())
-                .channelStatus(contentNode.path("channelStatus").asText())
-                .streamKey(contentNode.path("streamKey").asText())
-                .url(contentNode.path("url").asText())
+                .url(abrUrl) // 'ABR' 객체의 URL 사용
                 .build();
     }
+
 
     @Override
     public void deleteStreamingChannel(String channelId) throws Exception {
         String time = String.valueOf(System.currentTimeMillis());
-        System.out.println(channelId);
 
         // 헤더 설정
         HttpHeaders headers = new HttpHeaders();
@@ -257,9 +261,6 @@ public class PostServiceImpl implements PostService {
         byte[] rawHmac = mac.doFinal(message.getBytes("UTF-8"));
         String encodeBase64String = Base64.getEncoder().encodeToString(rawHmac);
 
-        System.out.println(timestamp);
-        System.out.println(encodeBase64String);
-
         return encodeBase64String;
     }
 
@@ -297,7 +298,7 @@ public class PostServiceImpl implements PostService {
         String space = " ";					// 공백
         String newLine = "\n";  				// 줄바꿈
         String method = "GET";  				// HTTP 메서드
-        String url = "/api/v2/channels/"+ channelId + "/serviceUrls?serviceUrlType=GENERAL";	// 도메인을 제외한 "/" 아래 전체 url (쿼리스트링 포함)
+        String url = "/api/v2/channels/"+channelId+"/serviceUrls?serviceUrlType=GENERAL";	// 도메인을 제외한 "/" 아래 전체 url (쿼리스트링 포함)
         String timestamp = time;		// 현재 타임스탬프 (epoch, millisecond)
 
         String message = new StringBuilder()
@@ -317,8 +318,8 @@ public class PostServiceImpl implements PostService {
         byte[] rawHmac = mac.doFinal(message.getBytes("UTF-8"));
         String encodeBase64String = Base64.getEncoder().encodeToString(rawHmac);
 
-        System.out.println(timestamp);
-        System.out.println(encodeBase64String);
+        System.out.println("url : "+ timestamp);
+        System.out.println("url : "+encodeBase64String);
 
         return encodeBase64String;
     }
@@ -346,9 +347,6 @@ public class PostServiceImpl implements PostService {
 
         byte[] rawHmac = mac.doFinal(message.getBytes("UTF-8"));
         String encodeBase64String = Base64.getEncoder().encodeToString(rawHmac);
-
-        System.out.println(timestamp);
-        System.out.println(encodeBase64String);
 
         return encodeBase64String;
     }

@@ -31,30 +31,24 @@ public class DongNeRestController {
     @Value("${pageSize}")
     int pageSize;
 
-    //    @PostMapping("/addPost")
-//    public ResponseEntity<String> addPost(@RequestPart("postDTO") PostDTO postDTO, @RequestPart(value = "images" ,required = false)  List<MultipartFile> images) throws Exception {
-//        Long postId = postService.addPost(postDTO);
-//        // 이미지 업로드 및 저장을 위한 ImageDTO 생성
-//        ImageDTO imageDTO = ImageDTO.builder()
-//            .post(PostDTO.builder().postId(postId).build())
-//            .build();
-//
-//        // 이미지 업로드 및 저장
-//        imageService.addImage(images, imageDTO);
-//      return ResponseEntity.status(HttpStatus.OK).body("{\"success\": true}");
-//    }
-
     @PostMapping("/addPost")
-    public ResponseEntity<String> addPost(@ModelAttribute PostDTO postDTO, @RequestParam("images") List<MultipartFile> images) throws Exception {
+    public ResponseEntity<String> addPost(@RequestPart PostDTO postDTO, @RequestParam(value = "images", required = false) List<MultipartFile> images) throws Exception {
         Long postId = postService.addPost(postDTO);
-        // 이미지 업로드 및 저장을 위한 ImageDTO 생성
-        ImageDTO imageDTO = ImageDTO.builder()
-            .post(PostDTO.builder().postId(postId).build())
-            .build();
 
-        // 이미지 업로드 및 저장
-        imageService.addImage(images, imageDTO);
-      return ResponseEntity.status(HttpStatus.OK).body("{\"success\": true}");
+        System.out.println("postDTO :" +postDTO);
+        System.out.println("images :" +images);
+
+        // 이미지가 제공되었는지 확인
+        if (images != null && !images.isEmpty()) {
+            // 이미지 업로드 및 저장을 위한 ImageDTO 생성
+            ImageDTO imageDTO = ImageDTO.builder()
+                    .post(PostDTO.builder().postId(postId).build())
+                    .build();
+
+            // 이미지 업로드 및 저장
+            imageService.addImage(images, imageDTO);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body("{\"success\": true}");
     }
 
     @GetMapping("/getPost/{postId}")
@@ -134,17 +128,17 @@ public class DongNeRestController {
         return ResponseEntity.status(HttpStatus.OK).body("{\"success\": true}");
     }
 
-    @PostMapping("/addStreaming")
+    @PostMapping("/addChannel")
     public StreamingDTO addStreaming(@ModelAttribute StreamingDTO streamingDTO) throws Exception {
         return postService.addStreamingChannel(streamingDTO);
     }
 
-    @GetMapping("/getStreaming/{channelId}")
-    public StreamingDTO getStreaming(@PathVariable String channelId) throws Exception {
-        return postService.getStreamingUrl(channelId);
+    @GetMapping("/getChannel/{channelId}")
+    public StreamingDTO getStreamingChannel(@PathVariable String channelId) throws Exception {
+        return postService.getStreamingChannel(channelId);
     }
 
-    @GetMapping("/deleteStreaming/{channelId}")
+    @GetMapping("/deleteChannel/{channelId}")
     public ResponseEntity<String> deleteComment(@PathVariable String channelId) throws Exception {
         postService.deleteStreamingChannel(channelId);
         return ResponseEntity.status(HttpStatus.OK).body("{\"success\": true}");
