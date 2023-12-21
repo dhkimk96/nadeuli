@@ -19,7 +19,7 @@ public interface PostService {
 
     StreamingDTO addStreamingChannel(StreamingDTO streamingDTO) throws Exception;
 
-    StreamingDTO getStreamingUrl(String channelId) throws Exception;
+    StreamingDTO getStreamingChannel(String channelId) throws Exception;
 
     void deleteStreamingChannel(String channelId) throws Exception;
 }

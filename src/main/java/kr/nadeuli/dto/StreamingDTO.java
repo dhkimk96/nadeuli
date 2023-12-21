@@ -13,7 +13,8 @@ public class StreamingDTO {
 
     private String channelName;
     private String channelId;
-
+    private String rtmpUrl;
+    private String globalRtmpUrl;
     private String channelStatus;
     private String streamKey;
 
