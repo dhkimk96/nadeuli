@@ -66,7 +66,6 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
     accessTokenCookie.setSecure(true); // HTTPS 전용으로 설정
     accessTokenCookie.setHttpOnly(true); // JavaScript에서 쿠키 접근을 막음
     accessTokenCookie.setDomain("www.nadeuli.kr");
-    accessTokenCookie.setSameSite(SameSite.None);
     accessTokenCookie.setPath("/"); // 쿠키의 유효 경로 설정 (루트 경로로 설정하면 전체 애플리케이션에서 사용 가능)
     response.addCookie(accessTokenCookie);
 
