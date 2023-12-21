@@ -48,13 +48,17 @@ public class NadeuliPayRestController {
     @Value("${iamport.api.secret}")
     private String apiSecret;
 
-    @GetMapping("/getNadeuliPayList/{currentPage}/{tradeType}/{tag}")
-    public List<NadeuliPayHistoryDTO> getNadeuliPayList(@PathVariable String tag, @PathVariable TradeType tradeType, @PathVariable int currentPage){
+    @GetMapping("/getNadeuliPayList/{currentPage}/{tag}")
+    public List<NadeuliPayHistoryDTO> getNadeuliPayList(@PathVariable String tag, @RequestParam(required = false) String tradeType, @PathVariable int currentPage){
         SearchDTO searchDTO = SearchDTO.builder()
                 .currentPage(currentPage)
                 .pageSize(pageSize)
                                        .build();
-        return nadeuliPayService.getNadeuliPayList(tag, tradeType, searchDTO);
+        TradeType convertedTradeType = null;
+        if(tradeType != null) {
+            convertedTradeType = TradeType.valueOf(tradeType);
+        }
+        return nadeuliPayService.getNadeuliPayList(tag, convertedTradeType, searchDTO);
     }
     
     // api 사용 로직 필요
