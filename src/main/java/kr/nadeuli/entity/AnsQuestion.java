@@ -34,7 +34,7 @@ public class AnsQuestion {
     @Column(name = "content", length = 5000, nullable = false)
     private String content;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "orikkiri_id")
     @JsonBackReference
     private Orikkiri orikkiri;

@@ -90,6 +90,26 @@ public class OrikkiriManageRestController {
     return ResponseEntity.status(HttpStatus.OK).body("{\"success\": true}");
   }
 
+  @PostMapping("/addAns")
+  public ResponseEntity<String> addAns(@RequestBody AnsQuestionDTO ansQuestionDTO) throws Exception {
+    log.info("Received ansQuestionDTO: {}", ansQuestionDTO);
+
+    // orikkiriId를 사용하여 orikkiriDTO를 가져옴
+    Long orikkiriId = ansQuestionDTO.getOrikkiri().getOrikkiriId();
+    OrikkiriDTO orikkiriDTO = orikkiriManageService.getOrikkiri(orikkiriId);
+
+    // ansQuestionDTO에 orikkiriDTO 설정
+    ansQuestionDTO.setOrikkiri(orikkiriDTO);
+
+    // 서버에서 직접 oriScheMemChatFavId를 추출하여 사용
+    Long oriScheMemChatFavId = ansQuestionDTO.getOriScheMemChatFav().getOriScheMemChatFavId();
+
+    // 답변 추가 서비스 호출
+    orikkiriManageService.addAnsQuestion(ansQuestionDTO);
+
+    return ResponseEntity.status(HttpStatus.OK).body("{\"success\": true}");
+  }
+
   @PostMapping("/updateAnsQuestion")
   public ResponseEntity<String> updateAnsQuestion(@RequestBody AnsQuestionDTO ansQuestionDTO)
       throws Exception {
@@ -102,11 +122,10 @@ public class OrikkiriManageRestController {
     return orikkiriManageService.getAnsQuestion(ansQuestionId);
   }
 
-  @GetMapping("/getAnsQuestionList/{orikkiriId}/{currentPage}")
-  public List<AnsQuestionDTO> getAnsQuestionList(@PathVariable long orikkiriId,
-      @PathVariable int currentPage) throws Exception {
+  @GetMapping("/getAnsQuestionList/{orikkiriId}")
+  public List<AnsQuestionDTO> getAnsQuestionList(@PathVariable long orikkiriId) throws Exception {
     SearchDTO searchDTO = new SearchDTO();
-    searchDTO.setCurrentPage(currentPage);
+    searchDTO.setCurrentPage(0);
     searchDTO.setPageSize(pageSize);
     return orikkiriManageService.getAnsQuestionList(orikkiriId, searchDTO);
   }

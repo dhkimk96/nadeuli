@@ -11,6 +11,7 @@ import kr.nadeuli.dto.GpsDTO;
 import kr.nadeuli.dto.ImageDTO;
 import kr.nadeuli.dto.MemberDTO;
 import kr.nadeuli.dto.OriScheMemChatFavDTO;
+import kr.nadeuli.dto.PortOneAccountDTO;
 import kr.nadeuli.dto.PostDTO;
 import kr.nadeuli.dto.ProductDTO;
 import kr.nadeuli.dto.ReportDTO;
@@ -259,6 +260,29 @@ public class MemberRestController {
     // 이미지 업로드 및 저장
     imageService.addProfile(image, memberDTO);
     return getMember(memberDTO.getTag());
+  }
+
+  @GetMapping("/getPortOneToken")
+  public String getPortOneToken() throws Exception{
+
+    return memberService.getPortOneToken();
+  }
+
+  @PostMapping("/checkPortOneAccountName")
+  public ResponseEntity<MemberDTO> checkPortOneAccountName(@RequestBody Map<String, Object> requestData) throws Exception {
+    PortOneAccountDTO portOneAccountDTO = objectMapper.convertValue(requestData.get("portOneAccountDTO"), PortOneAccountDTO.class);
+    log.info("받은 DTO는{}", portOneAccountDTO);
+
+    boolean isAccountNameValid = memberService.checkPortOneAccountName(portOneAccountDTO.getName(), portOneAccountDTO.getAccountNum(), portOneAccountDTO.getCode());
+
+    if (isAccountNameValid) {
+      // true일 경우에만 addBankAccount 메소드 실행
+      memberService.addBankAccount(portOneAccountDTO);
+      MemberDTO memberDTO = memberService.getMember(portOneAccountDTO.getTag());
+      return ResponseEntity.ok(memberDTO);
+    }
+
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
   }
 
 }

@@ -30,10 +30,10 @@ public class Orikkiri {
     @Column(name = "orikkiri_name", nullable = false, length = 255)
     private String orikkiriName;
 
-    @Column(name = "orikkiri_picture", columnDefinition = "VARCHAR(10000) DEFAULT 'https://kr.object.ncloudstorage.com/nadeuli/image/empty.jpg'")
+    @Column(name = "orikkiri_picture",  length = 10000)
     private String orikkiriPicture;
 
-    @Column(name = "orikkiri_introduction", nullable = false, length = 5000)
+    @Column(name = "orikkiri_introduction", nullable = false)
     private String orikkiriIntroduction;
 
     @Column(name = "orikkiri_regist_time", nullable = false)
@@ -42,11 +42,11 @@ public class Orikkiri {
     @Column(name = "master_tag", nullable = false, length = 20)
     private String masterTag;
 
-    @OneToMany(mappedBy = "orikkiri", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "orikkiri", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JsonManagedReference
     private List<AnsQuestion> ansQuestions;
 
-    @OneToMany(mappedBy = "orikkiri", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "orikkiri", fetch = FetchType.LAZY, cascade = CascadeType.ALL,orphanRemoval = true)
     @JsonManagedReference
     private List<Post> posts;
 
@@ -57,4 +57,11 @@ public class Orikkiri {
     @OneToMany(mappedBy = "orikkiri", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<OriScheMemChatFav> oriScheMemChatFavs;
+
+    @PrePersist
+    public void prePersist() {
+        if (this.orikkiriPicture == null || this.orikkiriPicture.isEmpty()) {
+            this.orikkiriPicture = "https://kr.object.ncloudstorage.com/nadeuli/image/empty.jpg";
+        }
+    }
 }

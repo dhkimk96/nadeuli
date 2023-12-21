@@ -20,5 +20,5 @@ public class OriScheMemChatFavDTO {
     private OrikkiriDTO orikkiri;
     private OrikkiriScheduleDTO orikkiriSchedule;
     private ProductDTO product;
-    private List<AnsQuestion> ansQuestions;
+    private List<AnsQuestionDTO> ansQuestions;
 }

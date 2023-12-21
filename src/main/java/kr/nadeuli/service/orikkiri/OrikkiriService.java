@@ -6,13 +6,15 @@ import java.util.List;
 
 public interface OrikkiriService {
 
-    void addOrikkrirSignUp(OriScheMemChatFavDTO oriScheMemChatFavDTO) throws Exception;
+    OriScheMemChatFavDTO addOrikkrirSignUp(OriScheMemChatFavDTO oriScheMemChatFavDTO) throws Exception;
 
-    List<OriScheMemChatFavDTO> getOrikkiriSignUpList(long orikkiriId, SearchDTO searchDTO) throws Exception;
+    List<AnsQuestionDTO> getOrikkiriSignUpList(long orikkiriId, SearchDTO searchDTO) throws Exception;
 
     List<OriScheMemChatFavDTO> getMyOrikkiriList(String tag, SearchDTO searchDTO) throws Exception;
 
     List<OriScheMemChatFavDTO> getOrikkiriMemberList(long orikkiriId, SearchDTO searchDTO) throws Exception;
+
+    MemberDTO getAnsMember(OriScheMemChatFavDTO oriScheMemChatFavDTO)throws Exception;
 
     void deleteOrikkiriMember(String tag, long oriScheMemChatFavId) throws Exception;
 

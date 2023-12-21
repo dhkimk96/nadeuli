@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("/dongNe")
+@RequestMapping("/nadeuli/dongNe")
 @RequiredArgsConstructor
 @Log4j2
 public class DongNeRestController {

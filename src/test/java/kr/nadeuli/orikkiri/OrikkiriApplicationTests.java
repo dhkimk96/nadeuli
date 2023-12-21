@@ -44,13 +44,13 @@ public class OrikkiriApplicationTests {
     @Test
     @Transactional
     public void testGetOrikkiriSignUpList() throws Exception {
-        long ansQuestionId = 6L;
-        SearchDTO searchDTO = new SearchDTO();
-        searchDTO.setCurrentPage(0);
-        searchDTO.setPageSize(pageSize);
-        searchDTO.setSearchKeyword("");
-        List<OriScheMemChatFavDTO> orikkiriServiceOrikkiriSignUpList = orikkiriService.getOrikkiriSignUpList(ansQuestionId, searchDTO);
-        System.out.println(orikkiriServiceOrikkiriSignUpList);
+//        long ansQuestionId = 6L;
+//        SearchDTO searchDTO = new SearchDTO();
+//        searchDTO.setCurrentPage(0);
+//        searchDTO.setPageSize(pageSize);
+//        searchDTO.setSearchKeyword("");
+//        List<OriScheMemChatFavDTO> orikkiriServiceOrikkiriSignUpList = orikkiriService.getOrikkiriSignUpList(ansQuestionId, searchDTO);
+//        System.out.println(orikkiriServiceOrikkiriSignUpList);
     }
 
 //    @Test

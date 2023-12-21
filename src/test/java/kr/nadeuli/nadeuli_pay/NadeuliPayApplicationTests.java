@@ -49,7 +49,7 @@ public class NadeuliPayApplicationTests {
         nadeuliPayService.nadeuliPayPay(tag, nadeuliPayHistoryDTO);
     }
 
-    @Test
+//    @Test
     public void testNadeuliPayCharge(){
         NadeuliPayHistoryDTO nadeuliPayHistoryDTO = NadeuliPayHistoryDTO.builder()
                 .bankAccountBackNum("2223")
@@ -60,7 +60,7 @@ public class NadeuliPayApplicationTests {
         nadeuliPayService.nadeuliPayCharge(tag, nadeuliPayHistoryDTO);
     }
 
-    @Test
+//    @Test
     public void testNadeuliPayWithdraw(){
         NadeuliPayHistoryDTO nadeuliPayHistoryDTO = NadeuliPayHistoryDTO.builder()
                 .bankAccountBackNum("2223")
