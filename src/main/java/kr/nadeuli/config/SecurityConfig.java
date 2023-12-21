@@ -183,7 +183,7 @@ public class SecurityConfig {
     configuration.setAllowedOrigins(Arrays.asList("*")); // 허용할 origin을 나열
     configuration.setAllowedMethods(Arrays.asList("*"));
     configuration.setAllowedHeaders(Arrays.asList("X-Requested-With", "Content-Type", "Authorization", "X-XSRF-token"));
-    configuration.setAllowCredentials(true);
+    configuration.setAllowCredentials(false);
     configuration.setMaxAge(3600L);
 
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
