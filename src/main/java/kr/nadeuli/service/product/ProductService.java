@@ -10,7 +10,7 @@ import java.util.List;
 
      Long updateProduct(ProductDTO productDTO) throws Exception;
 
-     ProductDTO getProduct(long productId) throws Exception;
+     ProductDTO getProduct(long productId, String tag) throws Exception;
 
      List<ProductDTO> getProductList(String gu, SearchDTO searchDTO) throws Exception;
 

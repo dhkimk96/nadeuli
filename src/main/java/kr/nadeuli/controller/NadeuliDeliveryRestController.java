@@ -44,7 +44,7 @@ public class NadeuliDeliveryRestController {
         List<TradeScheduleDTO> tradeScheduleDTOList = tradeService.getTradeScheduleList(tag, searchDTO);
         for (TradeScheduleDTO tradeScheduleDTO : tradeScheduleDTOList) {
             Long productId = tradeScheduleDTO.getProduct().getProductId();
-            ProductDTO productDTO = productService.getProduct(productId);
+            ProductDTO productDTO = productService.getProduct(productId, null);
             tradeScheduleDTO.setProduct(productDTO);
         }
 
