@@ -2,11 +2,10 @@ package kr.nadeuli.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Map;
-import kr.nadeuli.dto.AnsQuestionDTO;
-import kr.nadeuli.dto.OrikkiriDTO;
-import kr.nadeuli.dto.SearchDTO;
-import kr.nadeuli.dto.TokenDTO;
+
+import kr.nadeuli.dto.*;
 import kr.nadeuli.service.image.ImageService;
+import kr.nadeuli.service.orikkiri.OrikkiriService;
 import kr.nadeuli.service.orikkirimanage.OrikkiriManageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -26,7 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class OrikkiriManageRestController {
 
   private final OrikkiriManageService orikkiriManageService;
-
+  private final OrikkiriService orikkiriService;
   private final ImageService imageService;
 
   @Autowired
@@ -43,6 +42,21 @@ public class OrikkiriManageRestController {
     log.info("addOrikkiri에서 받은 image : {}", image);
 
     OrikkiriDTO existOrikkiriDTO = orikkiriManageService.addOrikkiri(orikkiriDTO);
+
+// 필요한 정보를 가진 MemberDTO 객체 생성
+    MemberDTO memberDTO = MemberDTO.builder()
+            .tag(orikkiriDTO.getMasterTag()) // MemberDTO에 적절한 필드와 메소드가 있다고 가정
+            .build();
+
+// OriScheMemChatFavDTO 객체 생성
+    OriScheMemChatFavDTO oriScheMemChatFavDTO = OriScheMemChatFavDTO.builder()
+            .member(memberDTO)
+            .orikkiri(existOrikkiriDTO)
+            .build();
+
+    // orikkiriService의 메소드 호출
+    orikkiriService.addOrikkiriMember(oriScheMemChatFavDTO);
+
 
     // image가 null이 아닌 경우에만 실행
     if (image != null) {

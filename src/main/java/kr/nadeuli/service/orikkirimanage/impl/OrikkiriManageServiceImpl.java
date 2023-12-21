@@ -43,7 +43,6 @@ public class OrikkiriManageServiceImpl implements OrikkiriManageService {
         Orikkiri orikkiri = orikkiriMapper.orikkiriDTOToOrikkiri(orikkiriDTO);
         log.info(orikkiri);
 
-
         return orikkiriMapper.orikkiriToOrikkiriDTO(orikkiriManageRepository.save(orikkiri));
     }
 
