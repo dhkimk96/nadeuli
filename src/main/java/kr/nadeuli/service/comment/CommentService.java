@@ -18,4 +18,6 @@ public interface CommentService {
     void updateComment(CommentDTO commentDTO) throws Exception;
 
     void deleteComment(long commentId) throws Exception;
+
+
 }
