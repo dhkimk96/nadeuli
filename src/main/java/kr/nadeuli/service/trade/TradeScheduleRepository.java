@@ -11,6 +11,6 @@ import org.springframework.data.repository.query.Param;
 import java.time.LocalDateTime;
 
 public interface TradeScheduleRepository extends JpaRepository<TradeSchedule, Long> {
-    @Query("SELECT t FROM TradeSchedule t WHERE (t.seller = :member OR t.buyer = :member) AND t.tradingTime > :currentTime")
+    @Query("SELECT t FROM TradeSchedule t WHERE (t.buyer = :member) AND t.tradingTime > :currentTime")
     Page<TradeSchedule> findTradeScheduleList(@Param("member") Member member, @Param("currentTime") LocalDateTime currentTime, Pageable pageable);
 }
