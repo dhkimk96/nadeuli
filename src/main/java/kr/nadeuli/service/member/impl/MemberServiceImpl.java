@@ -193,14 +193,10 @@ public class MemberServiceImpl implements MemberService {
         .equals(existMember.getCellphone())) {
       log.info("받은 Cellphone는 {}", memberDTO.getCellphone());
       existMember.setCellphone(memberDTO.getCellphone());
-    } else {
-      return null;
     }
     if (memberDTO.getEmail() != null && !memberDTO.getEmail().equals(existMember.getEmail())) {
       log.info("받은 Email는 {}", memberDTO.getEmail());
       existMember.setEmail(memberDTO.getEmail());
-    } else {
-      return null;
     }
 
     memberRepository.save(memberMapper.memberDTOToMember(existMember));
