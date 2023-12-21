@@ -32,6 +32,7 @@ public interface ProductMapper {
     Product productDTOToProduct(ProductDTO productDTO);
 
     @Mapping(target = "likeNum", ignore = true)
+    @Mapping(target = "isLike", ignore = true)
     @Mapping(source = "bargain", target = "isBargain")
     @Mapping(source = "sold", target = "isSold")
     @Mapping(source = "premium", target = "isPremium")

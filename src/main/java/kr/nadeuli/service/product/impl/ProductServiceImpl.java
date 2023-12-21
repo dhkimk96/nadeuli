@@ -66,7 +66,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductDTO getProduct(long productId) throws Exception {
+    public ProductDTO getProduct(long productId, String tag) throws Exception {
         Product product = productRepository.findById(productId).orElse(null);
         if(product == null){
             return null;
@@ -75,6 +75,11 @@ public class ProductServiceImpl implements ProductService {
         productRepository.save(product);
         ProductDTO productDTO = productMapper.productToProductDTO(product);
         productDTO.setLikeNum(oriScheMenChatFavRepository.countByProduct(product));
+        if(tag != null) {
+            productDTO.setIsLike(oriScheMenChatFavRepository.existsByMemberAndProduct(Member.builder()
+                                                                                            .tag(tag)
+                                                                                            .build(), product));
+        }
         return productDTO;
     }
 

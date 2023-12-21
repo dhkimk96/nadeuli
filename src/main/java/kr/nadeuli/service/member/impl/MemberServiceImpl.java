@@ -346,7 +346,7 @@ public class MemberServiceImpl implements MemberService{
   @Override
   public void addFavorite(String tag, Long productId) throws Exception {
     Member member = memberMapper.memberDTOToMember(getMember(tag));
-    Product product = productMapper.productDTOToProduct(productService.getProduct(productId));
+    Product product = productMapper.productDTOToProduct(productService.getProduct(productId, null));
 
     // 이미 등록되어 있는지 확인
     if (oriScheMenChatFavRepository.existsByMemberAndProduct(member, product)) {
@@ -367,7 +367,7 @@ public class MemberServiceImpl implements MemberService{
   @Override
   public void deleteFavorite(String tag, Long productId) throws Exception {
     Member member = memberMapper.memberDTOToMember(getMember(tag));
-    Product product = productMapper.productDTOToProduct(productService.getProduct(productId));
+    Product product = productMapper.productDTOToProduct(productService.getProduct(productId, null));
 
     oriScheMenChatFavRepository.deleteByMemberAndProduct(member,product);
   }

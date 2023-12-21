@@ -189,7 +189,7 @@ public class MemberRestController {
     // ProductDTO 객체의 productId를 사용하여 객체를 가져와서 각각의 OriScheMemChatFavDTO에 설정
     for (OriScheMemChatFavDTO favDTO : list) {
       long productId = favDTO.getProduct().getProductId();
-      ProductDTO productDTO = productService.getProduct(productId);
+      ProductDTO productDTO = productService.getProduct(productId, null);
 
       // ProductDTO의 seller를 설정
       MemberDTO sellerDTO = memberService.getMember(productDTO.getSeller().getTag());

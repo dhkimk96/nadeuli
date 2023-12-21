@@ -49,13 +49,13 @@ public class ProductRestController {
         return productService.getProductList(gu, searchDTO);
     }
 
-    @GetMapping("/getProduct/{productId}")
-    public ProductDTO getProduct(@PathVariable Long productId) throws Exception {
+    @GetMapping("/getProduct/{productId}/{tag}")
+    public ProductDTO getProduct(@PathVariable Long productId, @PathVariable String tag) throws Exception {
         log.info(productId);
         List<ImageDTO> imageDTOList = imageService.getImageList(productId, SearchDTO.builder()
                             .isProduct(true)
                                                       .build());
-        ProductDTO productDTO = productService.getProduct(productId);
+        ProductDTO productDTO = productService.getProduct(productId, tag);
         List<String> imageNames = imageDTOList.stream()
                                               .map(ImageDTO::getImageName)
                                               .collect(Collectors.toList());
@@ -68,7 +68,7 @@ public class ProductRestController {
     public ResponseEntity<String> updateProduct(@ModelAttribute ProductDTO productDTO,@RequestParam("image") List<MultipartFile> images) throws Exception {
         System.out.println("업데이트프로덕트");
         log.info(productDTO);
-        ProductDTO beforeProductDTO = productService.getProduct(productDTO.getProductId());
+        ProductDTO beforeProductDTO = productService.getProduct(productDTO.getProductId(), null);
         log.info(beforeProductDTO);
         if(productDTO.getIsPremium()){
             Long premiumTime = 0L;
