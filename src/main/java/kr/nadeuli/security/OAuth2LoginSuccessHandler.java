@@ -80,7 +80,11 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
     response.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
 
     // 리다이렉션 수행
-    response.sendRedirect("https://www.nadeuli.kr/oAuth2RedirectHandler");
+//    response.sendRedirect("https://www.nadeuli.kr/oAuth2RedirectHandler");
+
+    // 리다이렉션 URL을 생성할 때 액세스 토큰을 포함
+    String redirectUrl = "https://www.nadeuli.kr/oAuth2RedirectHandler?accessToken=" + accessToken;
+    response.sendRedirect(redirectUrl);
   }
 
 
