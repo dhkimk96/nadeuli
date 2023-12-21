@@ -1,5 +1,7 @@
 package kr.nadeuli.service.orikkirimanage.impl;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Optional;
 import kr.nadeuli.dto.AnsQuestionDTO;
 import kr.nadeuli.dto.MemberDTO;
@@ -10,6 +12,7 @@ import kr.nadeuli.entity.AnsQuestion;
 import kr.nadeuli.entity.OriScheMemChatFav;
 import kr.nadeuli.entity.Orikkiri;
 import kr.nadeuli.mapper.AnsQuestionMapper;
+import kr.nadeuli.mapper.OriScheMemChatFavMapper;
 import kr.nadeuli.mapper.OrikkiriMapper;
 import kr.nadeuli.service.orikkiri.OriScheMenChatFavRepository;
 import kr.nadeuli.service.orikkirimanage.AnsQuestionRepository;
@@ -34,6 +37,7 @@ public class OrikkiriManageServiceImpl implements OrikkiriManageService {
     private final OrikkiriManageRepository orikkiriManageRepository;
     private final OrikkiriMapper orikkiriMapper;
     private final OriScheMenChatFavRepository oriScheMenChatFavRepository;
+    private final OriScheMemChatFavMapper oriScheMemChatFavMapper;
 
     private final AnsQuestionRepository ansQuestionRepository;
     private final AnsQuestionMapper ansQuestionMapper ;
@@ -66,21 +70,77 @@ public class OrikkiriManageServiceImpl implements OrikkiriManageService {
     }
 
     @Override
-    public void addAnsQuestion(AnsQuestionDTO ansQuestionDTO) throws Exception {
+    public AnsQuestionDTO addAnsQuestion(AnsQuestionDTO ansQuestionDTO) throws Exception {
         AnsQuestion ansQuestion = ansQuestionMapper.ansQuestionDTOToAnsQuestion(ansQuestionDTO);
         log.info(ansQuestion);
-        ansQuestionRepository.save(ansQuestion);
+        AnsQuestionDTO ansQuestionDTO1 = ansQuestionMapper.ansQuestionToAnsQuestionDTO(ansQuestionRepository.save(ansQuestion));
+        return ansQuestionDTO1;
     }
 
-//    @Override
-//    public void addAns(AnsQuestionDTO ansQuestionDTO) throws Exception {
-//        AnsQuestion ansQuestion = ansQuestionMapper.ansQuestionDTOToAnsQuestion(ansQuestionDTO);
-//        log.info(ansQuestion);
-//        AnsQuestionDTO existAnsQuestion = ansQuestionMapper.ansQuestionToAnsQuestionDTO(ansQuestionRepository.save(ansQuestion));
-//        Optional<OriScheMemChatFav> oriScheMemChatFav = oriScheMenChatFavRepository.findById(existAnsQuestion.getOriScheMemChatFav().getOriScheMemChatFavId());
-//        oriScheMemChatFav.get().setAnsQuestions((List<AnsQuestion>) existAnsQuestion);
-//        oriScheMenChatFavRepository.save(oriScheMemChatFav.get().getOriScheMemChatFavId());
-//    }
+    @Override
+    public void addAns(AnsQuestionDTO ansQuestionDTO) throws Exception {
+        try {
+            AnsQuestion ansQuestion = ansQuestionMapper.ansQuestionDTOToAnsQuestion(ansQuestionDTO);
+            log.info(ansQuestion);
+
+            if (ansQuestion != null) {
+                AnsQuestion savedAnsQuestion = ansQuestionRepository.save(ansQuestion);
+
+                AnsQuestionDTO existAnsQuestion = ansQuestionMapper.ansQuestionToAnsQuestionDTO(savedAnsQuestion);
+
+                if (existAnsQuestion != null) {
+                    Optional<OriScheMemChatFav> oriScheMemChatFav = oriScheMenChatFavRepository.findById(existAnsQuestion.getOriScheMemChatFav().getOriScheMemChatFavId());
+
+                    if (oriScheMemChatFav.isPresent()) {
+                        log.info("존재하는 oriScheMemChatFav는 {}", oriScheMemChatFav.get());
+
+                        // ArrayList로 변경
+                        List<AnsQuestion> ansQuestionsList = new ArrayList<>();
+                        ansQuestionsList.add(savedAnsQuestion);
+
+                        // OriScheMemChatFav에 대한 관계 업데이트
+                        oriScheMemChatFav.get().setAnsQuestions(ansQuestionsList);
+                        savedAnsQuestion.setOriScheMemChatFav(oriScheMemChatFav.get()); // 이 부분 추가
+
+                        log.info("존재하는 Collections {}", ansQuestionsList);
+
+                        oriScheMenChatFavRepository.save(oriScheMemChatFav.get());
+                    } else {
+                        // oriScheMemChatFav가 null이면 처리할 내용 추가
+                        log.error("oriScheMemChatFav is null");
+                    }
+                } else {
+                    // existAnsQuestion이 null이면 처리할 내용 추가
+                    log.error("existAnsQuestion is null");
+                }
+            } else {
+                // ansQuestion이 null이면 처리할 내용 추가
+                log.error("ansQuestion is null");
+            }
+        } catch (Exception e) {
+            // 예외 처리, 로깅 등 필요한 작업 수행
+            log.error("Error while adding Ans", e);
+            throw new Exception("Error while adding Ans", e);
+        }
+    }
+
+    @Override
+    public OriScheMemChatFavDTO getOriScheMemChatFavDTO(Long oriScheMemChatFavId) throws Exception {
+        Optional<OriScheMemChatFav> optionalOriScheMemChatFav = oriScheMenChatFavRepository.findById(oriScheMemChatFavId);
+
+        if (optionalOriScheMemChatFav.isPresent()) {
+            OriScheMemChatFav oriScheMemChatFav = optionalOriScheMemChatFav.get();
+            OriScheMemChatFavDTO oriScheMemChatFavDTO = oriScheMemChatFavMapper.oriScheMemChatFavToOriScheMemChatFavDTO(oriScheMemChatFav);
+
+            // 처리 로직 추가 (optional이 비어있지 않을 때 수행할 내용)
+
+            return oriScheMemChatFavDTO;
+        } else {
+            // 처리 로직 추가 (optional이 비어있을 때 수행할 내용)
+            throw new Exception("원하는 oriScheMemChatFav를 찾을 수 없습니다.");
+        }
+    }
+
 
     @Override
     public void updateAnsQuestion(AnsQuestionDTO ansQuestionDTO) throws Exception {

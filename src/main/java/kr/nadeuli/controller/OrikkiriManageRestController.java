@@ -103,9 +103,11 @@ public class OrikkiriManageRestController {
 
     // 서버에서 직접 oriScheMemChatFavId를 추출하여 사용
     Long oriScheMemChatFavId = ansQuestionDTO.getOriScheMemChatFav().getOriScheMemChatFavId();
+    ansQuestionDTO.setOriScheMemChatFav(orikkiriManageService.getOriScheMemChatFavDTO(oriScheMemChatFavId));
 
     // 답변 추가 서비스 호출
-    orikkiriManageService.addAnsQuestion(ansQuestionDTO);
+    AnsQuestionDTO ansQuestionDTO1 = orikkiriManageService.addAnsQuestion(ansQuestionDTO);
+    orikkiriManageService.addAns(ansQuestionDTO1);
 
     return ResponseEntity.status(HttpStatus.OK).body("{\"success\": true}");
   }
