@@ -180,7 +180,7 @@ public class SecurityConfig {
   @Bean
   public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration = new CorsConfiguration();
-    configuration.setAllowedOrigins(Arrays.asList("*"));
+    configuration.setAllowedOrigins(Arrays.asList("*")); // 허용할 origin을 나열
     configuration.setAllowedMethods(Arrays.asList("*"));
     configuration.setAllowedHeaders(Arrays.asList("X-Requested-With", "Content-Type", "Authorization", "X-XSRF-token"));
     configuration.setAllowCredentials(false);

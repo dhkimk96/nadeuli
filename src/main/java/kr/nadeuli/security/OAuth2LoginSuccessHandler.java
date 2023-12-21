@@ -1,5 +1,6 @@
 package kr.nadeuli.security;
 
+import io.netty.handler.codec.http.cookie.CookieHeaderNames.SameSite;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -64,6 +65,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
     accessTokenCookie.setMaxAge(3600); // 쿠키 유효 시간 설정 (예: 1시간)
     accessTokenCookie.setSecure(true); // HTTPS 전용으로 설정
 //    accessTokenCookie.setHttpOnly(true); // JavaScript에서 쿠키 접근을 막음
+    accessTokenCookie.setDomain("www.nadeuli.kr");
     accessTokenCookie.setPath("/"); // 쿠키의 유효 경로 설정 (루트 경로로 설정하면 전체 애플리케이션에서 사용 가능)
     response.addCookie(accessTokenCookie);
 
@@ -72,11 +74,13 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
     refreshTokenCookie.setMaxAge(2592000); // 쿠키 유효 시간 설정 (예: 30일)
     refreshTokenCookie.setSecure(true); // HTTPS 전용으로 설정
 //    refreshTokenCookie.setHttpOnly(true); // JavaScript에서 쿠키 접근을 막음
+    accessTokenCookie.setDomain("www.nadeuli.kr");
     refreshTokenCookie.setPath("/"); // 쿠키의 유효 경로 설정 (루트 경로로 설정하면 전체 애플리케이션에서 사용 가능)
     response.addCookie(refreshTokenCookie);
+    response.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
 
     // 리다이렉션 수행
-    response.sendRedirect("http://localhost:3000/oAuth2RedirectHandler");
+    response.sendRedirect("https://www.nadeuli.kr/oAuth2RedirectHandler");
   }
 
 

@@ -14,7 +14,7 @@ public interface OrikkiriManageService {
 
     void deleteOrikkiri(long orikkiriId) throws Exception;
 
-    void addAnsQuestion(AnsQuestionDTO ansQuestionDTO) throws Exception;
+    AnsQuestionDTO addAnsQuestion(AnsQuestionDTO ansQuestionDTO) throws Exception;
 
     void updateAnsQuestion(AnsQuestionDTO ansQuestionDTO) throws Exception;
 
@@ -24,4 +24,7 @@ public interface OrikkiriManageService {
 
     public void deleteAnsQuestion(long ansQuestionId) throws Exception;
 
+    public void addAns(AnsQuestionDTO ansQuestionDTO) throws Exception;
+
+    public OriScheMemChatFavDTO getOriScheMemChatFavDTO(Long oriScheMemChatFavId) throws Exception;
 }

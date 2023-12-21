@@ -1,5 +1,6 @@
 package kr.nadeuli.controller;
 
+import kr.nadeuli.category.TradeType;
 import kr.nadeuli.dto.ImageDTO;
 import kr.nadeuli.dto.MemberDTO;
 import kr.nadeuli.dto.NadeuliPayHistoryDTO;
@@ -106,6 +107,7 @@ public class ProductRestController {
         productDTO.setProductId(productId);
         if(productDTO.getIsPremium()){
             nadeuliPayService.nadeuliPayPay(productDTO.getSeller().getTag(), NadeuliPayHistoryDTO.builder()
+                                     .tradeType(TradeType.PAYMENT)
                                      .productTitle(productDTO.getTitle())
                                      .product(productDTO)
                                      .tradingMoney(productDTO.getPremiumTime() * premiumPricePerHour)

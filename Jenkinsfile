@@ -59,15 +59,21 @@ pipeline {
             }
         }
         // Slack 통지 단계
-        stage("Slack Notification") {
-            when {
-                expression { currentBuild.resultIsBetterOrEqualTo('UNSTABLE') }
-            }
-            steps {
-                script {
-                    slackSend channel: '#jenkins', color: 'danger', message: "Was 배포 실패"
-                }
-            }
-        }
+       stage("Slack Notification") {
+                   when {
+                       expression { currentBuild.resultIsBetterOrEqualTo('UNSTABLE') }
+                   }
+                   steps {
+                       echo 'Slack 통지 테스트'
+                   }
+                   post {
+                       success {
+                           slackSend channel: '#jenkins', color: 'good', message: "Web 배포 성공"
+                       }
+                       failure {
+                           slackSend channel: '#jenkins', color: 'danger', message: "Web 배포 실패"
+                       }
+                   }
+               }
     }
 }
