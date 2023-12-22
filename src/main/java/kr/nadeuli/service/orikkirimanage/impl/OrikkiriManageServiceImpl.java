@@ -178,5 +178,11 @@ public class OrikkiriManageServiceImpl implements OrikkiriManageService {
         ansQuestionRepository.deleteById(ansQuestionId);
     }
 
+    @Override
+    public void deleteSignUp(long oriScheMemChatFavId) throws Exception {
+        log.info(oriScheMemChatFavId);
+        oriScheMenChatFavRepository.deleteById(oriScheMemChatFavId);
+    }
+
 
 }

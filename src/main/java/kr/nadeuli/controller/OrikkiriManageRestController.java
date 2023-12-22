@@ -97,6 +97,18 @@ public class OrikkiriManageRestController {
     return ResponseEntity.status(HttpStatus.OK).body("{\"success\": true}");
   }
 
+  @GetMapping("/deleteSignUp/{oriScheMemChatFavId}")
+  public ResponseEntity<String> deleteSignUp(@PathVariable long oriScheMemChatFavId) throws Exception {
+    orikkiriManageService.deleteSignUp(oriScheMemChatFavId);
+    return ResponseEntity.status(HttpStatus.OK).body("{\"success\": true}");
+  }
+
+  @GetMapping("/addSignUp/{ansQuestionId}")
+  public ResponseEntity<String> addSignUp(@PathVariable long ansQuestionId) throws Exception {
+    orikkiriManageService.deleteAnsQuestion(ansQuestionId);
+    return ResponseEntity.status(HttpStatus.OK).body("{\"success\": true}");
+  }
+
   @PostMapping("/addAnsQuestion")
   public ResponseEntity<String> addAnsQuestion(@RequestParam("orikkiriId") long orikkiriId,
       @RequestParam("content") String content) throws Exception {

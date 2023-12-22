@@ -30,4 +30,6 @@ public interface OrikkiriManageService {
     public void addAns(AnsQuestionDTO ansQuestionDTO) throws Exception;
 
     public OriScheMemChatFavDTO getOriScheMemChatFavDTO(Long oriScheMemChatFavId) throws Exception;
+
+    public void deleteSignUp(long oriScheMemChatFavId) throws Exception;
 }
