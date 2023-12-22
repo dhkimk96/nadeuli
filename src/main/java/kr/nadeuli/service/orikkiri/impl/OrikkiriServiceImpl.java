@@ -67,11 +67,14 @@ public class OrikkiriServiceImpl implements OrikkiriService {
             .map(objects -> {
                 Member member = (Member) objects[0]; // 첫 번째 요소는 Member 엔터티
                 AnsQuestion ansQuestion = (AnsQuestion) objects[1]; // 두 번째 요소는 AnsQuestion 엔터티
+                OriScheMemChatFav oriScheMemChatFav = (OriScheMemChatFav) objects[2]; // 두 번째 요소는 AnsQuestion 엔터티
 
                 // tag와 content를 맵에 담아서 반환
                 Map<String, Object> map = new HashMap<>();
                 map.put("tag", member.getTag());
                 map.put("content", ansQuestion.getContent());
+                map.put("ansQuestionId", ansQuestion.getAnsQuestionId());
+                map.put("oriScheMemChatFavId", oriScheMemChatFav.getOriScheMemChatFavId());
 
                 return map;
             })
@@ -179,6 +182,12 @@ public class OrikkiriServiceImpl implements OrikkiriService {
         log.info(orikkiriScheduleId);
         orikkiriScheduleRepository.deleteById(orikkiriScheduleId);
     }
+
+//    @Override
+//    public void deleteSignUp(long orikkiriScheduleId, ) throws Exception {
+//        log.info(orikkiriScheduleId);
+//        orikkiriScheduleRepository.deleteById(orikkiriScheduleId);
+//    }
 
 
 

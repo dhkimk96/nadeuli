@@ -46,7 +46,7 @@ public class OriScheMemChatFav {
     @JsonBackReference
     private Product product;
 
-    @OneToMany(mappedBy = "oriScheMemChatFav", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "oriScheMemChatFav", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<AnsQuestion> ansQuestions;
 
