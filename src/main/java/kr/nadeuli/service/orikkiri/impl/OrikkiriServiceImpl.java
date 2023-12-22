@@ -1,5 +1,8 @@
 package kr.nadeuli.service.orikkiri.impl;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 import kr.nadeuli.dto.AnsQuestionDTO;
 import kr.nadeuli.dto.MemberDTO;
 import kr.nadeuli.dto.OriScheMemChatFavDTO;
@@ -7,6 +10,7 @@ import kr.nadeuli.dto.OrikkiriScheduleDTO;
 import kr.nadeuli.dto.SearchDTO;
 import kr.nadeuli.entity.*;
 import kr.nadeuli.mapper.AnsQuestionMapper;
+import kr.nadeuli.mapper.MemberMapper;
 import kr.nadeuli.mapper.OriScheMemChatFavMapper;
 import kr.nadeuli.mapper.OrikkiriScheduleMapper;
 import kr.nadeuli.service.member.MemberService;
@@ -39,6 +43,7 @@ public class OrikkiriServiceImpl implements OrikkiriService {
     private final AnsQuestionMapper ansQuestionMapper;
     private final OriScheMemChatFavMapper oriScheMemChatFavMapper;
     private final MemberService memberService;
+    private final MemberMapper memberMapper;
 
     private final OrikkiriScheduleRepository orikkiriScheduleRepository;
     private final OrikkiriScheduleMapper orikkiriScheduleMapper;
@@ -54,12 +59,25 @@ public class OrikkiriServiceImpl implements OrikkiriService {
     }
 
     @Override
-    public List<AnsQuestionDTO> getOrikkiriSignUpList(long orikkiriId, SearchDTO searchDTO) throws Exception {
-        Pageable pageable = PageRequest.of(searchDTO.getCurrentPage(), searchDTO.getPageSize());
-        Page<AnsQuestion> ansQuestionPage;
-        ansQuestionPage = ansQuestionRepository.findByOrikkiriAndOriScheMemChatFavNotNull(Orikkiri.builder().orikkiriId(orikkiriId).build(), pageable);
-        log.info(ansQuestionPage);
-        return ansQuestionPage.map(ansQuestionMapper::ansQuestionToAnsQuestionDTO).toList();
+    public List<Map<String, Object>> getOrikkiriSignUpList(long orikkiriId) throws Exception {
+        List<Object[]> signUpList = ansQuestionRepository.findSignUpByOrikkiriId(orikkiriId);
+        log.info(signUpList);
+
+        List<Map<String, Object>> result = signUpList.stream()
+            .map(objects -> {
+                Member member = (Member) objects[0]; // 첫 번째 요소는 Member 엔터티
+                AnsQuestion ansQuestion = (AnsQuestion) objects[1]; // 두 번째 요소는 AnsQuestion 엔터티
+
+                // tag와 content를 맵에 담아서 반환
+                Map<String, Object> map = new HashMap<>();
+                map.put("tag", member.getTag());
+                map.put("content", ansQuestion.getContent());
+
+                return map;
+            })
+            .collect(Collectors.toList());
+
+        return result;
     }
 
 

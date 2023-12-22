@@ -61,14 +61,14 @@ public class OrikkiriRestController {
     }
 
     @GetMapping("/getOrikkrirSignupList/{orikkiriId}")
-    public List<AnsQuestionDTO> getOrikkiriSignUpList(@PathVariable long orikkiriId) throws Exception {
+    public List<Map<String, Object>> getOrikkiriSignUpList(@PathVariable long orikkiriId) throws Exception {
         SearchDTO searchDTO = SearchDTO.builder()
-                .currentPage(0)
-                .pageSize(pageSize)
-                .build();
+            .currentPage(0)
+            .pageSize(pageSize)
+            .build();
 
-        List<AnsQuestionDTO> ansQuestionDTO =orikkiriService.getOrikkiriSignUpList(orikkiriId, searchDTO);
-        return ansQuestionDTO;
+        List<Map<String, Object>> signUpList = orikkiriService.getOrikkiriSignUpList(orikkiriId);
+        return signUpList;
     }
 
     @GetMapping("/getMyOrikkiriList/{tag}/{currentPage}")

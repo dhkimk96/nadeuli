@@ -16,10 +16,12 @@ public interface AnsQuestionRepository extends JpaRepository<AnsQuestion, Long> 
 
     Page<AnsQuestion> findByOrikkiriAndOriScheMemChatFavIsNull(Orikkiri orikkiri, Pageable pageable);
 
-    @Query("SELECT DISTINCT m " +
+    @Query("SELECT DISTINCT m, aq " +
         "FROM Member m " +
         "JOIN OriScheMemChatFav mcf ON m.tag = mcf.member.tag " +
         "JOIN AnsQuestion aq ON mcf.oriScheMemChatFavId = aq.oriScheMemChatFav.oriScheMemChatFavId " +
-        "WHERE mcf.orikkiri.orikkiriId = :orikkiriId")
-    List<Member> findSignUpByOrikkiriId(@Param("orikkiriId") Long orikkiriId);
+        "WHERE mcf.orikkiri.orikkiriId = :orikkiriId " +
+        "AND aq.content IS NOT NULL AND aq.oriScheMemChatFav IS NOT NULL")
+    List<Object[]> findSignUpByOrikkiriId(@Param("orikkiriId") Long orikkiriId);
+
 }
