@@ -114,13 +114,31 @@ public class OrikkiriServiceImpl implements OrikkiriService {
     }
 
     @Override
-    public List<OriScheMemChatFavDTO> getOrikkiriMemberList(long orikkiriId, SearchDTO searchDTO) throws Exception {
-        Pageable pageable = PageRequest.of(searchDTO.getCurrentPage(), searchDTO.getPageSize());
-        Page<OriScheMemChatFav> oriScheMemChatFavPage;
-        oriScheMemChatFavPage = oriScheMenChatFavRepository.findByOrikkiriAndAnsQuestionsNull(Orikkiri.builder().orikkiriId(orikkiriId).build(), pageable);
-        log.info(oriScheMemChatFavPage);
-        return oriScheMemChatFavPage.map(oriScheMemChatFavMapper::oriScheMemChatFavToOriScheMemChatFavDTO).toList();
+    public List<Map<String, Object>> getOrikkiriMemberList(long orikkiriId) throws Exception {
+        List<Object[]> orikkiriMemberList = ansQuestionRepository.findMembersWithOrikkiriIdAndNoAnsQuestion(orikkiriId);
+
+        List<Map<String, Object>> result = orikkiriMemberList.stream()
+                .map(objects -> {
+                    Member member = (Member) objects[0]; // 첫 번째 요소는 Member 엔터티
+
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("tag", member.getTag());
+
+                    // OriScheMemChatFav 엔터티가 존재한다면 orikkiri 정보를 맵에 추가
+                    if(objects.length > 1 && objects[1] instanceof OriScheMemChatFav) {
+                        OriScheMemChatFav oriScheMemChatFav = (OriScheMemChatFav) objects[1];
+                        map.put("orikkiriId", oriScheMemChatFav.getOrikkiri().getOrikkiriId());
+                    }
+
+                    return map;
+                })
+                .collect(Collectors.toList());
+
+        System.out.println("잘 나오나 보자 : "+result);
+
+        return result;
     }
+
 
 
     @Override

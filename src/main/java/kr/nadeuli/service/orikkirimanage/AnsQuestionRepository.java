@@ -24,4 +24,12 @@ public interface AnsQuestionRepository extends JpaRepository<AnsQuestion, Long> 
         "AND aq.content IS NOT NULL AND aq.oriScheMemChatFav IS NOT NULL")
     List<Object[]> findSignUpByOrikkiriId(@Param("orikkiriId") Long orikkiriId);
 
+
+    @Query("SELECT DISTINCT m " +
+            "FROM Member m " +
+            "JOIN OriScheMemChatFav mcf ON m.tag = mcf.member.tag " +
+            "LEFT JOIN AnsQuestion aq ON mcf.oriScheMemChatFavId = aq.oriScheMemChatFav.oriScheMemChatFavId " +
+            "WHERE mcf.orikkiri.orikkiriId = :orikkiriId " +
+            "AND aq.oriScheMemChatFav IS NULL")
+    List<Object[]> findMembersWithOrikkiriIdAndNoAnsQuestion(@Param("orikkiriId") Long orikkiriId);
 }

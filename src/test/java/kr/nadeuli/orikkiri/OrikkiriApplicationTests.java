@@ -74,15 +74,15 @@ public class OrikkiriApplicationTests {
 
 //    @Test
 //    @Transactional
-    public void testGetOrikkiriMemberList() throws Exception {
-        long orikkiriId = 2L;
-        SearchDTO searchDTO = new SearchDTO();
-        searchDTO.setCurrentPage(0);
-        searchDTO.setPageSize(pageSize);
-        searchDTO.setSearchKeyword("");
-        List<OriScheMemChatFavDTO> orikkiriServiceOrikkiriMemberList = orikkiriService.getOrikkiriMemberList(orikkiriId, searchDTO);
-        System.out.println(orikkiriServiceOrikkiriMemberList);
-    }
+//    public void testGetOrikkiriMemberList() throws Exception {
+//        long orikkiriId = 2L;
+//        SearchDTO searchDTO = new SearchDTO();
+//        searchDTO.setCurrentPage(0);
+//        searchDTO.setPageSize(pageSize);
+//        searchDTO.setSearchKeyword("");
+//        List<OriScheMemChatFavDTO> orikkiriServiceOrikkiriMemberList = orikkiriService.getOrikkiriMemberList(orikkiriId, searchDTO);
+//        System.out.println(orikkiriServiceOrikkiriMemberList);
+//    }
 
 //    @Test
     public void testAddOrikkiriScheduleMember() throws Exception {
