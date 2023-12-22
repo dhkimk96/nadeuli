@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Log4j2
@@ -41,6 +42,15 @@ public class OrikkiriManageServiceImpl implements OrikkiriManageService {
 
     private final AnsQuestionRepository ansQuestionRepository;
     private final AnsQuestionMapper ansQuestionMapper ;
+
+    @Override
+    public List<OrikkiriDTO> allOrikkiri() throws Exception {
+        List<Orikkiri> orikkiriList = orikkiriManageRepository.findAll();
+        return orikkiriList.stream()
+                .map(orikkiriMapper::orikkiriToOrikkiriDTO)
+                .collect(Collectors.toList());
+    }
+
 
     @Override
     public OrikkiriDTO addOrikkiri(OrikkiriDTO orikkiriDTO) throws Exception {

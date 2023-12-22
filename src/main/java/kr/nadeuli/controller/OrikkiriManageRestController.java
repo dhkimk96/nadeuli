@@ -34,6 +34,11 @@ public class OrikkiriManageRestController {
   @Value("${pageSize}")
   private int pageSize;
 
+  @GetMapping("/allOrikkiri")
+  public List<OrikkiriDTO> getAllOrikkiris() throws Exception {
+    return orikkiriManageService.allOrikkiri();
+  }
+
   @PostMapping("/addOrikkiri")
   public OrikkiriDTO addOrikkiri(@ModelAttribute OrikkiriDTO orikkiriDTO,
       @RequestParam(value = "image", required = false) MultipartFile image) throws Exception {
