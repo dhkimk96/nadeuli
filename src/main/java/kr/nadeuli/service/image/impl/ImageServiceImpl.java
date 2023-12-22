@@ -291,7 +291,7 @@ public class ImageServiceImpl implements ImageService {
         String extension = getFileExtension(fileName);
         String baseUrl = "https://kr.object.ncloudstorage.com/nadeuli/";
 
-        // 이미지 디렉터리에는 .jpg와 .png 확장자만 허용
+        // 이미지 디렉터리에는 .jpg와 .png, .gif, .jpeg, heif 확장자만 허용
         if (isImageFile(extension)) {
             return baseUrl + subDirectory1 + fileName;
         }
@@ -304,7 +304,7 @@ public class ImageServiceImpl implements ImageService {
     }
 
     private boolean isImageFile(String extension) {
-        return ".jpg".equalsIgnoreCase(extension) || ".png".equalsIgnoreCase(extension);
+        return ".jpg".equalsIgnoreCase(extension) || ".png".equalsIgnoreCase(extension) || ".jpeg".equalsIgnoreCase(extension) || ".gif".equalsIgnoreCase(extension) || ".heif".equalsIgnoreCase(extension);
     }
 
     private boolean isVideoFile(String extension) {
