@@ -111,10 +111,11 @@ public class AuthenticationRestController {
   }
 
   @PostMapping("/updateCellphone")
-  public boolean updateCellphone(@RequestBody MemberDTO memberDTO) throws Exception {
+  public int updateCellphone(@RequestBody MemberDTO memberDTO) throws Exception {
     log.info("/nadeuli/updateCellphone : POST : {}", memberDTO);
-    log.info(memberService.updateCellphone(memberDTO));
-    return memberService.updateCellphone(memberDTO);
+    int result = memberService.updateCellphone(memberDTO) ? 1 : 0;
+    log.info("Result: {}", result);
+    return result;
   }
 
 
