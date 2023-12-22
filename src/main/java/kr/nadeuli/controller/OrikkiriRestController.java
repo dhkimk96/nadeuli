@@ -86,13 +86,15 @@ public class OrikkiriRestController {
         return ResponseEntity.status(HttpStatus.OK).body("{\"success\": true}");
     }
 
-    @GetMapping("/getOrikkiriMemberList/{orikkiriId}/{currentPage}")
-    public List<OriScheMemChatFavDTO> getOrikkiriMemberList(@PathVariable long orikkiriId, @PathVariable int currentPage) throws Exception {
+    @GetMapping("/getOrikkiriMemberList/{orikkiriId}")
+    public List<Map<String, Object>> getOrikkiriMemberList(@PathVariable long orikkiriId) throws Exception {
         SearchDTO searchDTO = SearchDTO.builder()
-                .currentPage(currentPage)
+                .currentPage(0)
                 .pageSize(pageSize)
                 .build();
-        return orikkiriService.getOrikkiriMemberList(orikkiriId, searchDTO);
+
+        List<Map<String, Object>> orikkiriMemberListList = orikkiriService.getOrikkiriMemberList(orikkiriId);
+        return orikkiriMemberListList;
     }
 
     @PostMapping("/addOrikkiriScheduleMember")
