@@ -2,6 +2,8 @@ package kr.nadeuli.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import kr.nadeuli.dto.*;
 import kr.nadeuli.entity.Orikkiri;
@@ -117,15 +119,26 @@ public class OrikkiriRestController {
     }
 
     @PostMapping("/addOrikkiriSchedule")
-    public ResponseEntity<String> addOrikkiriSchedule(@RequestBody OrikkiriScheduleDTO orikkiriScheduleDTO) throws Exception {
+    public ResponseEntity<String> addOrikkiriSchedule(@RequestBody Map<String, Object> requestData) throws Exception {
+        OrikkiriScheduleDTO orikkiriScheduleDTO = objectMapper.convertValue(requestData.get("orikkiriScheduleDTO"), OrikkiriScheduleDTO.class);
+        log.info("받은 DTO는 {}", orikkiriScheduleDTO);
+
+        // 이미 LocalDateTime 형식이라면 toString()을 사용하지 않고 그대로 사용
+        LocalDateTime meetingDateTime = (orikkiriScheduleDTO.getMeetingDay() instanceof LocalDateTime)
+            ? (LocalDateTime) orikkiriScheduleDTO.getMeetingDay()
+            : LocalDateTime.parse(orikkiriScheduleDTO.getMeetingDay().toString(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+
+        // 변환된 LocalDateTime을 다시 설정
+        orikkiriScheduleDTO.setMeetingDay(meetingDateTime);
+
         orikkiriService.addOrikkiriSchedule(orikkiriScheduleDTO);
         return ResponseEntity.status(HttpStatus.OK).body("{\"success\": true}");
     }
 
-    @GetMapping("/getOrikkiriScheduleList/{orikkiriId}/{currentPage}")
-    public List<OrikkiriScheduleDTO> getOrikkiriScheduleList(long orikkiriId, @PathVariable int currentPage) throws Exception {
+    @GetMapping("/getOrikkiriScheduleList/{orikkiriId}")
+    public List<OrikkiriScheduleDTO> getOrikkiriScheduleList(@PathVariable long orikkiriId) throws Exception {
         SearchDTO searchDTO = SearchDTO.builder()
-                .currentPage(currentPage)
+                .currentPage(0)
                 .pageSize(pageSize)
                 .build();
         return orikkiriService.getOrikkiriScheduleList(orikkiriId, searchDTO);

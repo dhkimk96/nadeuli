@@ -1,11 +1,13 @@
 package kr.nadeuli.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import org.springframework.format.annotation.DateTimeFormat;
 
 @Data
 @NoArgsConstructor
@@ -16,6 +18,8 @@ public class OrikkiriScheduleDTO {
     private Long orikkiriScheduleId;
     private Long scheduleMemberNum;
     private String meetingDongNe;
+    private String meetingTitle;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
     private LocalDateTime meetingDay;
     private OrikkiriDTO orikkiri;
 
