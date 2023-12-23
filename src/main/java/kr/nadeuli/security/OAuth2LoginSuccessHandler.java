@@ -47,18 +47,6 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
       String refreshToken = jwtService.generateRefreshToken(new HashMap<>(), userDetails);
       log.info("accessToken은 {}",accessToken);
       log.info("refreshToken은 {}",refreshToken);
-//
-//    try {
-//      MemberDTO memberDTO = memberService.getMember(jwtService.extractUserName(accessToken));
-//      if(memberDTO.getDongNe() == null){
-//        memberService.addDongNe()
-//
-//      }
-//    } catch (Exception e) {
-//      throw new RuntimeException(e);
-//    }
-
-
 
     // AccessToken 쿠키 추가
     Cookie accessTokenCookie = new Cookie("Authorization", accessToken);
@@ -78,9 +66,6 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
     refreshTokenCookie.setPath("/"); // 쿠키의 유효 경로 설정 (루트 경로로 설정하면 전체 애플리케이션에서 사용 가능)
     response.addCookie(refreshTokenCookie);
     response.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
-
-    // 리다이렉션 수행
-//    response.sendRedirect("https://www.nadeuli.kr/oAuth2RedirectHandler");
 
     // 리다이렉션 URL을 생성할 때 액세스 토큰을 포함
     String redirectUrl = "https://www.nadeuli.kr/oAuth2RedirectHandler?accessToken=" + accessToken;
