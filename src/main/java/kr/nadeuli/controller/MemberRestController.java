@@ -205,8 +205,10 @@ public class MemberRestController {
   }
 
   @PostMapping("/addReport")
-  public String addReport(@RequestBody ReportDTO reportDTO) throws Exception{
-    log.info("/member/addReport : POST : {}", reportDTO);
+  public String addReport(@RequestBody Map<String, Object> requestData) throws Exception{
+    log.info("/member/addReport : POST : {}", requestData);
+    ReportDTO reportDTO = objectMapper.convertValue(requestData.get("reportDTO"), ReportDTO.class);
+
     memberService.addReport(reportDTO);
     return "{\"success\": true}";
   }
