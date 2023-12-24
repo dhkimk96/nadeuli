@@ -67,4 +67,6 @@ public interface MemberService {
       throws JsonProcessingException;
 
   public void addBankAccount(PortOneAccountDTO portOneAccountDTO) throws Exception;
+
+  public MemberDTO deleteBankAccount(MemberDTO memberDTO) throws Exception;
 }

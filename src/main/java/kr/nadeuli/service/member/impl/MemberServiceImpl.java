@@ -642,15 +642,26 @@ public class MemberServiceImpl implements MemberService {
     MemberDTO memberDTO = getMember(portOneAccountDTO.getTag());
 
     memberDTO.setBankAccountNum(portOneAccountDTO.getAccountNum());
-    memberDTO.setBankName(portOneAccountDTO.getName());
+    memberDTO.setBankName(portOneAccountDTO.getCode());
 
     BankAccountDTO bankAccountDTO = BankAccountDTO.builder()
         .bankAccountNum(portOneAccountDTO.getAccountNum())
-        .bankName(portOneAccountDTO.getName())
+        .bankName(portOneAccountDTO.getCode())
         .build();
 
+//    updateMember(memberDTO);
     memberRepository.save(memberMapper.memberDTOToMember(memberDTO));
-    bankAccountRepository.save(bankAccountMapper.bankAccountDTOToBankAccount(bankAccountDTO));
+//    bankAccountRepository.save(bankAccountMapper.bankAccountDTOToBankAccount(bankAccountDTO));
+  }
+
+  @Override
+  public MemberDTO deleteBankAccount(MemberDTO memberDTO) throws Exception{
+    MemberDTO existMemberDTO = getMember(memberDTO.getTag());
+
+    existMemberDTO.setBankAccountNum(null);
+    existMemberDTO.setBankName(null);
+    log.info(existMemberDTO);
+    return memberMapper.memberToMemberDTO(memberRepository.save(memberMapper.memberDTOToMember(existMemberDTO)));
   }
 }
 

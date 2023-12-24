@@ -285,4 +285,13 @@ public class MemberRestController {
     return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
   }
 
+  @PostMapping("/deleteMemberBackAccount")
+  public ResponseEntity<MemberDTO> deleteBackAccount(@RequestBody Map<String, Object> requestData) throws Exception {
+    MemberDTO memberDTO= objectMapper.convertValue(requestData.get("memberDTO"), MemberDTO.class);
+    log.info("받은 DTO는{}", memberDTO);
+
+      return ResponseEntity.ok(memberService.deleteBankAccount(memberDTO));
+
+  }
+
 }
