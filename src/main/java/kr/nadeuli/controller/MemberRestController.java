@@ -152,8 +152,21 @@ public class MemberRestController {
   }
 
   @PostMapping("/updateTo")
-  public MemberDTO updateTo(@RequestBody MemberDTO memberDTO) throws Exception{
+  public MemberDTO updateTo(@RequestBody MemberDTO memberDTO) throws Exception {
     log.info("/member/updateTo : POST : {}", memberDTO);
+
+    // 기존 멤버 정보 조회
+    MemberDTO existMember = memberService.getMember(memberDTO.getTag());
+
+    // 이메일 또는 휴대폰 번호가 이미 존재하는 경우
+    if (existMember != null &&
+        (existMember.getEmail().equals(memberDTO.getEmail()) ||
+            existMember.getCellphone().equals(memberDTO.getCellphone()))) {
+      // 이미 존재하는 이메일입니다. 경고창 띄우기 또는 예외 처리 등을 수행할 수 있습니다.
+      throw new Exception("이미 존재하는 이메일입니다.");
+    }
+
+    // 존재하지 않는 경우에만 업데이트 수행
     return memberService.updateTo(memberDTO);
   }
 
