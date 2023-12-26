@@ -1,5 +1,6 @@
 package kr.nadeuli.service.orikkiri.impl;
 
+import jakarta.persistence.EntityManager;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -36,7 +37,7 @@ import java.util.List;
 @Service("orikkiriServiceImpl")
 public class OrikkiriServiceImpl implements OrikkiriService {
     
-
+    private final EntityManager entityManager;
 
     private final OriScheMenChatFavRepository oriScheMenChatFavRepository;
     private final AnsQuestionRepository ansQuestionRepository;
@@ -54,6 +55,11 @@ public class OrikkiriServiceImpl implements OrikkiriService {
         OriScheMemChatFav oriScheMemChatFav = oriScheMemChatFavMapper.oriScheMemChatFavDTOToOriScheMemChatFav(oriScheMemChatFavDTO);
         log.info("받은 oriScheMemChatFavDTO는{}",oriScheMemChatFavDTO);
         log.info("변환한 OriScheMemChatFav는{}",oriScheMemChatFav);
+
+        List<AnsQuestion> ansQuestions = oriScheMemChatFavDTO.getAnsQuestions().stream()
+            .map(ansQuestionDTO -> entityManager.getReference(AnsQuestion.class, ansQuestionDTO.getAnsQuestionId()))
+            .collect(Collectors.toList());
+        oriScheMemChatFav.setAnsQuestions(ansQuestions);
         OriScheMemChatFavDTO existOriScheMemChatFavDTO = oriScheMemChatFavMapper.oriScheMemChatFavToOriScheMemChatFavDTO(oriScheMenChatFavRepository.save(oriScheMemChatFav));
         return existOriScheMemChatFavDTO;
     }

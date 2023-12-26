@@ -17,14 +17,14 @@ public interface OriScheMemChatFavMapper {
 //    @Mapping(source = "orikkiri", target = "orikkiri", qualifiedByName = "orikkiriDTOToOrikkiri")
     @Mapping(source = "orikkiriSchedule", target = "orikkiriSchedule", qualifiedByName = "orikkiriScheduleDTOToOrikkiriSchedule")
     @Mapping(source = "product", target = "product", qualifiedByName = "productDTOToProduct")
-//    @Mapping(source = "ansQuestions", target = "ansQuestions", qualifiedByName = "ansQuestionsDTOListToAnsQuestionsList")
+    @Mapping(source = "ansQuestions", target = "ansQuestions", qualifiedByName = "ansQuestionsDTOListToAnsQuestionsList")
     OriScheMemChatFav oriScheMemChatFavDTOToOriScheMemChatFav(OriScheMemChatFavDTO oriScheMemChatFavDTO);
 
     @Mapping(source = "member", target = "member", qualifiedByName = "memberToMemberDTO")
 //    @Mapping(source = "orikkiri", target = "orikkiri", qualifiedByName = "orikkiriToOrikkiriDTO")
     @Mapping(source = "orikkiriSchedule", target = "orikkiriSchedule", qualifiedByName = "orikkiriScheduleToOrikkiriScheduleDTO")
     @Mapping(source = "product", target = "product", qualifiedByName = "productToProductDTO")
-//    @Mapping(source = "ansQuestions", target = "ansQuestions", qualifiedByName = "ansQuestionListToAnsQuestionDTOList")
+    @Mapping(source = "ansQuestions", target = "ansQuestions", qualifiedByName = "ansQuestionListToAnsQuestionDTOList")
     OriScheMemChatFavDTO oriScheMemChatFavToOriScheMemChatFavDTO(OriScheMemChatFav oriScheMemChatFav);
 
     @Named("memberDTOToMember")
@@ -95,38 +95,38 @@ public interface OriScheMemChatFavMapper {
     }
 
     // 추가된 메서드: DTO에서 Entity로 List<AnsQuestion> 매핑하는 메서드
-//    @Named("ansQuestionsDTOListToAnsQuestionsList")
-//    default List<AnsQuestion> ansQuestionsDTOListToAnsQuestionsList(List<AnsQuestionDTO> ansQuestionDTOList) {
-//        if (ansQuestionDTOList == null) {
-//            return null;
-//        }
-//        return ansQuestionDTOList.stream()
-//            .map(ansQuestionDTO -> {
-//                AnsQuestion ansQuestion = AnsQuestion.builder()
-//                    .content(ansQuestionDTO.getContent())
-//                    // ID 설정 추가
-//                    .ansQuestionId(ansQuestionDTO.getAnsQuestionId())
-//                    .build();
-//
-//                // 다른 필요한 매핑 작업 수행
-//
-//                // 로그 추가
-//                System.out.println("DTO Info: " + ansQuestionDTO);
-//                System.out.println("Entity Info: " + ansQuestion);
-//
-//                return ansQuestion;
-//            })
-//            .collect(Collectors.toList());
-//    }
-//
-//    @Named("ansQuestionListToAnsQuestionDTOList")
-//    default List<AnsQuestionDTO> ansQuestionListToAnsQuestionDTOList(List<AnsQuestion> ansQuestions) {
-//        if (ansQuestions == null) {
-//            return null;
-//        }
-//        return ansQuestions.stream()
-//            .map(ansQuestion -> AnsQuestionDTO.builder().content(ansQuestion.getContent()).build())
-//            .collect(Collectors.toList());
-//    }
+    @Named("ansQuestionsDTOListToAnsQuestionsList")
+    default List<AnsQuestion> ansQuestionsDTOListToAnsQuestionsList(List<AnsQuestionDTO> ansQuestionDTOList) {
+        if (ansQuestionDTOList == null) {
+            return null;
+        }
+        return ansQuestionDTOList.stream()
+            .map(ansQuestionDTO -> {
+                AnsQuestion ansQuestion = AnsQuestion.builder()
+                    .content(ansQuestionDTO.getContent())
+                    // ID 설정 추가
+                    .ansQuestionId(ansQuestionDTO.getAnsQuestionId())
+                    .build();
+
+                // 다른 필요한 매핑 작업 수행
+
+                // 로그 추가
+                System.out.println("DTO Info: " + ansQuestionDTO);
+                System.out.println("Entity Info: " + ansQuestion);
+
+                return ansQuestion;
+            })
+            .collect(Collectors.toList());
+    }
+
+    @Named("ansQuestionListToAnsQuestionDTOList")
+    default List<AnsQuestionDTO> ansQuestionListToAnsQuestionDTOList(List<AnsQuestion> ansQuestions) {
+        if (ansQuestions == null) {
+            return null;
+        }
+        return ansQuestions.stream()
+            .map(ansQuestion -> AnsQuestionDTO.builder().content(ansQuestion.getContent()).build())
+            .collect(Collectors.toList());
+    }
 }
 
