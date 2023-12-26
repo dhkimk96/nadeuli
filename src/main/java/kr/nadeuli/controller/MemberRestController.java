@@ -264,8 +264,8 @@ public class MemberRestController {
     MemberDTO memberDTO = objectMapper.convertValue(requestData.get("memberDTO"), MemberDTO.class);
 
     String tag = jwtService.extractUserName(tokenDTO.getAccessToken());
+    memberService.addDongNe(tag, gpsDTO);
     MemberDTO existMemberDTO = memberService.getMember(tag);
-    memberService.addDongNe(existMemberDTO.getTag(), gpsDTO);
     existMemberDTO.setNickname(memberDTO.getNickname());
 
     // 디버깅: memberDTO의 내용 다시 확인
