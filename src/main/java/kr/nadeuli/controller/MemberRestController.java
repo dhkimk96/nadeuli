@@ -205,14 +205,16 @@ public class MemberRestController {
       log.info("추출한 favDTO는 {}",favDTO);
       log.info("추출한 favDTO는 {}",favDTO.getProduct());
       log.info("추출한 favDTO는 {}",favDTO.getProduct().getProductId());
-      long productId = favDTO.getProduct().getProductId();
-      ProductDTO productDTO = productService.getProduct(productId, null);
+      if (favDTO.getProduct() != null) {
+        long productId = favDTO.getProduct().getProductId();
+        ProductDTO productDTO = productService.getProduct(productId, null);
 
-      // ProductDTO의 seller를 설정
-      MemberDTO sellerDTO = memberService.getMember(productDTO.getSeller().getTag());
-      productDTO.setSeller(sellerDTO);
+        // ProductDTO의 seller를 설정
+        MemberDTO sellerDTO = memberService.getMember(productDTO.getSeller().getTag());
+        productDTO.setSeller(sellerDTO);
 
-      favDTO.setProduct(productDTO);
+        favDTO.setProduct(productDTO);
+      }
     }
 
     log.info(list.stream().toList());
