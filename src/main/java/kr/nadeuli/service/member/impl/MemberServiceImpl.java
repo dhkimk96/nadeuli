@@ -400,7 +400,7 @@ public class MemberServiceImpl implements MemberService {
       throws Exception {
     Pageable pageable = PageRequest.of(searchDTO.getCurrentPage(), searchDTO.getPageSize());
     return oriScheMenChatFavRepository
-        .findNotNullProductsByMemberTag(tag,pageable)
+        .findByMemberTagAndOrikkiriScheduleIsNullAndOrikkiriIsNullAndAnsQuestionsIsNullAndProductNotNull(tag,pageable)
         .map(oriScheMemChatFavMapper::oriScheMemChatFavToOriScheMemChatFavDTO)
         .toList();
   }
