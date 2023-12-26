@@ -203,8 +203,6 @@ public class MemberRestController {
     // ProductDTO 객체의 productId를 사용하여 객체를 가져와서 각각의 OriScheMemChatFavDTO에 설정
     for (OriScheMemChatFavDTO favDTO : list) {
       log.info("추출한 favDTO는 {}",favDTO);
-      log.info("추출한 favDTO는 {}",favDTO.getProduct());
-      log.info("추출한 favDTO는 {}",favDTO.getProduct().getProductId());
       if (favDTO.getProduct() != null) {
         long productId = favDTO.getProduct().getProductId();
         ProductDTO productDTO = productService.getProduct(productId, null);
