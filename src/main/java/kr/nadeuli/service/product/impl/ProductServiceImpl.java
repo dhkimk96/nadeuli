@@ -1,8 +1,13 @@
 package kr.nadeuli.service.product.impl;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import kr.nadeuli.dto.ProductDTO;
 import kr.nadeuli.dto.SearchDTO;
 import kr.nadeuli.entity.Member;
+import kr.nadeuli.entity.OriScheMemChatFav;
 import kr.nadeuli.entity.Product;
 import kr.nadeuli.mapper.ProductMapper;
 import kr.nadeuli.scheduler.PremiumTimeScheduler;
@@ -86,20 +91,62 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<ProductDTO> getProductList(String gu, SearchDTO searchDTO) throws Exception {
         Sort sort = Sort.by(
-                Sort.Order.desc("isPremium"),
-                Sort.Order.desc("lastWriteTime")
+            Sort.Order.desc("isPremium"),
+            Sort.Order.desc("lastWriteTime")
         );
         Pageable pageable = PageRequest.of(searchDTO.getCurrentPage(), searchDTO.getPageSize(), sort);
         Page<Product> productPage;
-        log.info(oriScheMenChatFavRepository.findAllByOrikkiriScheduleIsNullAndOrikkiriIsNullAndAnsQuestionsIsNull());
-        if(searchDTO.getSearchKeyword() == null || searchDTO.getSearchKeyword().isEmpty()){
+
+        // 좋아요 정보를 담을 Map 초기화
+        Map<Long, Long> likeCountMap = new HashMap<>();
+
+        // 좋아요 정보를 가져오기
+        List<OriScheMemChatFav> oriScheMemChatFavs = oriScheMenChatFavRepository.findAllByOrikkiriScheduleIsNullAndOrikkiriIsNullAndAnsQuestionsIsNull();
+        for (OriScheMemChatFav oriScheMemChatFav : oriScheMemChatFavs) {
+            // 해당 OriScheMemChatFav의 상품 객체 가져오기
+            Product product = oriScheMemChatFav.getProduct();
+
+            // 상품 객체가 null이 아닌 경우에 작업 수행
+            if (product != null) {
+                Long productId = product.getProductId();
+                likeCountMap.put(productId, likeCountMap.getOrDefault(productId, 0L) + 1);
+                log.info("OriScheMemChatFav(oriScheMemChatFavId={}), Product(productId={})", oriScheMemChatFav.getOriScheMemChatFavId(), productId);
+                // 여기서 productId를 이용한 원하는 작업 수행
+            } else {
+                // 상품 객체가 null인 경우에 대한 처리
+            }
+        }
+
+        // 상품 정보 가져오기
+        if (searchDTO.getSearchKeyword() == null || searchDTO.getSearchKeyword().isEmpty()) {
             productPage = productRepository.findProductList(gu, pageable);
-        }else{
+        } else {
             productPage = productRepository.findProductListByKeyword(searchDTO.getSearchKeyword(), searchDTO.getSearchKeyword(), gu, pageable);
         }
-        log.info(productPage);
-        return productPage.map(productMapper::productToProductDTO).toList();
+
+        // ProductDTO 리스트 생성
+        List<ProductDTO> productDTOList = productPage.getContent().stream()
+            .map(product -> {
+                // ProductDTO 생성
+                ProductDTO productDTO = productMapper.productToProductDTO(product);
+
+                // Product의 ID를 이용하여 좋아요 개수 가져오기
+                Long likeCount = likeCountMap.get(product.getProductId());
+
+                // 좋아요 개수가 존재하는 경우에만 설정
+                if (likeCount != null) {
+                    productDTO.setLikeNum(likeCount);
+                }
+
+                return productDTO;
+            })
+            .collect(Collectors.toList());
+
+        // 최종 결과인 productDTOList 반환
+        log.info(productDTOList);
+        return productDTOList;
     }
+
 
     @Override
     public List<ProductDTO> getMyProductList(String tag, SearchDTO searchDTO) throws Exception {
