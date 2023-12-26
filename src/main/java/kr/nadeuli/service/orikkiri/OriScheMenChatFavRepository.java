@@ -22,7 +22,7 @@ public interface OriScheMenChatFavRepository extends JpaRepository<OriScheMemCha
 
     List<OriScheMemChatFav> findAllByOrikkiriScheduleIsNullAndOrikkiriIsNullAndAnsQuestionsIsNull();
 
-
+    List<OriScheMemChatFav> findAllByOriScheMemChatFavIdIn(List<Long> oriScheMemChatFavIds);
     void deleteByMemberAndOrikkiri(Member member, Orikkiri orikkiriId);
 
     void deleteByMemberAndProduct(Member member, Product product);
