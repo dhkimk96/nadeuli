@@ -268,6 +268,9 @@ public class MemberRestController {
     memberService.addDongNe(existMemberDTO.getTag(), gpsDTO);
     existMemberDTO.setNickname(memberDTO.getNickname());
 
+    // 디버깅: memberDTO의 내용 다시 확인
+    log.info("Updated existMemberDTO: {}", existMemberDTO);
+
     return memberService.updateMember(existMemberDTO);
   }
 
