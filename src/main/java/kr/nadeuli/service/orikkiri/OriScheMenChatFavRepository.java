@@ -17,7 +17,9 @@ public interface OriScheMenChatFavRepository extends JpaRepository<OriScheMemCha
 
     Page<OriScheMemChatFav> findByMemberAndOrikkiriNotNullAndAnsQuestionsNull(Member member, Pageable pageable);
 
-    Page<OriScheMemChatFav> findByMemberTagAndOrikkiriScheduleIsNullAndOrikkiriIsNullAndAnsQuestionsIsNullAndProductNotNull(String memberTag, Pageable pageable);
+    @Query("SELECT o FROM OriScheMemChatFav o WHERE o.member.tag = :memberTag AND o.orikkiriSchedule IS NULL AND o.orikkiri IS NULL AND o.ansQuestions IS NULL AND o.product IS NOT NULL")
+    Page<OriScheMemChatFav> findNotNullProductsByMemberTag(@Param("memberTag") String memberTag, Pageable pageable);
+
 
     Page<OriScheMemChatFav> findAllByOrikkiriScheduleIsNullAndOrikkiriIsNullAndAnsQuestionsIsNull(Pageable pageable);
 
