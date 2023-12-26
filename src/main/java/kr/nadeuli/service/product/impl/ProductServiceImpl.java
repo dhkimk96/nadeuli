@@ -91,6 +91,7 @@ public class ProductServiceImpl implements ProductService {
         );
         Pageable pageable = PageRequest.of(searchDTO.getCurrentPage(), searchDTO.getPageSize(), sort);
         Page<Product> productPage;
+//        log.info(oriScheMenChatFavRepository.findAllByOrikkiriScheduleIsNullAndOrikkiriIsNullAndAnsQuestionsIsNull(pageable));
         if(searchDTO.getSearchKeyword() == null || searchDTO.getSearchKeyword().isEmpty()){
             productPage = productRepository.findProductList(gu, pageable);
         }else{

@@ -19,6 +19,8 @@ public interface OriScheMenChatFavRepository extends JpaRepository<OriScheMemCha
 
     Page<OriScheMemChatFav> findByMemberTagAndOrikkiriScheduleIsNullAndOrikkiriIsNullAndAnsQuestionsIsNull(String memberTag, Pageable pageable);
 
+    Page<OriScheMemChatFav> findAllByOrikkiriScheduleIsNullAndOrikkiriIsNullAndAnsQuestionsIsNull(Pageable pageable);
+
 
     void deleteByMemberAndOrikkiri(Member member, Orikkiri orikkiriId);
 

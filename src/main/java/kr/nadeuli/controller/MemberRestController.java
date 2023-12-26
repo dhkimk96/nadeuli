@@ -199,7 +199,7 @@ public class MemberRestController {
 
     searchDTO.setPageSize(pageSize);
     List<OriScheMemChatFavDTO> list = memberService.getFavoriteList(memberDTO.getTag(), searchDTO);
-
+    log.info("받은OriScheMemChatFavDTO는 {}",list);
     // ProductDTO 객체의 productId를 사용하여 객체를 가져와서 각각의 OriScheMemChatFavDTO에 설정
     for (OriScheMemChatFavDTO favDTO : list) {
       long productId = favDTO.getProduct().getProductId();
