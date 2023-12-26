@@ -76,17 +76,20 @@ public class DongNeRestController {
     }
 
     @PostMapping("/updatePost")
-    public ResponseEntity<String> updatePost(@RequestBody PostDTO postDTO,@RequestParam("images") List<MultipartFile> images) throws Exception {
+    public ResponseEntity<String> updatePost(@RequestPart PostDTO postDTO, @RequestParam(value= "images", required = false) List<MultipartFile> images) throws Exception {
         Long postId = postService.updatePost(postDTO);
         imageService.deletePostImage(postId);
 
-        // 이미지 업로드 및 저장을 위한 ImageDTO 생성
-        ImageDTO imageDTO = ImageDTO.builder()
-            .post(PostDTO.builder().postId(postId).build())
-            .build();
+        // 이미지가 제공되었는지 확인
+        if (images != null && !images.isEmpty()) {
+            // 이미지 업로드 및 저장을 위한 ImageDTO 생성
+            ImageDTO imageDTO = ImageDTO.builder()
+                    .post(PostDTO.builder().postId(postId).build())
+                    .build();
 
-        // 이미지 업로드 및 저장
-        imageService.addImage(images, imageDTO);
+            // 이미지 업로드 및 저장
+            imageService.addImage(images, imageDTO);
+        }
         return ResponseEntity.status(HttpStatus.OK).body("{\"success\": true}");
     }
 
