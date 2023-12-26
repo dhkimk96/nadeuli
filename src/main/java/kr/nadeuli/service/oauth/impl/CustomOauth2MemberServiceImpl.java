@@ -98,8 +98,6 @@ public class CustomOauth2MemberServiceImpl extends DefaultOAuth2UserService impl
   private void saveUser(OAuthAttributes attributes) throws Exception {
     MemberDTO memberDTO = attributes.toEntity(attributes.getOauth2UserInfo());
     memberDTO.setTag(memberService.addTag()); // 변경
-    memberDTO.setGu(null);
-    memberDTO.setDongNe(null);
     memberDTO.setAffinity(0L);
     memberDTO.setPicture("https://kr.object.ncloudstorage.com/nadeuli/image/nadeuli20231220143920148.png");
     memberRepository.save(memberMapper.memberDTOToMember(memberDTO));
