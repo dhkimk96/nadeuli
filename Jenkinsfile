@@ -114,7 +114,7 @@ spec:
 
                     // Deployment 및 Service 적용
                     withEnv(["PATH=${PATH}:/root/bin/ncp-iam-authenticator"]) {
-                        sh "sudo kubectl apply -f $DEPLOYMENT_FILE_PATH --kubeconfig=$KUBECONFIG_PATH"
+                        sh "sudo kubectl apply -f /var/lib/jenkins/deployment.yaml --kubeconfig=/root/.kube/config"
                     }
 
                     // Docker 이미지가 있는지 확인
