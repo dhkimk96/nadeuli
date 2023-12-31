@@ -1,5 +1,10 @@
 pipeline {
     agent any
+
+        environment {
+            KUBECONFIG_PATH = "/var/lib/jenkins/.kube/config"
+            IAM_AUTHENTICATOR_PATH = "/root/bin/ncp-iam-authenticator"  // 실제 경로로 변경
+        }
     stages {
         // Jenkins Credential에서 파일 가져오기
         stage('Fetch Credential File') {
@@ -92,7 +97,7 @@ pipeline {
 
                             // Deployment 및 Service 적용
                             writeFile file: 'deployment.yaml', text: kubernetesManifests
-                            sh 'export PATH=$PATH:/root/bin/ncp-iam-authenticator && kubectl apply --kubeconfig=${HOME}/.kube/config -f deployment.yaml'
+                            sh "${IAM_AUTHENTICATOR_PATH} token --clusterUuid 453f1927-60c9-4579-b22c-5338336c32ce --region KR-2 && kubectl --kubeconfig=${KUBECONFIG_PATH} apply -f deployment.yaml"
                     withCredentials([string(credentialsId: 'docker_hub_access_token', variable: 'DOCKERHUB_ACCESS_TOKEN')]) {
                         // Docker Hub에 로그인하고 이미지 푸시
                         sh "docker login -u lsm00 -p $DOCKERHUB_ACCESS_TOKEN"
