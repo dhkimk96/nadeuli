@@ -37,7 +37,7 @@ pipeline {
                     def versionFile = '/var/lib/jenkins/was-version.txt'
                     def currentVersion = readFile(versionFile).trim()
                     def newVersion = (currentVersion as Float) + 0.01
-                    newVersion = String.format('%.2f', newVersion) // 두 자리 소수점까지 표현
+                    newVersion = newVersion.toString()
                     sh "echo $newVersion > $versionFile"
 
                     // Docker 이미지 빌드
