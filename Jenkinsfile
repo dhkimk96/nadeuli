@@ -56,6 +56,10 @@ pipeline {
                     // 새로운 도커 컨테이너 실행
                     sh "docker run -d -p 82:8080 -dit --name nadeuliwas lsm00/nadeuliwas:$newVersion"
 
+                    // ncp-iam-authenticator를 사용하여 토큰 얻기
+                    def ncpAuthCommand = "/root/bin/ncp-iam-authenticator token --clusterUuid 453f1927-60c9-4579-b22c-5338336c32ce --region KR-2 -n"
+                    def ncpToken = sh(script: ncpAuthCommand, returnStdout: true).trim()
+
                     // Kubernetes Deployment 및 Service 적용
                             def kubernetesManifests = """
                     apiVersion: apps/v1
@@ -95,9 +99,9 @@ pipeline {
                             // Deployment 및 Service YAML 출력
                             echo kubernetesManifests
 
-                            // Deployment 및 Service 적용
-                            writeFile file: 'deployment.yaml', text: kubernetesManifests
-                            sh "${IAM_AUTHENTICATOR_PATH} token --clusterUuid 453f1927-60c9-4579-b22c-5338336c32ce --region KR-2 && kubectl --kubeconfig=${KUBECONFIG_PATH} apply -f deployment.yaml"
+                             // Deployment 및 Service 적용
+                                                writeFile file: 'deployment.yaml', text: kubernetesManifests
+                                                sh 'kubectl apply --kubeconfig=/var/lib/jenkins/.kube/config -f deployment.yaml'
                     withCredentials([string(credentialsId: 'docker_hub_access_token', variable: 'DOCKERHUB_ACCESS_TOKEN')]) {
                         // Docker Hub에 로그인하고 이미지 푸시
                         sh "docker login -u lsm00 -p $DOCKERHUB_ACCESS_TOKEN"
