@@ -114,6 +114,8 @@ spec:
 
                     // Deployment 및 Service 적용
                     withEnv(["PATH=${PATH}:/root/bin/ncp-iam-authenticator"]) {
+                        sh "echo \$PATH"
+                        sh "sudo kubectl version"
                         sh "sudo kubectl apply -f /var/lib/jenkins/deployment.yaml --kubeconfig=/root/.kube/config"
                     }
 
