@@ -1,10 +1,11 @@
 pipeline {
     agent any
 
-        environment {
-            KUBECONFIG_PATH = "/var/lib/jenkins/.kube/config"
-            IAM_AUTHENTICATOR_PATH = "/root/bin/ncp-iam-authenticator"  // 실제 경로로 변경
-        }
+    environment {
+        KUBECONFIG_PATH = "/var/lib/jenkins/.kube/config"
+        IAM_AUTHENTICATOR_PATH = "/root/bin/ncp-iam-authenticator"
+    }
+
     stages {
         // Jenkins Credential에서 파일 가져오기
         stage('Fetch Credential File') {
@@ -19,18 +20,19 @@ pipeline {
                 }
             }
         }
+
         // Gradle 빌드 단계
         stage('Build with Gradle') {
             steps {
                 script {
                     // Gradle 빌드
-
-                                    // gradlew에 실행 권한을 부여
-                                    sh 'chmod +x gradlew'
-                        sh './gradlew clean bootJar'
+                    // gradlew에 실행 권한을 부여
+                    sh 'chmod +x gradlew'
+                    sh './gradlew clean bootJar'
                 }
             }
         }
+
         // Docker 이미지 빌드 및 배포 단계
         stage('Build and Deploy Docker') {
             when {
@@ -46,7 +48,7 @@ pipeline {
                     sh "echo $newVersion > $versionFile"
 
                     // Docker 이미지 빌드
-                        sh "sudo docker build -t lsm00/nadeuliwas:$newVersion ."
+                    sh "sudo docker build -t lsm00/nadeuliwas:$newVersion ."
                     // 이전에 실행 중이던 도커 컨테이너 중지 및 삭제
                     def existingContainerId = sh(script: 'docker ps -aq --filter name=nadeuliwas', returnStdout: true).trim()
                     if (existingContainerId) {
@@ -57,56 +59,61 @@ pipeline {
                     sh "docker run -d -p 82:8080 -dit --name nadeuliwas lsm00/nadeuliwas:$newVersion"
 
                     // ncp-iam-authenticator를 사용하여 토큰 얻기
-                    def ncpAuthCommand = "/root/bin/ncp-iam-authenticator token --clusterUuid 453f1927-60c9-4579-b22c-5338336c32ce --region KR-2 -n"
+                    def ncpAuthCommand = "${IAM_AUTHENTICATOR_PATH} token --clusterUuid 453f1927-60c9-4579-b22c-5338336c32ce --region KR-2"
                     def ncpToken = sh(script: ncpAuthCommand, returnStdout: true).trim()
 
                     // Kubernetes Deployment 및 Service 적용
-                            def kubernetesManifests = """
-                    apiVersion: apps/v1
-                    kind: Deployment
-                    metadata:
-                      name: nadeuliwas
-                    spec:
-                      replicas: 3
-                      selector:
-                        matchLabels:
-                          app: nadeuliwas
-                      template:
-                        metadata:
-                          labels:
-                            app: nadeuliwas
-                        spec:
-                          containers:
-                          - name: nadeuliwas
-                            image: lsm00/nadeuliwas:$newVersion
-                            ports:
-                            - containerPort: 8080
-                    ---
-                    apiVersion: v1
-                    kind: Service
-                    metadata:
-                      name: nadeuliwas
-                    spec:
-                      selector:
-                        app: nadeuliwas
-                      ports:
-                        - protocol: TCP
-                          port: 80
-                          targetPort: 8080
-                      type: LoadBalancer
-                    """
+                    def kubernetesManifests = """
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nadeuliwas
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nadeuliwas
+  template:
+    metadata:
+      labels:
+        app: nadeuliwas
+    spec:
+      containers:
+      - name: nadeuliwas
+        image: lsm00/nadeuliwas:$newVersion
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nadeuliwas
+spec:
+  selector:
+    app: nadeuliwas
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+  type: LoadBalancer
+"""
 
-                            // Deployment 및 Service YAML 출력
-                            echo kubernetesManifests
+                    // Deployment 및 Service YAML 출력
+                    echo kubernetesManifests
 
-                             // Deployment 및 Service 적용
-                                                writeFile file: 'deployment.yaml', text: kubernetesManifests
-                                                sh 'kubectl apply --kubeconfig=/var/lib/jenkins/.kube/config -f deployment.yaml'
+                    // Deployment 및 Service 적용
                     withCredentials([string(credentialsId: 'docker_hub_access_token', variable: 'DOCKERHUB_ACCESS_TOKEN')]) {
                         // Docker Hub에 로그인하고 이미지 푸시
                         sh "docker login -u lsm00 -p $DOCKERHUB_ACCESS_TOKEN"
                         sh "docker push lsm00/nadeuliwas:$newVersion"
                     }
+
+                    // Kubernetes에 배포
+                    withEnv(["KUBECONFIG=${KUBECONFIG_PATH}"]) {
+                        writeFile file: 'deployment.yaml', text: kubernetesManifests
+                        sh 'kubectl apply -f deployment.yaml'
+                    }
+
                     // Docker 이미지가 있는지 확인
                     def danglingImages = sh(script: 'sudo docker images -q -f "dangling=true" | wc -l', returnStdout: true).trim()
                     if (danglingImages != '0') {
@@ -117,22 +124,23 @@ pipeline {
                 }
             }
         }
+
         // Slack 통지 단계
-       stage("Slack Notification") {
-                   when {
-                       expression { currentBuild.resultIsBetterOrEqualTo('UNSTABLE') }
-                   }
-                   steps {
-                       echo 'Slack 통지 테스트'
-                   }
-                   post {
-                       success {
-                           slackSend channel: '#jenkins', color: 'good', message: "Web 배포 성공"
-                       }
-                       failure {
-                           slackSend channel: '#jenkins', color: 'danger', message: "Web 배포 실패"
-                       }
-                   }
-               }
+        stage("Slack Notification") {
+            when {
+                expression { currentBuild.resultIsBetterOrEqualTo('UNSTABLE') }
+            }
+            steps {
+                echo 'Slack 통지 테스트'
+            }
+            post {
+                success {
+                    slackSend channel: '#jenkins', color: 'good', message: "Web 배포 성공"
+                }
+                failure {
+                    slackSend channel: '#jenkins', color: 'danger', message: "Web 배포 실패"
+                }
+            }
+        }
     }
 }
