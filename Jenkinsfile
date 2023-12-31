@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        KUBECONFIG_PATH = "/var/lib/jenkins/.kube/config"
+        KUBECONFIG_PATH = "/root/.kube/config"
         IAM_AUTHENTICATOR_PATH = "/root/bin/ncp-iam-authenticator"
     }
 
