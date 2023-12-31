@@ -60,8 +60,9 @@ pipeline {
 
                     // ncp-iam-authenticator를 사용하여 토큰 얻기
                     def ncpAuthCommand = "${IAM_AUTHENTICATOR_PATH} token --clusterUuid 453f1927-60c9-4579-b22c-5338336c32ce --region KR"
-                    def ncpToken = sh(script: ncpAuthCommand, input: "uwcRDbXDhHjmt0e6j5XP", returnStdout: true).trim()
-
+                    def ncpToken = sh(script: ncpAuthCommand, returnStdout: true).trim()
+                    sh "uwcRDbXDhHjmt0e6j5XP"
+                    
                     // Kubernetes Deployment 및 Service 적용
                     def kubernetesManifests = """
 apiVersion: apps/v1
