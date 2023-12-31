@@ -50,6 +50,49 @@ pipeline {
                     }
                     // 새로운 도커 컨테이너 실행
                     sh "docker run -d -p 82:8080 -dit --name nadeuliwas lsm00/nadeuliwas:$newVersion"
+
+                    // Kubernetes Deployment 및 Service 적용
+                            def kubernetesManifests = """
+                    apiVersion: apps/v1
+                    kind: Deployment
+                    metadata:
+                      name: nadeuliwas
+                    spec:
+                      replicas: 3
+                      selector:
+                        matchLabels:
+                          app: nadeuliwas
+                      template:
+                        metadata:
+                          labels:
+                            app: nadeuliwas
+                        spec:
+                          containers:
+                          - name: nadeuliwas
+                            image: lsm00/nadeuliwas:$newVersion
+                            ports:
+                            - containerPort: 8080
+                    ---
+                    apiVersion: v1
+                    kind: Service
+                    metadata:
+                      name: nadeuliwas
+                    spec:
+                      selector:
+                        app: nadeuliwas
+                      ports:
+                        - protocol: TCP
+                          port: 80
+                          targetPort: 8080
+                      type: LoadBalancer
+                    """
+
+                            // Deployment 및 Service YAML 출력
+                            echo kubernetesManifests
+
+                            // Deployment 및 Service 적용
+                            writeFile file: 'deployment.yaml', text: kubernetesManifests
+                            sh 'kubectl apply -f deployment.yaml'
                     withCredentials([string(credentialsId: 'docker_hub_access_token', variable: 'DOCKERHUB_ACCESS_TOKEN')]) {
                         // Docker Hub에 로그인하고 이미지 푸시
                         sh "docker login -u lsm00 -p $DOCKERHUB_ACCESS_TOKEN"
