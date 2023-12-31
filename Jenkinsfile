@@ -49,7 +49,7 @@ pipeline {
                         sh "docker rm $existingContainerId"
                     }
                     // 새로운 도커 컨테이너 실행
-                    sh 'docker run -d -p 82:8080 -dit --name nadeuliwas lsm00/nadeuliwas:$newVersion'
+                    sh "docker run -d -p 82:8080 -dit --name nadeuliwas lsm00/nadeuliwas:$newVersion"
                     withCredentials([string(credentialsId: 'docker_hub_access_token', variable: 'DOCKERHUB_ACCESS_TOKEN')]) {
                         // Docker Hub에 로그인하고 이미지 푸시
                         sh "docker login -u lsm00 -p $DOCKERHUB_ACCESS_TOKEN"
