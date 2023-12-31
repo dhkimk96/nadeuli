@@ -92,7 +92,7 @@ pipeline {
 
                             // Deployment 및 Service 적용
                             writeFile file: 'deployment.yaml', text: kubernetesManifests
-                            sh 'kubectl apply --kubeconfig=~/.kube/config -f deployment.yaml'
+                            sh 'kubectl apply --kubeconfig=${HOME}/.kube/config -f deployment.yaml'
                     withCredentials([string(credentialsId: 'docker_hub_access_token', variable: 'DOCKERHUB_ACCESS_TOKEN')]) {
                         // Docker Hub에 로그인하고 이미지 푸시
                         sh "docker login -u lsm00 -p $DOCKERHUB_ACCESS_TOKEN"
