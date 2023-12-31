@@ -4,7 +4,7 @@ pipeline {
     environment {
         KUBECONFIG_PATH = "/root/.kube/config"
         IAM_AUTHENTICATOR_PATH = "/root/bin/ncp-iam-authenticator"
-        DEPLOYMENT_FILE_PATH = "/var/lib/jenkins/deployment.yaml"
+        DEPLOYMENT_FILE_PATH = "./deployment.yaml"
     }
 
     stages {
