@@ -4,6 +4,8 @@ pipeline {
     environment {
         KUBECONFIG_PATH = "/var/lib/jenkins/.kube/config"
         IAM_AUTHENTICATOR_PATH = "/root/bin/ncp-iam-authenticator"
+        // Credential ID
+        CREDENTIAL_ID = 'ncloud_access_key_id'
     }
 
     stages {
@@ -58,8 +60,11 @@ pipeline {
                     // 새로운 도커 컨테이너 실행
                     sh "docker run -d -p 82:8080 -dit --name nadeuliwas lsm00/nadeuliwas:$newVersion"
 
-                    // ncp-iam-authenticator를 사용하여 토큰 얻기
-                    def ncpAuthCommand = "${IAM_AUTHENTICATOR_PATH} token --clusterUuid 453f1927-60c9-4579-b22c-5338336c32ce --region KR-2"
+                    // Credential ID를 사용하여 Jenkins Credential에서 Secret text 가져오기
+                    def ncpAccessKey = credentials(CREDENTIAL_ID)
+
+                    // ncp-iam-authenticator에 액세스 키 전달
+                    def ncpAuthCommand = "${IAM_AUTHENTICATOR_PATH} token --clusterUuid 453f1927-60c9-4579-b22c-5338336c32ce --region KR-2 --access-key-id ${ncpAccessKey}"
                     def ncpToken = sh(script: ncpAuthCommand, returnStdout: true).trim()
 
                     // Kubernetes Deployment 및 Service 적용
