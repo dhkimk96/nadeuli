@@ -59,7 +59,7 @@ pipeline {
                     sh "docker run -d -p 82:8080 -dit --name nadeuliwas lsm00/nadeuliwas:$newVersion"
 
                     // ncp-iam-authenticator를 사용하여 토큰 얻기
-                    def ncpAuthCommand = "${IAM_AUTHENTICATOR_PATH} token --clusterUuid 453f1927-60c9-4579-b22c-5338336c32ce --region KR"
+                    def ncpAuthCommand = "sudo ${IAM_AUTHENTICATOR_PATH} token --clusterUuid 453f1927-60c9-4579-b22c-5338336c32ce --region KR"
                     def ncpToken = sh(script: ncpAuthCommand, returnStdout: true).trim()
 
 
