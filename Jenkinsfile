@@ -37,11 +37,11 @@ pipeline {
                     def versionFile = '/var/lib/jenkins/was-version.txt'
                     def currentVersion = readFile(versionFile).trim()
                     def newVersion = (currentVersion as Float) + 0.01
-                    newVersion = newVersion.toString()
+                    newVersion = String.format('%.2f', newVersion) // 두 자리 소수점까지 표현
                     sh "echo $newVersion > $versionFile"
 
                     // Docker 이미지 빌드
-                        sh 'sudo docker build -t lsm00/nadeuliwas:$newVersion .'
+                        sh "sudo docker build -t lsm00/nadeuliwas:$newVersion ."
                     // 이전에 실행 중이던 도커 컨테이너 중지 및 삭제
                     def existingContainerId = sh(script: 'docker ps -aq --filter name=nadeuliwas', returnStdout: true).trim()
                     if (existingContainerId) {
