@@ -4,6 +4,7 @@ pipeline {
     environment {
         KUBECONFIG_PATH = "/root/.kube/config"
         IAM_AUTHENTICATOR_PATH = "/root/bin/ncp-iam-authenticator"
+        DEPLOYMENT_FILE_PATH = "/var/lib/jenkins/deployment.yaml"
     }
 
     stages {
@@ -102,17 +103,18 @@ spec:
                     // Deployment 및 Service YAML 출력
                     echo kubernetesManifests
 
-                    // Deployment 및 Service 적용
                     withCredentials([string(credentialsId: 'docker_hub_access_token', variable: 'DOCKERHUB_ACCESS_TOKEN')]) {
                         // Docker Hub에 로그인하고 이미지 푸시
                         sh "docker login -u lsm00 -p $DOCKERHUB_ACCESS_TOKEN"
                         sh "docker push lsm00/nadeuliwas:$newVersion"
                     }
 
-                    // Kubernetes에 배포
+                    // Deployment 및 Service YAML 파일 저장
+                    writeFile file: DEPLOYMENT_FILE_PATH, text: kubernetesManifests
+
+                    // Deployment 및 Service 적용
                     withEnv(["PATH=${PATH}:/root/bin/ncp-iam-authenticator"]) {
-                        writeFile file: 'deployment.yaml', text: kubernetesManifests
-                        sh 'sudo kubectl apply -f deployment.yaml --kubeconfig=/root/.kube/config'
+                        sh "sudo kubectl apply -f $DEPLOYMENT_FILE_PATH --kubeconfig=$KUBECONFIG_PATH"
                     }
 
                     // Docker 이미지가 있는지 확인
