@@ -58,14 +58,10 @@ pipeline {
                     // 새로운 도커 컨테이너 실행
                     sh "docker run -d -p 82:8080 -dit --name nadeuliwas lsm00/nadeuliwas:$newVersion"
 
-                    // Credential ID를 사용하여 Jenkins Credential에서 Secret text 가져오기
-                    def ncpAccessKey = 'ncloud_access_key_id'
-
-                    // ncp-iam-authenticator에 액세스 키 전달
-                    withCredentials([string(credentialsId: ncpAccessKey, variable: 'NCLOUD_ACCESS_KEY')]) {
-                    def ncpAuthCommand = "${IAM_AUTHENTICATOR_PATH} token --clusterUuid 453f1927-60c9-4579-b22c-5338336c32ce --region KR-2 --access-key-id ${NCLOUD_ACCESS_KEY}"
+                    // ncp-iam-authenticator를 사용하여 토큰 얻기
+                    def ncpAuthCommand = "${IAM_AUTHENTICATOR_PATH} token --clusterUuid 453f1927-60c9-4579-b22c-5338336c32ce --region KR-2"
                     def ncpToken = sh(script: ncpAuthCommand, returnStdout: true).trim()
-                    }
+
                     // Kubernetes Deployment 및 Service 적용
                     def kubernetesManifests = """
 apiVersion: apps/v1
