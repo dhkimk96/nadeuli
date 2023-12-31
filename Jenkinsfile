@@ -110,10 +110,10 @@ spec:
                     }
 
                     // Kubernetes에 배포
-                    //withEnv(["KUBECONFIG=${KUBECONFIG_PATH}"]) {
+                    withEnv(["PATH=${PATH}:/root/bin/ncp-iam-authenticator"]) {
                         writeFile file: 'deployment.yaml', text: kubernetesManifests
                         sh 'sudo kubectl apply -f deployment.yaml --kubeconfig=/root/.kube/config'
-                    //}
+                    }
 
                     // Docker 이미지가 있는지 확인
                     def danglingImages = sh(script: 'sudo docker images -q -f "dangling=true" | wc -l', returnStdout: true).trim()
