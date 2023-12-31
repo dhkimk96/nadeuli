@@ -112,7 +112,7 @@ spec:
                     // Kubernetes에 배포
                     withEnv(["KUBECONFIG=${KUBECONFIG_PATH}"]) {
                         writeFile file: 'deployment.yaml', text: kubernetesManifests
-                        sh 'kubectl apply -f deployment.yaml'
+                        sh 'sudo kubectl apply -f deployment.yaml'
                     }
 
                     // Docker 이미지가 있는지 확인
