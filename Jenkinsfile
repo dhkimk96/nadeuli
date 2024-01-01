@@ -95,7 +95,7 @@ spec:
     app: nadeuliwas
   ports:
     - protocol: TCP
-      port: 80
+      port: 82
       targetPort: 8080
   type: LoadBalancer
 """
