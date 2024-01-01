@@ -113,10 +113,9 @@ spec:
                     writeFile file: DEPLOYMENT_FILE_PATH, text: kubernetesManifests
 
                     // Deployment 및 Service 적용
-
+                        sh"sudo env PATH=\$PATH:/root/bin"
                         sh "echo \$PATH"
-                        sh "sudo kubectl version"
-                        sh "sudo env PATH=$PATH:/root/bin kubectl apply -f /var/lib/jenkins/deployment.yaml --kubeconfig=/root/.kube/config"
+                        sh "sudo env PATH=\$PATH:/root/bin kubectl apply -f /var/lib/jenkins/deployment.yaml --kubeconfig=/root/.kube/config"
 
 
                     // Docker 이미지가 있는지 확인
