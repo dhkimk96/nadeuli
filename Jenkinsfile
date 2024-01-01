@@ -90,13 +90,18 @@ apiVersion: v1
 kind: Service
 metadata:
   name: nadeuliwas
+  annotations:
+      service.beta.kubernetes.io/ncloud-load-balancer-layer-type: "nplb"
+      service.beta.kubernetes.io/ncloud-load-balancer-retain-public-ip-on-termination: "true"
 spec:
+  loadBalancerIP: 223.130.140.169
   selector:
     app: nadeuliwas
   ports:
     - protocol: TCP
       port: 82
       targetPort: 8080
+      name: http
   type: LoadBalancer
 """
 
