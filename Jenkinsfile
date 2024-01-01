@@ -108,13 +108,13 @@ spec:
                         sh "docker login -u lsm00 -p $DOCKERHUB_ACCESS_TOKEN"
                         sh "docker push lsm00/nadeuliwas:$newVersion"
                     }
-
-                    // Deployment 및 Service YAML 파일 저장
-                    writeFile file: DEPLOYMENT_FILE_PATH, text: kubernetesManifests
             // /var/lib/jenkins/deployment.yaml 파일에 대한 쓰기 권한 변경
             sh 'sudo chown jenkins:jenkins /var/lib/jenkins/deployment.yaml'
             // /var/lib/jenkins 디렉토리의 소유자를 jenkins로 변경
             sh 'sudo chown -R jenkins:jenkins /var/lib/jenkins'
+                    // Deployment 및 Service YAML 파일 저장
+                    writeFile file: DEPLOYMENT_FILE_PATH, text: kubernetesManifests
+
                     // Deployment 및 Service 적용
                         sh"sudo env PATH=\$PATH:/root/bin"
                         sh "echo \$PATH"
