@@ -97,6 +97,7 @@ spec:
     - protocol: TCP
       port: 82
       targetPort: 8080
+      nodePort:8080
   type: LoadBalancer
 """
 
