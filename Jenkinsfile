@@ -113,11 +113,11 @@ spec:
                     writeFile file: DEPLOYMENT_FILE_PATH, text: kubernetesManifests
 
                     // Deployment 및 Service 적용
-                    withEnv(["PATH=${PATH}:/root/bin/ncp-iam-authenticator"]) {
+
                         sh "echo \$PATH"
                         sh "sudo kubectl version"
-                        sh "kubectl apply -f /var/lib/jenkins/deployment.yaml --kubeconfig=/root/.kube/config"
-                    }
+                        sh "sudo env PATH=$PATH:/root/bin kubectl apply -f /var/lib/jenkins/deployment.yaml --kubeconfig=/root/.kube/config"
+
 
                     // Docker 이미지가 있는지 확인
                     def danglingImages = sh(script: 'sudo docker images -q -f "dangling=true" | wc -l', returnStdout: true).trim()
