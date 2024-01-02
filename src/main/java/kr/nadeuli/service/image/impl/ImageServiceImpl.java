@@ -190,12 +190,17 @@ public class ImageServiceImpl implements ImageService {
         amazonS3.deleteObject(new DeleteObjectRequest(bucket, cleanedFileName));
     }
 
-    public void deleteProfile(String fileName){
-        // endpoint와 bucket을 파일 경로에서 먼저 삭제
-        String cleanedFileName = removeEndpointForProfile(fileName);
-        log.info("cleanedFileName,{}",cleanedFileName);
-        // S3에서 파일 삭제
-        amazonS3.deleteObject(new DeleteObjectRequest(bucket, cleanedFileName));
+    public void deleteProfile(String fileName) {
+        // 특정 조건을 만족하는 경우 파일 삭제를 수행하지 않음
+        if (!fileName.equals("https://kr.object.ncloudstorage.com/nadeuli/image/nadeuli20231221213746683.png")) {
+            // endpoint와 bucket을 파일 경로에서 먼저 삭제
+            String cleanedFileName = removeEndpointForProfile(fileName);
+            log.info("cleanedFileName, {}", cleanedFileName);
+            // S3에서 파일 삭제
+            amazonS3.deleteObject(new DeleteObjectRequest(bucket, cleanedFileName));
+        } else {
+            log.info("해당 파일은 삭제되지 않습니다: {}", fileName);
+        }
     }
 
     private void deleteEntityImages(Object entity) throws Exception {
