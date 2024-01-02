@@ -56,6 +56,7 @@ public class Member implements UserDetails {
   private String dongNe;
 
   @Column(name = "picture", columnDefinition = "VARCHAR(10000) DEFAULT 'https://kr.object.ncloudstorage.com/nadeuli/image/nadeuli20231221213746683.png'")
+
   private String picture;
 
   @Column(name = "nadeuli_pay_balance", columnDefinition = "BIGINT DEFAULT 0")
