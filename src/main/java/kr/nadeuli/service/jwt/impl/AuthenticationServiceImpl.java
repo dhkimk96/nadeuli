@@ -84,7 +84,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
       memberDTO.setNadeuliPayBalance(0L);
       memberDTO.setDongNe(memberService.addDongNe(memberDTO.getTag(),gpsDTO).getDocuments().get(1).getAddressName());
       memberDTO.setGu(memberService.addDongNe(memberDTO.getTag(),gpsDTO).getDocuments().get(1).getRegion2depthName());
-      memberDTO.setPicture("https://kr.object.ncloudstorage.com/nadeuli/image/nadeuli20231220143920148.png");
+      memberDTO.setPicture("https://kr.object.ncloudstorage.com/nadeuli/image/nadeuli20231221213746683.png");
       Member member = memberMapper.memberDTOToMember(memberDTO);
       memberRepository.save(member);
       MemberDTO existMember = memberRepository.findByTag(memberDTO.getTag()).map(memberMapper::memberToMemberDTO).orElseThrow(()-> new IllegalArgumentException("없는 태그입니다."));
