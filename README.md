@@ -12,19 +12,19 @@
 
 ---
 
-#### 1. [프로젝트 소개](프로젝트-소개)
+#### 1. [프로젝트 소개](#프로젝트-소개)
 
-#### 2. [프로젝트 산출물](#프로젝트-산출물물)
+#### 2. [프로젝트 산출물](#프로젝트-산출물)
 
 #### 3. [역할 및 담당 업무](#역할-및-담당-업무)
 
-#### 4. [DevOps](#DevOps)
+#### 4. [DevOps](#devops)
 
-#### 5. [Cloud Architecture](#Cloud-Architecture)
+#### 5. [Cloud Architecture](#cloud-architecture)
 
-#### 6. [Server Architecture](#Server-Architectrue)
+#### 6. [Server Architecture](#server-architectrue)
 
-#### 7. [ERD](#ERD)
+#### 7. [ERD](#erd)
 
 ---
 
@@ -49,10 +49,6 @@
 · 카카오, 네이버 소셜로그인 지원
 · 실계좌인증을 통한 계좌등록 제공
 ```
-
-
-
-
 
 ---
 
