@@ -12,23 +12,19 @@
 
 ---
 
-#### 1. [프로젝트 소개](#프로젝트-소개)
+#### 1. [프로젝트 소개](프로젝트-소개)
 
-#### 2. [프로젝트 보고서](#프로젝트-보고서)
+#### 2. [프로젝트 산출물](#프로젝트-산출물물)
 
 #### 3. [역할 및 담당 업무](#역할-및-담당-업무)
 
-#### 4. [담당 구현 기능](#담당-구현-기능)
+#### 4. [DevOps](#DevOps)
 
-#### 5. [DevOps](#DevOps)
+#### 5. [Cloud Architecture](#Cloud-Architecture)
 
-#### 6. [Cloud Architecture](#Cloud-Architecture)
+#### 6. [Server Architecture](#Server-Architectrue)
 
-#### 7. [Server Architecture](#Server-Architectrue)
-
-#### 8. [ERD](#ERD)
-
-#### 9. [프로젝트 소감](#프로젝트-소감)
+#### 7. [ERD](#ERD)
 
 ---
 
@@ -54,7 +50,7 @@
 · 실계좌인증을 통한 계좌등록 제공
 ```
 
-![nadeuliDevops](https://github.com/Coalman96/nadeuli/assets/96984831/7014c31d-ccac-4ccd-9236-3583e02b01c0)
+
 
 
 
@@ -77,6 +73,11 @@
 ``` 
 발표 담당 부분 타임라인
 기술 소개 : 00:25:45 ~ 00:34:30
+```
+
+- 시연영상
+
+[<img src="https://github.com/Coalman96/nadeuli/assets/96984831/c7dd2b70-703c-4101-9fe0-513d30ea1949" alt="유튜브썸네일" style="zoom:50%;" />](https://youtu.be/-fIyGQvTGY0?si=BtVAGZerDh4eYcMr)
 
 ---
 
@@ -90,3 +91,25 @@
 
 
 ---
+
+#### DevOps
+
+![nadeuliDevops](https://github.com/Coalman96/nadeuli/assets/96984831/7014c31d-ccac-4ccd-9236-3583e02b01c0)
+
+---
+
+#### Cloud Archtecture
+
+![nadeuli_cloud_architecture](https://github.com/Coalman96/nadeuli/assets/96984831/29d1edf4-8df1-49ad-b24b-758a864dff34)
+
+
+
+---
+#### Server Architectrue
+
+![nadeuli_server_architecture](https://github.com/Coalman96/nadeuli/assets/96984831/89ff2fd6-3a92-432d-be7e-6a0665e445da)
+
+---
+#### ERD
+
+![nadeuli_erd_diagram](https://github.com/Coalman96/nadeuli/assets/96984831/4656e1a9-ce23-4c2b-951e-b5e18ea11486)
